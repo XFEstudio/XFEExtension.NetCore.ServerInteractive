@@ -1,11 +1,11 @@
 ﻿using XFEExtension.NetCore.CyberComm;
 
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces.ServerCoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 /// <summary>
 /// 服务器核心服务
 /// </summary>
-public interface IServerCoreService : IXFEServerCoreService
+public interface IServerCoreRegisterService : IXFEServerCoreService
 {
     /// <summary>
     /// 服务器启动事件

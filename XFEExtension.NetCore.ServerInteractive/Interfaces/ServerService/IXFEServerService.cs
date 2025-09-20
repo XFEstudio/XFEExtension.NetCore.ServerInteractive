@@ -10,5 +10,5 @@ public interface IXFEServerService
     /// <summary>
     /// XFE服务器
     /// </summary>
-    XFEServer XFEServer { get; init; }
+    XFEServer XFEServer { get; set; }
 }

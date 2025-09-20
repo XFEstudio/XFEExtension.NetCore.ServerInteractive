@@ -1,12 +1,12 @@
 ﻿using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces.ServerCoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 /// <summary>
 /// 服务器标准核心服务
 /// </summary>
-public interface IServerStandardCoreService : IXFEServerCoreService
+public interface IServerCoreStandardRegisterService : IXFEServerCoreService
 {
     /// <summary>
     /// 服务器标准请求接收事件
@@ -15,5 +15,5 @@ public interface IServerStandardCoreService : IXFEServerCoreService
     /// <param name="execute"></param>
     /// <param name="queryableJsonNode"></param>
     /// <param name="e"></param>
-    void StandardRequestReceived(object? sender, string execute, QueryableJsonNode? queryableJsonNode, CyberCommRequestEventArgs e);
+    void StandardRequestReceived(object? sender, string execute, QueryableJsonNode queryableJsonNode, CyberCommRequestEventArgs e);
 }

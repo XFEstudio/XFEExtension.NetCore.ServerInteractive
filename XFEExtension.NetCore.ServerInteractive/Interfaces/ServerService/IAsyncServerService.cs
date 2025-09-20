@@ -9,5 +9,5 @@ public interface IAsyncServerService : IXFEServerService
     /// 启动服务（异步）
     /// </summary>
     /// <returns></returns>
-    Task StartServiceAsync(string ipAddress);
+    Task StartServiceAsync();
 }

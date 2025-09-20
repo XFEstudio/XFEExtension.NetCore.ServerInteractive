@@ -44,10 +44,7 @@
 		<PackageReference Include="XFEExtension.NetCore" Version="3.3.6" />
 		<PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Utilities\Services\" />
+		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="1.1.*" />
 	</ItemGroup>
 
 </Project>

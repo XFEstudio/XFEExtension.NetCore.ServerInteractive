@@ -1,6 +1,4 @@
-﻿using SCCApplication.Core.Models.UserModels;
-
-namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 
 /// <summary>
 /// 加密的用户登录模型

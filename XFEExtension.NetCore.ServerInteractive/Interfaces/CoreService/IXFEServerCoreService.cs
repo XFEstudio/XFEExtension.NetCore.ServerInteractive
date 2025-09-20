@@ -1,6 +1,6 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces.ServerCoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 /// <summary>
 /// XFE服务器核心服务
@@ -10,5 +10,5 @@ public interface IXFEServerCoreService
     /// <summary>
     /// 服务器核心
     /// </summary>
-    XFEServerCore XFEServerCore { get; init; }
+    XFEServerCore XFEServerCore { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
-using XFEExtension.NetCore.ServerInteractive.Interfaces.ServerCoreService;
+using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
+using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
@@ -10,9 +11,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 public abstract class XFEServerCoreBuilder
 {
     readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
-    readonly List<IServerCoreService> serverCoreServiceList = [];
-    readonly Dictionary<string, IServerStandardCoreService> serverStandardCoreServiceDictionary = [];
-    readonly Dictionary<List<string>, IServerStandardCoreService> serverMultiStandardCoreServiceDictionary = [];
+    readonly List<IServerCoreRegisterService> serverCoreServiceList = [];
+    readonly Dictionary<string, IServerCoreStandardRegisterService> serverStandardCoreServiceDictionary = [];
+    readonly Dictionary<List<string>, IServerCoreStandardRegisterService> serverMultiStandardCoreServiceDictionary = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -25,7 +26,7 @@ public abstract class XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>构建器</returns>
-    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreService, new()
+    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreRegisterService, new()
     {
         serverCoreServiceList.Add(new T()
         {
@@ -40,7 +41,7 @@ public abstract class XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="execute">注册执行语句</param>
     /// <returns></returns>
-    public XFEServerCoreBuilder RegisterStandardService<T>(string execute) where T : IServerStandardCoreService, new()
+    public XFEServerCoreBuilder RegisterStandardService<T>(string execute) where T : IServerCoreStandardRegisterService, new()
     {
         serverStandardCoreServiceDictionary.Add(execute, new T()
         {
@@ -55,7 +56,7 @@ public abstract class XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="executeList">执行语句列表</param>
     /// <returns></returns>
-    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerStandardCoreService, new()
+    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerCoreStandardRegisterService, new()
     {
         serverMultiStandardCoreServiceDictionary.Add(executeList, new T()
         {
@@ -68,7 +69,7 @@ public abstract class XFEServerCoreBuilder
     /// 构建XFE服务器核心
     /// </summary>
     /// <returns></returns>
-    public XFEServerCore Build()
+    public XFEServerCore Build(string? name = "")
     {
         foreach (var serverCoreService in serverCoreServiceList)
         {
@@ -77,6 +78,8 @@ public abstract class XFEServerCoreBuilder
         }
         xFEServerCore.StandardCoreServiceDictionary = serverStandardCoreServiceDictionary;
         xFEServerCore.StandardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
+        if (!name.IsNullOrEmpty())
+            xFEServerCore.CoreServerName = name;
         return xFEServerCore;
     }
 }

@@ -2,9 +2,8 @@
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
-using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
-namespace SCCApplication.Core.Utilities.DataTable;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
 /// <summary>
 /// XFE数据表格管理器构造器
@@ -13,6 +12,10 @@ namespace SCCApplication.Core.Utilities.DataTable;
 public abstract class XFEDataTableManagerBuilder
 {
     readonly List<IXFEDataTable> dataTableList = [];
+    /// <summary>
+    /// 执行语句列表
+    /// </summary>
+    public List<string> ExecuteList { get; set; } = [];
 
     /// <summary>
     /// 创建构造器
@@ -46,7 +49,7 @@ public abstract class XFEDataTableManagerBuilder
     /// <returns></returns>
     public XFEDataTableManagerBuilder AddTable<T>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, Type profileType, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel
     {
-        dataTableList.Add(new XFEDataTable<T>(profileType)
+        var dataTable = new XFEDataTable<T>(profileType)
         {
             TableShowName = tabelShowName,
             AddPermissionLevel = addPermissionLevel,
@@ -54,7 +57,9 @@ public abstract class XFEDataTableManagerBuilder
             ChangePermissionLevel = changePermissionLevel,
             GetPermissionLevel = getPermissionLevel,
             JsonSerializerOptions = jsonSerializerOptions
-        });
+        };
+        dataTableList.Add(dataTable);
+        ExecuteList.AddRange([$"get_{dataTable.TableNameInRequest}", $"add_{dataTable.TableNameInRequest}", $"change_{dataTable.TableNameInRequest}", $"remove_{dataTable.TableNameInRequest}"]);
         return this;
     }
 

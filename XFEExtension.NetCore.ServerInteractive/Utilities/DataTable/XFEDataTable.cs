@@ -1,5 +1,4 @@
-﻿using SCCApplication.Core.Utilities.DataTable;
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
 using System.Text.Json;
 using XFEExtension.NetCore.AutoConfig;

@@ -9,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 public abstract class AsyncServerServiceBase : IAsyncServerService
 {
     /// <inheritdoc/>
-    public XFEServer XFEServer { get; init; } = new XFEServerImpl();
+    public XFEServer XFEServer { get; set; } = new XFEServerImpl();
     /// <inheritdoc/>
-    public abstract Task StartServiceAsync(string ipAddress);
+    public abstract Task StartServiceAsync();
 }

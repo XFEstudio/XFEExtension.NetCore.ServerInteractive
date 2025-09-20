@@ -8,5 +8,5 @@ public interface IServerService : IXFEServerService
     /// <summary>
     /// 启动服务
     /// </summary>
-    void StartService(string ipAddress);
+    void StartService();
 }

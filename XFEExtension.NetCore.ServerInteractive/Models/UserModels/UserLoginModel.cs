@@ -1,4 +1,4 @@
-﻿namespace SCCApplication.Core.Models.UserModels;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 
 /// <summary>
 /// 用户登录模型

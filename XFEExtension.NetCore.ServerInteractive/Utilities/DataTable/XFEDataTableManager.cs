@@ -3,7 +3,7 @@ using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace SCCApplication.Core.Utilities.DataTable;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
 /// <summary>
 /// XFE数据表格管理器

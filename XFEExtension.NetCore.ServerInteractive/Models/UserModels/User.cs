@@ -3,12 +3,15 @@
 namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 
 /// <summary>
-/// 用户信息模型
+/// 用户标准模型
 /// </summary>
 public class User : IUserInfo
 {
+    /// <inheritdoc/>
     public string ID { get; set; } = Guid.NewGuid().ToString("N");
+    /// <inheritdoc/>
     public string NickName { get; set; } = string.Empty;
+    /// <inheritdoc/>
     public int PermissionLevel { get; set; } = 0;
     /// <summary>
     /// 用户名，登录使用
