@@ -1,23 +1,26 @@
-﻿using System;
+﻿using SCCApplication.Core.Utilities.DataTable;
 using System.Net;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Text.Json;
-using XFEExtension.NetCore;
 using XFEExtension.NetCore.AutoConfig;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
-using XFEExtension.NetCore.StringExtension.Json;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace SCCApplication.Core.Utilities.DataTable;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
+/// <summary>
+/// XFE数据表格
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
 {
+    /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
+    /// <inheritdoc/>
     public Func<IEnumerable<User>> GetUsersFunction { get; set; } = () => [];
     /// <summary>
     /// 获取列表的方法
@@ -35,13 +38,21 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
     /// 更改列表中元素的方法
     /// </summary>
     public Action<T> ChangeItemTableFunction { get; set; } = item => { };
+    /// <inheritdoc/>
     public string TableShowName { get; set; } = typeof(T).Name;
+    /// <inheritdoc/>
     public string TableName { get; set; } = typeof(T).Name;
+    /// <inheritdoc/>
     public string TableNameInRequest { get; set; } = typeof(T).Name;
-    public UserRole GetRole { get; set; } = UserRole.无权限;
-    public UserRole RemoveRole { get; set; } = UserRole.无权限;
-    public UserRole ChangeRole { get; set; } = UserRole.无权限;
-    public UserRole AddRole { get; set; } = UserRole.无权限;
+    /// <inheritdoc/>
+    public int GetPermissionLevel { get; set; } = 0;
+    /// <inheritdoc/>
+    public int RemovePermissionLevel { get; set; } = 0;
+    /// <inheritdoc/>
+    public int ChangePermissionLevel { get; set; } = 0;
+    /// <inheritdoc/>
+    public int AddPermissionLevel { get; set; } = 0;
+    /// <inheritdoc/>
     public JsonSerializerOptions? JsonSerializerOptions { get; set; }
 
     /// <summary>
@@ -89,14 +100,31 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
         }
     }
 
+    /// <summary>
+    /// 获取列表
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<T> GetList() => GetTableFunction();
 
+    /// <summary>
+    /// 添加一个元素
+    /// </summary>
+    /// <param name="item"></param>
     public void Add(T item) => AddToTableFunction(item);
 
+    /// <summary>
+    /// 移除一个元素
+    /// </summary>
+    /// <param name="id"></param>
     public void Remove(string id) => RemoveFromTableFunction(id);
 
+    /// <summary>
+    /// 更改一个元素
+    /// </summary>
+    /// <param name="item"></param>
     public void Change(T item) => ChangeItemTableFunction(item);
 
+    /// <inheritdoc/>
     public async Task<HttpStatusCode> Execute(string execute, QueryableJsonNode requestJsonNode, CyberCommRequestEventArgs e)
     {
         var statusCode = HttpStatusCode.OK;
@@ -106,7 +134,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
             {
                 case "get":
                     Console.Write($"【{e.ClientIP}】获取{TableShowName}列表请求");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, GetRole, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, GetPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
                     await e.ReplyAndClose(JsonSerializer.Serialize(GetTableFunction(), JsonSerializerOptions), HttpStatusCode.OK);
                     break;
                 case "add":
@@ -118,7 +146,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
                     Console.Write($"：{item.ID}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, AddRole, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, AddPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
                     if (item.ID.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -133,7 +161,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     Console.Write($"【{e.ClientIP}】删除{TableShowName}请求");
                     var id = requestJsonNode["id"].ToString();
                     Console.Write($"：{id}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, RemoveRole, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, RemovePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
                     if (id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -161,7 +189,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");
                     }
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, ChangeRole, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, ChangePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
                     Change(item);
                     e.Close();
                     break;

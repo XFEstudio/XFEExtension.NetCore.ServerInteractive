@@ -2,8 +2,15 @@
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
+/// <summary>
+/// AES加密帮助
+/// </summary>
 public static class AESHelper
 {
+    /// <summary>
+    /// 生成随机密钥
+    /// </summary>
+    /// <returns></returns>
     public static string GenerateRandomKey()
     {
         byte[] key = new byte[32];
@@ -11,6 +18,10 @@ public static class AESHelper
         return Convert.ToBase64String(key);
     }
 
+    /// <summary>
+    /// 生成随机向量
+    /// </summary>
+    /// <returns></returns>
     public static string GenerateRandomIV()
     {
         byte[] iv = new byte[16];
@@ -18,6 +29,12 @@ public static class AESHelper
         return Convert.ToBase64String(iv);
     }
 
+    /// <summary>
+    /// 加密
+    /// </summary>
+    /// <param name="plainText"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public static string Encrypt(string plainText, string key)
     {
         using Aes aes = Aes.Create();
@@ -38,6 +55,12 @@ public static class AESHelper
         return Convert.ToBase64String(combined);
     }
 
+    /// <summary>
+    /// 解密
+    /// </summary>
+    /// <param name="cipherTextBase64"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public static string Decrypt(string cipherTextBase64, string key)
     {
         var cipherBytes = Convert.FromBase64String(cipherTextBase64);

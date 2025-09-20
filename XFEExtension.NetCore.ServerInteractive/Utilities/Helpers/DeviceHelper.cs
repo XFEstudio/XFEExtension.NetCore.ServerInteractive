@@ -6,6 +6,9 @@ using System.Text;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
+/// <summary>
+/// 设备帮助
+/// </summary>
 [SupportedOSPlatform("windows")]
 public static class DeviceHelper
 {
@@ -71,6 +74,10 @@ public static class DeviceHelper
         return sb.ToString();
     }
 
+    /// <summary>
+    /// 获取独特的硬件编码ID
+    /// </summary>
+    /// <returns></returns>
     public static string GetUniqueHardwareId()
     {
         string cpuId = GetCpuId();

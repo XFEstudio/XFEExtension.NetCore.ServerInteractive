@@ -6,7 +6,7 @@ using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension.Json;
 
-namespace SCCApplication.Core.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 
 public class TableRequester
 {
@@ -31,7 +31,12 @@ public class TableRequester
     /// </summary>
     public event XFEEventHandler<object?, ServerInteractiveEventArgs>? MessageReceived;
 
-    private string GetRequestName<T>() => $"{typeof(T).Name[0]}".ToLower() + typeof(T).Name[1..];
+    /// <summary>
+    /// 获取请求名称
+    /// </summary>
+    /// <typeparam name="T">请求数据类型</typeparam>
+    /// <returns>请求时所用的名称</returns>
+    public static string GetRequestName<T>() => $"{typeof(T).Name[0]}".ToLower() + typeof(T).Name[1..];
 
     /// <summary>
     /// 获取Table列表

@@ -6,24 +6,27 @@ using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace SCCApplication.Core.Utilities.DataTable;
 
+/// <summary>
+/// XFE数据表格接口
+/// </summary>
 public interface IXFEDataTable
 {
     /// <summary>
     /// 添加数据所需的最小权限
     /// </summary>
-    UserRole AddRole { get; set; }
+    int AddPermissionLevel { get; set; }
     /// <summary>
     /// 移除数据所需的最小权限
     /// </summary>
-    UserRole RemoveRole { get; set; }
+    int RemovePermissionLevel { get; set; }
     /// <summary>
     /// 更改数据所需的最小权限
     /// </summary>
-    UserRole ChangeRole { get; set; }
+    int ChangePermissionLevel { get; set; }
     /// <summary>
     /// 获取数据所需的最小权限
     /// </summary>
-    UserRole GetRole { get; set; }
+    int GetPermissionLevel { get; set; }
     /// <summary>
     /// 获取加密用户登录列表的方法
     /// </summary>

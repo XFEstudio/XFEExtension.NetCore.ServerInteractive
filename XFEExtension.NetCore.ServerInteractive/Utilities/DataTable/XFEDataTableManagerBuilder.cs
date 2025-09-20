@@ -2,9 +2,13 @@
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
 namespace SCCApplication.Core.Utilities.DataTable;
 
+/// <summary>
+/// XFE数据表格管理器构造器
+/// </summary>
 [CreateImpl]
 public abstract class XFEDataTableManagerBuilder
 {
@@ -33,22 +37,22 @@ public abstract class XFEDataTableManagerBuilder
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="tabelShowName">表格数据的显示名称（如：订单、用户等）</param>
-    /// <param name="addRole">增加数据所需的最小权限</param>
-    /// <param name="removeRole">删除数据所需的最小权限</param>
-    /// <param name="changeRole">更改数据所需的最小权限</param>
-    /// <param name="getRole">获取数据所需的最小权限</param>
+    /// <param name="addPermissionLevel">增加数据所需的最小权限</param>
+    /// <param name="removePermissionLevel">删除数据所需的最小权限</param>
+    /// <param name="changePermissionLevel">更改数据所需的最小权限</param>
+    /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
     /// <param name="profileType">配置文件类型</param>
     /// <param name="jsonSerializerOptions">JSON转换器</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T>(string tabelShowName, UserRole addRole, UserRole removeRole, UserRole changeRole, UserRole getRole, Type profileType, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel
+    public XFEDataTableManagerBuilder AddTable<T>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, Type profileType, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel
     {
         dataTableList.Add(new XFEDataTable<T>(profileType)
         {
             TableShowName = tabelShowName,
-            AddRole = addRole,
-            RemoveRole = removeRole,
-            ChangeRole = changeRole,
-            GetRole = getRole,
+            AddPermissionLevel = addPermissionLevel,
+            RemovePermissionLevel = removePermissionLevel,
+            ChangePermissionLevel = changePermissionLevel,
+            GetPermissionLevel = getPermissionLevel,
             JsonSerializerOptions = jsonSerializerOptions
         });
         return this;

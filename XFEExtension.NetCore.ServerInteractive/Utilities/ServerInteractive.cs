@@ -1,17 +1,18 @@
-﻿using SCCApplication.Core.Models.OrderModels;
-using SCCApplication.Core.Models.SoloModels;
-using SCCApplication.Core.Models.UserModels;
-using SCCApplication.Core.Utilities.JsonConverter;
+﻿using SCCApplication.Core.Models.UserModels;
 using System.Net;
 using System.Text.Json;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
+using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 using XFEExtension.NetCore.StringExtension.Json;
 
-namespace SCCApplication.Core.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 
+/// <summary>
+/// 服务器交互类
+/// </summary>
 public class ServerInteractive
 {
     JsonSerializerOptions jsonSerializerOptions = new();
@@ -24,6 +25,12 @@ public class ServerInteractive
     /// </summary>
     public TableRequester TableRequester { get; set; }
 
+    /// <summary>
+    /// 服务器交互类
+    /// </summary>
+    /// <param name="requsetAddress">请求地址</param>
+    /// <param name="computerInfo">电脑信息</param>
+    /// <param name="session">Session信息</param>
     public ServerInteractive(string requsetAddress, string computerInfo, string session)
     {
         jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
