@@ -70,7 +70,7 @@ public abstract class XFEDataTableManagerBuilder
     /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <param name="getUsersFunction"></param>
     /// <returns></returns>
-    public XFEDataTableManager Build(Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Func<IEnumerable<IUserInfo>> getUsersFunction)
+    public XFEDataTableManager Build(Func<IEnumerable<IUserInfo>> getUsersFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction)
     {
         var xFEDataTableManager = new XFEDataTableManagerImpl();
         foreach (var table in dataTableList)

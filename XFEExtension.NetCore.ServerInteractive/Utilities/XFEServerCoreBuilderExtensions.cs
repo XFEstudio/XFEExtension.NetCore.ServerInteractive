@@ -15,12 +15,10 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <param name="xFEDataTableManagerBuilder">数据表格构建器</param>
+    /// <param name="getUserFunction"></param>
+    /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddDataTableManager(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEDataTableManagerBuilder xFEDataTableManagerBuilder)
-    {
-        xFEServerCoreBuilder.RegisterStandardAsyncService<XFEDataTableManagerService>(xFEDataTableManagerBuilder.ExecuteList);
-        return xFEServerCoreBuilder;
-    }
+    public static XFEServerCoreBuilder AddDataTableManager(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction)).RegisterStandardAsyncService<XFEDataTableManagerService>(xFEDataTableManagerBuilder.ExecuteList);
 
     /// <summary>
     /// 添加用户基本参数
@@ -31,14 +29,10 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="addEncryptedUserLoginModelFunction"></param>
     /// <param name="removeEncryptedUserLoginModelFunction"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddUserParameterBase(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction)
-    {
-        xFEServerCoreBuilder.AddParameter("GetUserFunction", getUserFunction);
-        xFEServerCoreBuilder.AddParameter("GetEncryptedUserLoginModelFunction", getEncryptedUserLoginModelFunction);
-        xFEServerCoreBuilder.AddParameter("AddEncryptedUserLoginModelFunction", addEncryptedUserLoginModelFunction);
-        xFEServerCoreBuilder.AddParameter("RemoveEncryptedUserLoginModelFunction", removeEncryptedUserLoginModelFunction);
-        return xFEServerCoreBuilder;
-    }
+    public static XFEServerCoreBuilder AddUserParameterBase(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("GetUserFunction", getUserFunction)
+                            .AddParameter("GetEncryptedUserLoginModelFunction", getEncryptedUserLoginModelFunction)
+                            .AddParameter("AddEncryptedUserLoginModelFunction", addEncryptedUserLoginModelFunction)
+                            .AddParameter("RemoveEncryptedUserLoginModelFunction", removeEncryptedUserLoginModelFunction);
 
     /// <summary>
     /// 使用XFE标准登录服务
@@ -49,22 +43,29 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="addEncryptedUserLoginModelFunction">添加加密用户模型方法</param>
     /// <param name="removeEncryptedUserLoginModelFunction">移除加密用户模型方法</param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddStandardLoginServer(this XFEServerCoreBuilder xFEServerCoreBuilder)
-    {
-        xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService>("login");
-        xFEServerCoreBuilder.RegisterStandardAsyncService<UserReloginService>("relogin");
-        xFEServerCoreBuilder.AddService<UserLoginAutoCleanService>();
-        return xFEServerCoreBuilder;
-    }
+    public static XFEServerCoreBuilder AddStandardLoginService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService>("login")
+            .RegisterStandardAsyncService<UserReloginService>("relogin")
+            .AddService<UserLoginAutoCleanService>();
 
     /// <summary>
     /// 添加IP封禁服务
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddIpBannerService(this XFEServerCoreBuilder xFEServerCoreBuilder)
-    {
-        xFEServerCoreBuilder.RegisterStandardAsyncService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
-        return xFEServerCoreBuilder;
-    }
+    public static XFEServerCoreBuilder AddIpBannerService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
+
+    /// <summary>
+    /// 使用XFE标准服务器核心
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <param name="getUserFunction"></param>
+    /// <param name="getEncryptedUserLoginModelFunction"></param>
+    /// <param name="addEncryptedUserLoginModelFunction"></param>
+    /// <param name="removeEncryptedUserLoginModelFunction"></param>
+    /// <param name="xFEDataTableManagerBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder UseXFEStandardServerCore(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction)
+            .AddDataTableManager(xFEDataTableManagerBuilder, getUserFunction, getEncryptedUserLoginModelFunction)
+            .AddStandardLoginService()
+            .AddIpBannerService();
 }

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="XFEExtension.NetCore.ServerInteractive.Test/XFEExtension.NetCore.ServerInteractive.Test.csproj" />
+  <Project Path="XFEExtension.NetCore.ServerInteractive.TServer/XFEExtension.NetCore.ServerInteractive.TServer.csproj" Id="48ae17dc-8466-413f-8e8e-cbfc6f59fbe8" />
   <Project Path="XFEExtension.NetCore.ServerInteractive/XFEExtension.NetCore.ServerInteractive.csproj" />
 </Solution>

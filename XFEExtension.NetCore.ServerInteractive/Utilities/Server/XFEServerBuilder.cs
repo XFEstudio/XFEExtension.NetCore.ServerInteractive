@@ -11,6 +11,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 public abstract class XFEServerBuilder
 {
     bool addedProcessServiced = false;
+    ICoreServerProcessService? coreServerProcess;
     readonly List<ICoreServerService> coreServerServiceList = [];
 
     /// <summary>
@@ -113,8 +114,7 @@ public abstract class XFEServerBuilder
         if (coreServerProcessService is null)
             throw new XFEServerBuilderException("处理器为空", new ArgumentNullException(nameof(coreServerProcessService)));
         addedProcessServiced = true;
-        coreServerProcessService.CoreServerServiceList = coreServerServiceList;
-        XFEServer.CoreServerProcessService = coreServerProcessService;
+        coreServerProcess = coreServerProcessService;
         return this;
     }
 
@@ -132,8 +132,10 @@ public abstract class XFEServerBuilder
     /// <exception cref="XFEServerBuilderException">未添加核心处理器异常</exception>
     public XFEServer Build()
     {
-        if (!addedProcessServiced)
+        if (!addedProcessServiced || coreServerProcess is null)
             throw new XFEServerBuilderException("未添加核心处理器！");
+        coreServerProcess.CoreServerServiceList = coreServerServiceList;
+        XFEServer.CoreServerProcessService = coreServerProcess;
         return XFEServer;
     }
 }
