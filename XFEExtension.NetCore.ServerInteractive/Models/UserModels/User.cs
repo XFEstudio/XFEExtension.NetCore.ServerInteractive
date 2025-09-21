@@ -13,16 +13,10 @@ public class User : IUserInfo
     public string NickName { get; set; } = string.Empty;
     /// <inheritdoc/>
     public int PermissionLevel { get; set; } = 0;
-    /// <summary>
-    /// 用户名，登录使用
-    /// </summary>
+    /// <inheritdoc/>
     public string UserName { get; set; } = string.Empty;
-    /// <summary>
-    /// 密码
-    /// </summary>
+    /// <inheritdoc/>
     public string Password { get; set; } = string.Empty;
-    /// <summary>
-    /// 用户是否启用
-    /// </summary>
+    /// <inheritdoc/>
     public bool Enable { get; set; } = true;
 }

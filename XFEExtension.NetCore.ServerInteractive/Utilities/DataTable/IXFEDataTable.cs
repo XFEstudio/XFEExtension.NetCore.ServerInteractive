@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Text.Json;
 using XFEExtension.NetCore.CyberComm;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
+using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
@@ -34,7 +36,7 @@ public interface IXFEDataTable
     /// <summary>
     /// 获取用户列表的方法
     /// </summary>
-    Func<IEnumerable<User>> GetUsersFunction { get; set; }
+    Func<IEnumerable<IUserInfo>> GetUsersFunction { get; set; }
     /// <summary>
     /// Json序列化选项
     /// </summary>
@@ -56,7 +58,7 @@ public interface IXFEDataTable
     /// </summary>
     /// <param name="execute">执行的操作</param>
     /// <param name="requestJsonNode">Json节点</param>
-    /// <param name="e">服务器参数</param>
+    /// <param name="r">参数</param>
     /// <returns>状态码</returns>
-    Task<HttpStatusCode> Execute(string execute, QueryableJsonNode requestJsonNode, CyberCommRequestEventArgs e);
+    Task<HttpStatusCode> Execute(string execute, QueryableJsonNode requestJsonNode, ServerCoreReturnArgs r);
 }

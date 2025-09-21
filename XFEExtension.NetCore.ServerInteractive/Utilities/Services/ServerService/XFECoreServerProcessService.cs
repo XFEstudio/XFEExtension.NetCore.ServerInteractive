@@ -32,21 +32,25 @@ public class XFECoreServerProcessService : CoreServerProcessServiceBase
                 {
                     taskList.Add(Task.Run(async () =>
                     {
-                        Console.WriteLine($"[DEBUG]正在启动服务器：{coreServerService.CoreServerName}({coreServerService})...");
-                        await coreServerService.StartServerCore();
-                        Console.WriteLine("[ERROR]服务器因未知原因自行结束！");
-                        Console.WriteLine("[DEBUG]准备重启服务器");
-                        await Task.Delay(1000);
-                        Console.WriteLine("[DEBUG]正在重启服务器 3...");
-                        await Task.Delay(1000);
-                        Console.WriteLine("[DEBUG]正在重启服务器 2...");
-                        await Task.Delay(1000);
-                        Console.WriteLine("[DEBUG]正在重启服务器 1...");
-                        Console.WriteLine("[DEBUG]正在保存日志...");
-                        XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-                        Console.WriteLine("[DEBUG]日志已保存！");
+                        while (true)
+                        {
+                            Console.WriteLine($"[DEBUG]正在启动服务器：{coreServerService.CoreServerName}({coreServerService})...");
+                            await coreServerService.StartServerCore();
+                            Console.WriteLine("[ERROR]服务器因未知原因自行结束！");
+                            Console.WriteLine("[DEBUG]准备重启服务器");
+                            await Task.Delay(1000);
+                            Console.WriteLine("[DEBUG]正在重启服务器 3...");
+                            await Task.Delay(1000);
+                            Console.WriteLine("[DEBUG]正在重启服务器 2...");
+                            await Task.Delay(1000);
+                            Console.WriteLine("[DEBUG]正在重启服务器 1...");
+                            Console.WriteLine("[DEBUG]正在保存日志...");
+                            XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
+                            Console.WriteLine("[DEBUG]日志已保存！");
+                        }
                     }));
                 }
+                await Task.WhenAll(taskList);
             }
             catch (Exception ex)
             {

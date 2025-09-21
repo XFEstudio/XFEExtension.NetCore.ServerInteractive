@@ -2,17 +2,16 @@
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
 /// <summary>
-/// 服务器标准核心服务基类
+/// 服务器核心校验服务基类
 /// </summary>
-public abstract class ServerCoreStandardRegisterServiceBase : IServerCoreStandardRegisterService
+public abstract class ServerCoreVerifyAsyncServiceBase : IServerCoreVerifyAsyncService
 {
     /// <inheritdoc/>
     public XFEServerCore XFEServerCore { get; set; } = new XFEServerCoreImpl();
     /// <inheritdoc/>
-    public abstract void StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
+    public abstract Task<bool> VerifyRequestAsync(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r);
 }

@@ -9,10 +9,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 /// <summary>
 /// 服务器标准核心服务基类
 /// </summary>
-public abstract class ServerCoreStandardRegisterServiceBase : IServerCoreStandardRegisterService
+public abstract class ServerCoreStandardRegisterAsyncServiceBase : IServerCoreStandardRegisterAsyncService
 {
     /// <inheritdoc/>
     public XFEServerCore XFEServerCore { get; set; } = new XFEServerCoreImpl();
     /// <inheritdoc/>
-    public abstract void StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
+    public abstract Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
 }

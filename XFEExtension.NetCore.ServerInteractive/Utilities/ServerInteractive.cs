@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using XFEExtension.NetCore.DelegateExtension;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -116,7 +117,7 @@ public class ServerInteractive
     /// 获取用户列表
     /// </summary>
     /// <returns></returns>
-    public async Task<List<User>> GetUserList()
+    public async Task<List<IUserInfo>> GetUserList()
     {
         try
         {
@@ -129,7 +130,7 @@ public class ServerInteractive
             if (code == HttpStatusCode.OK)
             {
                 MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
-                return JsonSerializer.Deserialize<List<User>>(response) ?? [];
+                return JsonSerializer.Deserialize<List<IUserInfo>>(response) ?? [];
             }
             else
             {

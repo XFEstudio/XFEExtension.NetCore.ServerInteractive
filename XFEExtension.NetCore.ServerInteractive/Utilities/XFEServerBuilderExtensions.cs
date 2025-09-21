@@ -24,7 +24,7 @@ public static class XFEServerBuilderExtensions
     /// </summary>
     /// <param name="xFEServerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerBuilder UseXFEExceptionProcess(this XFEServerBuilder xFEServerBuilder)
+    public static XFEServerBuilder AddXFEExceptionProcess(this XFEServerBuilder xFEServerBuilder)
     {
         xFEServerBuilder.AddService<ServerExceptionProcessService>();
         return xFEServerBuilder;
@@ -35,7 +35,7 @@ public static class XFEServerBuilderExtensions
     /// </summary>
     /// <param name="xFEServerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerBuilder UseXFECoreProcessor(this XFEServerBuilder xFEServerBuilder)
+    public static XFEServerBuilder AddXFECoreProcessor(this XFEServerBuilder xFEServerBuilder)
     {
         xFEServerBuilder.AddCoreProcessor<XFECoreServerProcessService>();
         return xFEServerBuilder;
@@ -46,7 +46,7 @@ public static class XFEServerBuilderExtensions
     /// </summary>
     /// <param name="xFEServerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerBuilder UseXFEIpInitializer(this XFEServerBuilder xFEServerBuilder)
+    public static XFEServerBuilder AddXFEIpInitializer(this XFEServerBuilder xFEServerBuilder)
     {
         xFEServerBuilder.AddInitializer<ServerIpInitializer>();
         return xFEServerBuilder;

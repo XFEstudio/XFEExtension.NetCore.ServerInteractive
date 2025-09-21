@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text.Json;
 using XFEExtension.NetCore.AutoConfig;
-using XFEExtension.NetCore.CyberComm;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -20,7 +20,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
     /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
     /// <inheritdoc/>
-    public Func<IEnumerable<User>> GetUsersFunction { get; set; } = () => [];
+    public Func<IEnumerable<IUserInfo>> GetUsersFunction { get; set; } = () => [];
     /// <summary>
     /// 获取列表的方法
     /// </summary>
@@ -124,7 +124,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
     public void Change(T item) => ChangeItemTableFunction(item);
 
     /// <inheritdoc/>
-    public async Task<HttpStatusCode> Execute(string execute, QueryableJsonNode requestJsonNode, CyberCommRequestEventArgs e)
+    public async Task<HttpStatusCode> Execute(string execute, QueryableJsonNode requestJsonNode, ServerCoreReturnArgs r)
     {
         var statusCode = HttpStatusCode.OK;
         try
@@ -132,12 +132,32 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
             switch (execute)
             {
                 case "get":
-                    Console.Write($"【{e.ClientIP}】获取{TableShowName}列表请求");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, GetPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
-                    await e.ReplyAndClose(JsonSerializer.Serialize(GetTableFunction(), JsonSerializerOptions), HttpStatusCode.OK);
+                    Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    List<T> tableList = [.. GetTableFunction()];
+                    int pageCount = requestJsonNode["pageCount"].GetValue<int>();
+                    if (pageCount == -1)
+                    {
+                        await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
+                        {
+                            totalCount = tableList.Count,
+                            lastPage = -1,
+                            data = tableList
+                        }, JsonSerializerOptions), HttpStatusCode.OK);
+                    }
+                    else
+                    {
+                        int page = requestJsonNode["page"].GetValue<int>();
+                        await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
+                        {
+                            totalCount = tableList.Count,
+                            lastPage = tableList.Count / pageCount,
+                            data = tableList[(page * pageCount)..((page + 1) * pageCount)]
+                        }, JsonSerializerOptions));
+                    }
                     break;
                 case "add":
-                    Console.Write($"【{e.ClientIP}】添加{TableShowName}请求");
+                    Console.Write($"【{r.Args.ClientIP}】添加{TableShowName}请求");
                     var item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]), JsonSerializerOptions);
                     if (item is null)
                     {
@@ -145,7 +165,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
                     Console.Write($"：{item.ID}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, AddPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, AddPermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (item.ID.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -154,23 +174,23 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     while (IDModelHelper.HasSameID(item.ID, GetTableFunction().Cast<IIDModel>()))
                         item.ID = Guid.NewGuid().ToString();
                     Add(item);
-                    e.Close();
+                    r.Args.Close();
                     break;
                 case "remove":
-                    Console.Write($"【{e.ClientIP}】删除{TableShowName}请求");
+                    Console.Write($"【{r.Args.ClientIP}】删除{TableShowName}请求");
                     var id = requestJsonNode["id"].ToString();
                     Console.Write($"：{id}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, RemovePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, RemovePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"{TableShowName}ID不能为空");
                     }
                     Remove(id);
-                    e.Close();
+                    r.Args.Close();
                     break;
                 case "change":
-                    Console.Write($"【{e.ClientIP}】更改{TableShowName}请求");
+                    Console.Write($"【{r.Args.ClientIP}】更改{TableShowName}请求");
                     item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]), JsonSerializerOptions);
                     if (item is null)
                     {
@@ -188,21 +208,21 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");
                     }
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], e.ClientIP, ChangePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), ref statusCode);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, ChangePermissionLevel, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     Change(item);
-                    e.Close();
+                    r.Args.Close();
                     break;
                 default:
-                    Console.WriteLine($"[ERROR]【{e.ClientIP}】意料之外的方法：{execute}");
-                    await e.ReplyAndClose($"意料之外的方法：{execute}", HttpStatusCode.BadRequest);
+                    Console.WriteLine($"[ERROR]【{r.Args.ClientIP}】意料之外的方法：{execute}");
+                    await r.Args.ReplyAndClose($"意料之外的方法：{execute}", HttpStatusCode.BadRequest);
                     break;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN]【{e.ClientIP}】{ex.Message}");
+            Console.WriteLine($"[WARN]【{r.Args.ClientIP}】{ex.Message}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
-            await e.ReplyAndClose(ex.Message, statusCode);
+            await r.Args.ReplyAndClose(ex.Message, statusCode);
         }
         return statusCode;
     }

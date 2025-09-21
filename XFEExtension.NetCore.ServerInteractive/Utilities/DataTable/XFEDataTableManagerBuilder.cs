@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using XFEExtension.NetCore.AutoImplement;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 
@@ -69,7 +70,7 @@ public abstract class XFEDataTableManagerBuilder
     /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <param name="getUsersFunction"></param>
     /// <returns></returns>
-    public XFEDataTableManager Build(Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Func<IEnumerable<User>> getUsersFunction)
+    public XFEDataTableManager Build(Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Func<IEnumerable<IUserInfo>> getUsersFunction)
     {
         var xFEDataTableManager = new XFEDataTableManagerImpl();
         foreach (var table in dataTableList)

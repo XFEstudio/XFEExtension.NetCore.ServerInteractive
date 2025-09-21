@@ -1,19 +1,20 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Models;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Interfaces;
 
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces;
-
-public interface IUserInfo : IIDModel
+/// <summary>
+/// 用户信息
+/// </summary>
+public interface IUserInfo : IUserFaceInfo
 {
     /// <summary>
-    /// 用户ID，唯一标识符
+    /// 用户名，登录使用
     /// </summary>
-    new string ID { get; set; }
+    string UserName { get; set; }
     /// <summary>
-    /// 昵称，显示使用
+    /// 密码
     /// </summary>
-    string NickName { get; set; }
+    string Password { get; set; }
     /// <summary>
-    /// 用户权限等级
+    /// 用户是否启用
     /// </summary>
-    int PermissionLevel { get; set; }
+    bool Enable { get; set; }
 }

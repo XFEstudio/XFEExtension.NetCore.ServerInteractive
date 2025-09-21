@@ -1,5 +1,5 @@
-﻿using XFEExtension.NetCore.CyberComm;
-using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+﻿using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
 /// <summary>
 /// XFE数据表格管理器服务
 /// </summary>
-public class XFEDataTableManagerService : ServerCoreStandardRegisterServiceBase
+public class XFEDataTableManagerService : ServerCoreStandardRegisterAsyncServiceBase
 {
     /// <summary>
     /// 数据表格管理器
@@ -16,5 +16,5 @@ public class XFEDataTableManagerService : ServerCoreStandardRegisterServiceBase
     public XFEDataTableManager TableManager { get; set; } = new XFEDataTableManagerImpl();
 
     /// <inheritdoc/>
-    public override async void StandardRequestReceived(object? sender, string execute, QueryableJsonNode queryableJsonNode, CyberCommRequestEventArgs e) => await TableManager.Execute(execute, queryableJsonNode, e);
+    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r) => await TableManager.Execute(execute, queryableJsonNode, r);
 }

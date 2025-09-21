@@ -1,27 +1,31 @@
 ﻿using System.Net;
-using XFEExtension.NetCore.CyberComm;
-using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
+using XFEExtension.NetCore.StringExtension;
+using XFEExtension.NetCore.StringExtension.Json;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
 
-public class UserLoginService : ServerCoreStandardRegisterServiceBase
+/// <summary>
+/// 用户登录服务
+/// </summary>
+public class UserLoginService : ServerCoreUserServiceBase
 {
     /// <inheritdoc/>
-    public override async void StandardRequestReceived(object? sender, string execute, QueryableJsonNode queryableJsonNode, CyberCommRequestEventArgs e)
+    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
     {
-        Console.Write($"【{e.ClientIP}】登录请求：");
+        Console.Write($"【{r.Args.ClientIP}】登录请求：");
         var account = queryableJsonNode["account"].ToString();
         var password = queryableJsonNode["password"].ToString();
         var computerInfo = queryableJsonNode["computerInfo"].ToString();
-        if (account.IsNullOrWhiteSpace()) throw new StopAction(() => statusCode = HttpStatusCode.BadRequest, "账户名不能为空");
-        if (password.IsNullOrWhiteSpace()) throw new StopAction(() => statusCode = HttpStatusCode.BadRequest, "登录密码不能为空");
-        if (computerInfo.IsNullOrWhiteSpace()) throw new StopAction(() => statusCode = HttpStatusCode.BadRequest, "电脑信息不能为空");
-        var user = UserHelper.GetUser(queryableJsonNode["account"], queryableJsonNode["password"], UserProfile.UserList, ref statusCode);
+        if (account.IsNullOrWhiteSpace()) r.Error("账户名不能为空", HttpStatusCode.BadRequest);
+        if (password.IsNullOrWhiteSpace()) r.Error("登录密码不能为空", HttpStatusCode.BadRequest);
+        if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
+        var user = UserHelper.GetUser(queryableJsonNode["account"], queryableJsonNode["password"], GetUserFunction(), r);
         Console.WriteLine($"{account}（{computerInfo}）");
-        var userLogin = UserProfile.EncryptedUserLoginList.FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
+        var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
         if (userLogin is null)
         {
             userLogin = new EncryptedUserLoginModel
@@ -31,13 +35,13 @@ public class UserLoginService : ServerCoreStandardRegisterServiceBase
                 {
                     UID = user.ID,
                     ComputerInfo = computerInfo,
-                    LastIPAddress = e.ClientIP,
-                    EndDateTime = DateTime.Now.AddDays(ServerProfile.LoginKeepDays)
+                    LastIPAddress = r.Args.ClientIP,
+                    EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
             };
-            UserProfile.EncryptedUserLoginList.Add(userLogin);
+            AddEncryptedUserLoginModelFunction(userLogin);
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
-            await e.ReplyAndClose(new
+            await r.Args.ReplyAndClose(new
             {
                 session = UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel),
                 expireDate = userLogin.UserLoginModel.EndDateTime
@@ -46,10 +50,10 @@ public class UserLoginService : ServerCoreStandardRegisterServiceBase
         else
         {
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
-            userLogin.UserLoginModel.LastIPAddress = e.ClientIP;
-            userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(ServerProfile.LoginKeepDays);
+            userLogin.UserLoginModel.LastIPAddress = r.Args.ClientIP;
+            userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
-            await e.ReplyAndClose(new
+            await r.Args.ReplyAndClose(new
             {
                 session = UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel),
                 expireDate = userLogin.UserLoginModel.EndDateTime

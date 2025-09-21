@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
+using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.StringExtension.Json;
 
@@ -16,7 +18,7 @@ public static class UserHelper
     /// <param name="id"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static User? GetUser(string id, IEnumerable<User> userInfoList) => userInfoList.FirstOrDefault(user => user.ID == id);
+    public static IUserInfo? GetUser(string id, IEnumerable<IUserInfo> userInfoList) => userInfoList.FirstOrDefault(user => user.ID == id);
 
     /// <summary>
     /// 获取用户（通过Session）
@@ -29,7 +31,7 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static UserOperateResult GetUser(string sessionId, string computerInfo, string ipAddress, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<User> userInfoList, out User? user)
+    public static UserOperateResult GetUser(string sessionId, string computerInfo, string ipAddress, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
         if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.ComputerInfo == computerInfo) is not EncryptedUserLoginModel encryptedUserLoginModel)
@@ -38,7 +40,7 @@ public static class UserHelper
             return UserOperateResult.UserNotFound;
         if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !((encryptedUserLoginModel.UserLoginModel.LastIPAddress == "127.0.0.1" || encryptedUserLoginModel.UserLoginModel.LastIPAddress == "::1") && (ipAddress == "127.0.0.1" || ipAddress == "::1"))))
             return UserOperateResult.LoginExpired;
-        if (GetUser(targetUserLoginModel.UID, userInfoList) is not User userInfo)
+        if (GetUser(targetUserLoginModel.UID, userInfoList) is not IUserInfo userInfo)
             return UserOperateResult.UserNotFound;
         if (!userInfo.Enable)
             return UserOperateResult.UserDisabled;
@@ -55,10 +57,10 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static UserOperateResult GetUser(string userName, string password, IEnumerable<User> userInfoList, out User? user)
+    public static UserOperateResult GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
-        if (userInfoList.FirstOrDefault(user => user.UserName == userName) is User userInfo)
+        if (userInfoList.FirstOrDefault(user => user.UserName == userName) is IUserInfo userInfo)
         {
             if (userInfo.Password == password)
             {
@@ -92,7 +94,7 @@ public static class UserHelper
     /// <param name="statusCode"></param>
     /// <returns></returns>
     /// <exception cref="StopAction"></exception>
-    public static User GetUser(string userName, string password, IEnumerable<User> userInfoList, ref HttpStatusCode statusCode)
+    public static IUserInfo GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
     {
         var result = GetUser(userName, password, userInfoList, out var user);
         if (result != UserOperateResult.Success)
@@ -104,6 +106,23 @@ public static class UserHelper
     }
 
     /// <summary>
+    /// 获取用户
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <param name="password"></param>
+    /// <param name="userInfoList"></param>
+    /// <param name="r"></param>
+    /// <returns></returns>
+    /// <exception cref="StopAction"></exception>
+    public static IUserInfo GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    {
+        var result = GetUser(userName, password, userInfoList, out var user);
+        if (result != UserOperateResult.Success)
+            r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
+        return user!;
+    }
+
+    /// <summary>
     /// 校验用户权限
     /// </summary>
     /// <param name="userName"></param>
@@ -111,7 +130,7 @@ public static class UserHelper
     /// <param name="requiredPermissionLevel"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string userName, string password, int requiredPermissionLevel, IEnumerable<User> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList)
     {
         var result = GetUser(userName, password, userInfoList, out var user);
         if (result != UserOperateResult.Success)
@@ -132,7 +151,7 @@ public static class UserHelper
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<User> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
     {
         var result = GetUser(sessionId, computerInfo, ipAddress, jsonSerializerOptions, encryptedUserLoginModels, userInfoList, out var user);
         if (result != UserOperateResult.Success)
@@ -151,12 +170,31 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="statusCode"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string userName, string password, int requiredPermissionLevel, IEnumerable<User> userInfoList, ref HttpStatusCode statusCode)
+    public static void ValidatePermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
     {
         var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
         if (result != UserOperateResult.Success)
         {
             statusCode = HttpStatusCode.Forbidden;
+            throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
+        }
+    }
+
+    /// <summary>
+    /// 校验权限
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <param name="password"></param>
+    /// <param name="requiredPermissionLevel"></param>
+    /// <param name="userInfoList"></param>
+    /// <param name="r"></param>
+    /// <exception cref="StopAction"></exception>
+    public static void ValidatePermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    {
+        var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
+        if (result != UserOperateResult.Success)
+        {
+            r.StatusCode = HttpStatusCode.Forbidden;
             throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
         }
     }
@@ -171,16 +209,13 @@ public static class UserHelper
     /// <param name="jsonSerializerOptions"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
-    /// <param name="statusCode"></param>
+    /// <param name="r"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<User> userInfoList, ref HttpStatusCode statusCode)
+    public static void ValidatePermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = ValidateUserPermission(sessionId, computerInfo, ipAddress, requiredPermissionLevel, jsonSerializerOptions, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
-        {
-            statusCode = HttpStatusCode.Forbidden;
-            throw new StopAction(() => { }, OutPutResult(result));
-        }
+            r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
     }
 
     /// <summary>
