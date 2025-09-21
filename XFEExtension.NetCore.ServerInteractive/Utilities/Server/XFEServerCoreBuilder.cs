@@ -188,14 +188,7 @@ public abstract class XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="executeList">执行语句列表</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerCoreStandardRegisterService, new()
-    {
-        serverMultiStandardCoreServiceDictionary.Add(executeList, new T()
-        {
-            XFEServerCore = xFEServerCore
-        });
-        return this;
-    }
+    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerCoreStandardRegisterService, new() => RegisterStandardService(executeList, new T());
 
     /// <summary>
     /// 注册多个执行语句的标准服务
@@ -216,14 +209,7 @@ public abstract class XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="executeList">执行语句列表</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(List<string> executeList) where T : IServerCoreStandardRegisterAsyncService, new()
-    {
-        serverMultiStandardCoreAsyncServiceDictionary.Add(executeList, new T()
-        {
-            XFEServerCore = xFEServerCore
-        });
-        return this;
-    }
+    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(List<string> executeList) where T : IServerCoreStandardRegisterAsyncService, new() => RegisterStandardAsyncService(executeList, new T());
 
     /// <summary>
     /// 构建XFE服务器核心
@@ -236,8 +222,12 @@ public abstract class XFEServerCoreBuilder
             xFEServerCore.ServerCoreServiceList.Add(serverCoreService);
             xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
         }
+        xFEServerCore.ServerCoreVerifyServiceList = serverCoreVerifyServiceList;
+        xFEServerCore.ServerCoreVerifyAsyncServiceList = serverCoreVerifyAsyncServiceList;
         xFEServerCore.StandardCoreServiceDictionary = serverStandardCoreServiceDictionary;
+        xFEServerCore.StandardCoreAsyncServiceDictionary = serverStandardCoreAsyncServiceDictionary;
         xFEServerCore.StandardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
+        xFEServerCore.StandardMultiCoreAsyncServiceDictionary = serverMultiStandardCoreAsyncServiceDictionary;
         if (!name.IsNullOrEmpty())
             xFEServerCore.CoreServerName = name;
         return xFEServerCore;

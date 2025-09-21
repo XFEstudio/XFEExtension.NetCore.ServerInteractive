@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.TServer\XFEExtension.NetCore.ServerInteractive.TServer.csproj" />
     <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive\XFEExtension.NetCore.ServerInteractive.csproj" />
   </ItemGroup>
 

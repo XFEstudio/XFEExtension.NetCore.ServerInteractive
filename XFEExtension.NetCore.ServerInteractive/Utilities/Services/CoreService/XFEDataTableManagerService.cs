@@ -13,7 +13,7 @@ public class XFEDataTableManagerService : ServerCoreStandardRegisterAsyncService
     /// <summary>
     /// 数据表格管理器
     /// </summary>
-    public XFEDataTableManager TableManager { get; set; } = new XFEDataTableManagerImpl();
+    public XFEDataTableManager TableManager { get; set; }
 
     /// <inheritdoc/>
     public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r) => await TableManager.Execute(execute, queryableJsonNode, r);

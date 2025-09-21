@@ -8,14 +8,15 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
 var server = XFEServerBuilder.CreateBuilder()
     .UseXFEServer()
-    .AddCoreServer(
-    XFEServerCoreBuilder.CreateBuilder()
-                        .UseXFEStandardServerCore(() => UserProfile.UserTable,
-                        () => UserProfile.EncryptedUserLoginModelTable,
-                        UserProfile.EncryptedUserLoginModelTable.Add,
-                        user => UserProfile.EncryptedUserLoginModelTable.Remove(user),
-                        XFEDataTableManagerBuilder.CreateBuilder()
-                                                  .AddTable<Person, DataProfile>("人物", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
-                                                  .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
-                                                  .AddTable<User, UserProfile>("用户", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)).Build()).Build();
+    .AddCoreServer(XFEServerCoreBuilder.CreateBuilder()
+                                       .UseXFEStandardServerCore(static () => UserProfile.UserTable,
+                                       static () => UserProfile.EncryptedUserLoginModelTable,
+                                       UserProfile.EncryptedUserLoginModelTable.Add,
+                                       static user => UserProfile.EncryptedUserLoginModelTable.Remove(user),
+                                       XFEDataTableManagerBuilder.CreateBuilder()
+                                                                 .AddTable<Person, DataProfile>("人物", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
+                                                                 .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
+                                                                 .AddTable<User, UserProfile>("用户", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员))
+                                       .Build())
+    .Build();
 await server.Start();

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text.Json;
-using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
@@ -41,6 +40,10 @@ public interface IXFEDataTable
     /// Json序列化选项
     /// </summary>
     JsonSerializerOptions? JsonSerializerOptions { get; set; }
+    /// <summary>
+    /// 用户Json序列化选项
+    /// </summary>
+    JsonSerializerOptions? UserJsonSerializerOptions { get; set; }
     /// <summary>
     /// 表名称，用其中元素的名称命名即可（如：Order（订单））
     /// </summary>

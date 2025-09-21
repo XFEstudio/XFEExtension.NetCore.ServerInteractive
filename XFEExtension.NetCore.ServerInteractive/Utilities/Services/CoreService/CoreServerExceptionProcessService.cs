@@ -23,7 +23,8 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
         if (!e.Handled && e.CyberCommRequestEventArgs is not null)
         {
             Console.WriteLine($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{e.ServerException?.Message}");
-            Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
+            if (e.ServerException?.StackTrace is not null)
+                Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
             await e.CyberCommRequestEventArgs.ReplyAndClose(e.ServerException?.Message ?? "服务器内部异常", e.StatusCode);
         }
     }

@@ -4,6 +4,7 @@ using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
@@ -14,6 +15,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 public abstract class XFEDataTableManagerBuilder
 {
     readonly List<IXFEDataTable> dataTableList = [];
+    JsonSerializerOptions userJsonSerializerOptions = new();
     /// <summary>
     /// 执行语句列表
     /// </summary>
@@ -23,7 +25,12 @@ public abstract class XFEDataTableManagerBuilder
     /// 创建构造器
     /// </summary>
     /// <returns></returns>
-    public static XFEDataTableManagerBuilder CreateBuilder() => new XFEDataTableManagerBuilderImpl();
+    public static XFEDataTableManagerBuilder CreateBuilder()
+    {
+        var builder = new XFEDataTableManagerBuilderImpl();
+        builder.userJsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+        return builder;
+    }
 
     /// <summary>
     /// 添加数据表
@@ -58,6 +65,7 @@ public abstract class XFEDataTableManagerBuilder
             RemovePermissionLevel = removePermissionLevel,
             ChangePermissionLevel = changePermissionLevel,
             GetPermissionLevel = getPermissionLevel,
+            UserJsonSerializerOptions = userJsonSerializerOptions,
             JsonSerializerOptions = jsonSerializerOptions
         };
         dataTableList.Add(dataTable);

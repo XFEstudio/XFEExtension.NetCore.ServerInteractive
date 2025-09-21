@@ -62,6 +62,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
+        Console.WriteLine($"[DEBUG]接收到请求【{e.ClientIP}】");
         var r = new ServerCoreReturnArgs
         {
             Args = e
@@ -69,10 +70,10 @@ public abstract class XFEServerCore : CoreServerServiceBase
         try
         {
             foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList)
-                if (serverCoreVerifyService.VerifyRequest(sender, e, r))
+                if (!serverCoreVerifyService.VerifyRequest(sender, e, r))
                     return;
             foreach (var serverCoreVerifyAsyncService in ServerCoreVerifyAsyncServiceList)
-                if (await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
+                if (!await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
                     return;
         }
         catch (Exception ex)
@@ -109,6 +110,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (!execute.IsNullOrEmpty())
             {
+                Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
                 if (StandardCoreServiceDictionary.TryGetValue(execute, out var service))
                 {
                     try
@@ -125,6 +127,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                         });
                     }
+                    Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     return;
                 }
                 else if (StandardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsync))
@@ -143,6 +146,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                         });
                     }
+                    Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     return;
                 }
                 foreach (var key in StandardMultiCoreServiceDictionary.Keys)
@@ -163,6 +167,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                                 ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                             });
                         }
+                        Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                         return;
                     }
                 }
@@ -184,6 +189,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                                 ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                             });
                         }
+                        Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                         return;
                     }
                 }
