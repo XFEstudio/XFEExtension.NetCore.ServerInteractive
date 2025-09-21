@@ -29,6 +29,7 @@ public class ServerIpInitializer : ServerInitializerServiceBase
                     }
                     ServerBaseProfile.ServerLastBindingAddressDictionary[coreServerService.CoreServerName] = ipAddress;
                 }
+                coreServerService.BindingIPAddress = ipAddress;
                 Console.WriteLine($"服务器{coreServerService.CoreServerName}设置完成！IP为：{ipAddress}");
             }
         }

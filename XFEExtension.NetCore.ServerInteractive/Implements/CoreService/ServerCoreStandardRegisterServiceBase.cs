@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class ServerCoreStandardRegisterServiceBase : IServerCoreStandardRegisterService
 {
     /// <inheritdoc/>
-    public XFEServerCore XFEServerCore { get; set; } = new XFEServerCoreImpl();
+    public XFEServerCore XFEServerCore { get; set; } 
     /// <inheritdoc/>
     public abstract void StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
 }

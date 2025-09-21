@@ -15,7 +15,6 @@ public interface IServerCoreStandardRegisterService : IXFEServerCoreService
     /// </summary>
     /// <param name="execute">执行语句</param>
     /// <param name="queryableJsonNode">json请求节点</param>
-    /// <param name="e">服务器参数</param>
     /// <param name="r">返回参数</param>
     void StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
 }

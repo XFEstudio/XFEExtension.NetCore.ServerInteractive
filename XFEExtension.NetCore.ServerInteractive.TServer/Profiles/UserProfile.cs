@@ -10,9 +10,9 @@ public partial class UserProfile : XFEProfile
     /// 用户列表
     /// </summary>
     [ProfileProperty]
-    [ProfilePropertyAddGet("Current.userList.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current.userList")]
-    private ProfileList<User> userList = [new()
+    [ProfilePropertyAddGet("Current.userTable.CurrentProfile = Current")]
+    [ProfilePropertyAddGet("return Current.userTable")]
+    private ProfileList<User> userTable = [new()
     {
         NickName = "XFEstudio",
         UserName = "Admin",
@@ -23,7 +23,7 @@ public partial class UserProfile : XFEProfile
     /// 加密的用户登录列表
     /// </summary>
     [ProfileProperty]
-    [ProfilePropertyAddGet("Current.encryptedUserLoginList.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current.encryptedUserLoginList")]
-    private ProfileList<EncryptedUserLoginModel> encryptedUserLoginList = [];
+    [ProfilePropertyAddGet("Current.encryptedUserLoginModelTable.CurrentProfile = Current")]
+    [ProfilePropertyAddGet("return Current.encryptedUserLoginModelTable")]
+    private ProfileList<EncryptedUserLoginModel> encryptedUserLoginModelTable = [];
 }

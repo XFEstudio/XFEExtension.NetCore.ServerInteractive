@@ -13,7 +13,7 @@ public abstract class CoreServerProcessServiceBase : ICoreServerProcessService
     /// <inheritdoc/>
     public IReadOnlyList<ICoreServerService> CoreServerServiceList { get; set; } = [];
     /// <inheritdoc/>
-    public XFEServer XFEServer { get; set; } = new XFEServerImpl();
+    public XFEServer XFEServer { get; set; }
     /// <inheritdoc/>
     public abstract Task ProcessCoreServer();
 }

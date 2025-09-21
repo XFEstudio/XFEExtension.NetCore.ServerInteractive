@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using XFEExtension.NetCore.AutoConfig;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
@@ -40,17 +41,17 @@ public abstract class XFEDataTableManagerBuilder
     /// 添加数据表
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
+    /// <typeparam name="P">配置文件类型</typeparam>
     /// <param name="tabelShowName">表格数据的显示名称（如：订单、用户等）</param>
     /// <param name="addPermissionLevel">增加数据所需的最小权限</param>
     /// <param name="removePermissionLevel">删除数据所需的最小权限</param>
     /// <param name="changePermissionLevel">更改数据所需的最小权限</param>
     /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
-    /// <param name="profileType">配置文件类型</param>
     /// <param name="jsonSerializerOptions">JSON转换器</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, Type profileType, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel
+    public XFEDataTableManagerBuilder AddTable<T, P>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where P : XFEProfile
     {
-        var dataTable = new XFEDataTable<T>(profileType)
+        var dataTable = new XFEDataTable<T>(typeof(P))
         {
             TableShowName = tabelShowName,
             AddPermissionLevel = addPermissionLevel,

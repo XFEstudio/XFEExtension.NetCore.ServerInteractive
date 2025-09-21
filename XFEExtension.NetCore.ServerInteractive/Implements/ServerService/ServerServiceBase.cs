@@ -9,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 public abstract class ServerServiceBase : IServerService
 {
     /// <inheritdoc/>
-    public XFEServer XFEServer { get; set; } = new XFEServerImpl();
+    public XFEServer XFEServer { get; set; }
     /// <inheritdoc/>
     public abstract void StartService();
 }

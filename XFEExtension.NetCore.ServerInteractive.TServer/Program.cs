@@ -1,4 +1,7 @@
-﻿using XFEExtension.NetCore.ServerInteractive.TServer;
+﻿using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.ServerInteractive.TServer;
+using XFEExtension.NetCore.ServerInteractive.TServer.Models;
+using XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
 using XFEExtension.NetCore.ServerInteractive.Utilities;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -7,9 +10,12 @@ var server = XFEServerBuilder.CreateBuilder()
     .UseXFEServer()
     .AddCoreServer(
     XFEServerCoreBuilder.CreateBuilder()
-                        .UseXFEStandardServerCore(()=>UserProfile.UserList,
-                        ()=>UserProfile.EncryptedUserLoginList,
-                        UserProfile.EncryptedUserLoginList.Add,
-                        user=>UserProfile.EncryptedUserLoginList.Remove(user),
+                        .UseXFEStandardServerCore(() => UserProfile.UserTable,
+                        () => UserProfile.EncryptedUserLoginModelTable,
+                        UserProfile.EncryptedUserLoginModelTable.Add,
+                        user => UserProfile.EncryptedUserLoginModelTable.Remove(user),
                         XFEDataTableManagerBuilder.CreateBuilder()
-                        .AddTable()).Build()).Build();
+                                                  .AddTable<Person, DataProfile>("人物", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
+                                                  .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)
+                                                  .AddTable<User, UserProfile>("用户", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)).Build()).Build();
+await server.Start();

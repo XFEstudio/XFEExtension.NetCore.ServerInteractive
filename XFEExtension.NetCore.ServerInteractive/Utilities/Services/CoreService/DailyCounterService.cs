@@ -2,6 +2,7 @@
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.FileExtension;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+using XFEExtension.NetCore.ServerInteractive.Interfaces.ServerService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
 
@@ -18,7 +19,7 @@ public class DailyCounterService : ServerCoreRegisterServiceBase
     /// <inheritdoc/>
     public override void ServerStarted(object? sender, EventArgs e)
     {
-        Console.WriteLine("[DEBUG]天数统计服务已启动！");
+        Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})天数统计服务已启动！");
         startTime = DateTime.Now;
         runningDays = 0;
         var serverTimer = new System.Timers.Timer(TimeSpan.FromHours(24))
@@ -32,7 +33,7 @@ public class DailyCounterService : ServerCoreRegisterServiceBase
     private void ServerTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         runningDays++;
-        Console.WriteLine($"[DEBUG]自上次（{startTime}）启动以来，服务器已稳定运行 {runningDays}天");
+        Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})自上次（{startTime}）启动以来，已稳定运行 {runningDays}天");
         try
         {
             Console.WriteLine("[DEBUG]正在保存日志...");
@@ -41,7 +42,7 @@ public class DailyCounterService : ServerCoreRegisterServiceBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR]保存日志时发生错误：{ex.Message}");
+            Console.WriteLine($"[ERROR]服务器({XFEServerCore.CoreServerName})保存日志时发生错误：{ex.Message}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
         }
     }

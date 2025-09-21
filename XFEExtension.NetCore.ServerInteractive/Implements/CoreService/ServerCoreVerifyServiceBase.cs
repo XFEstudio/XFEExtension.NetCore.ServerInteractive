@@ -11,7 +11,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class ServerCoreVerifyServiceBase : IServerCoreVerifyService
 {
     /// <inheritdoc/>
-    public XFEServerCore XFEServerCore { get; set; } = new XFEServerCoreImpl();
+    public XFEServerCore XFEServerCore { get; set; }
     /// <inheritdoc/>
     public abstract bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r);
 }

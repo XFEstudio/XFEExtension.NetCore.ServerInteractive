@@ -38,10 +38,6 @@ public static class XFEServerCoreBuilderExtensions
     /// 使用XFE标准登录服务
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
-    /// <param name="getUserFunction">获取用户列表方法</param>
-    /// <param name="getEncryptedUserLoginModelFunction">获取加密用户模型方法</param>
-    /// <param name="addEncryptedUserLoginModelFunction">添加加密用户模型方法</param>
-    /// <param name="removeEncryptedUserLoginModelFunction">移除加密用户模型方法</param>
     /// <returns></returns>
     public static XFEServerCoreBuilder AddStandardLoginService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService>("login")
             .RegisterStandardAsyncService<UserReloginService>("relogin")
@@ -55,6 +51,34 @@ public static class XFEServerCoreBuilderExtensions
     public static XFEServerCoreBuilder AddIpBannerService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
 
     /// <summary>
+    /// 添加日期统计服务
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder AddDailyCounterService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddService<DailyCounterService>();
+
+    /// <summary>
+    /// 添加XFE异常处理服务
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder AddXFEErrorProcessService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddService<CoreServerExceptionProcessService>();
+
+    /// <summary>
+    /// 添加连接检查服务
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder AddConnectService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<ConnectService>("check_connect");
+
+    /// <summary>
+    /// 添加服务器入口点校验
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder AddEntryPotinVerify(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyServer>();
+
+    /// <summary>
     /// 使用XFE标准服务器核心
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
@@ -66,6 +90,10 @@ public static class XFEServerCoreBuilderExtensions
     /// <returns></returns>
     public static XFEServerCoreBuilder UseXFEStandardServerCore(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction)
             .AddDataTableManager(xFEDataTableManagerBuilder, getUserFunction, getEncryptedUserLoginModelFunction)
+            .AddEntryPotinVerify()
+            .AddDailyCounterService()
+            .AddXFEErrorProcessService()
+            .AddConnectService()
             .AddStandardLoginService()
             .AddIpBannerService();
 }

@@ -10,7 +10,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class ServerCoreRegisterServiceBase : IServerCoreRegisterService
 {
     /// <inheritdoc/>
-    public XFEServerCore XFEServerCore { get; set; } = new XFEServerCoreImpl();
+    public XFEServerCore XFEServerCore { get; set; }
     /// <inheritdoc/>
     public abstract void ServerStarted(object? sender, EventArgs e);
     /// <inheritdoc/>

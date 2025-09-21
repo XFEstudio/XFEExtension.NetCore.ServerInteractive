@@ -12,7 +12,11 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
     public override void RequestReceived(object? sender, CyberCommRequestEventArgs e) { }
 
     /// <inheritdoc/>
-    public override void ServerStarted(object? sender, EventArgs e) => XFEServerCore.ServerCoreError += XFEServerCore_ServerCoreError;
+    public override void ServerStarted(object? sender, EventArgs e)
+    {
+        Console.WriteLine($"服务器({XFEServerCore.CoreServerName})已启动！");
+        XFEServerCore.ServerCoreError += XFEServerCore_ServerCoreError;
+    }
 
     private async void XFEServerCore_ServerCoreError(Server.XFEServerCore sender, Models.ServerCoreErrorEventArgs e)
     {

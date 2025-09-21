@@ -1,4 +1,4 @@
-﻿namespace XFEExtension.NetCore.ServerInteractive.TServer.Models;
+﻿namespace XFEExtension.NetCore.ServerInteractive.TServer;
 
 /// <summary>
 /// 用户角色

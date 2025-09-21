@@ -15,7 +15,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
 public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserServiceBase
 {
     /// <inheritdoc/>
-    public Func<IEnumerable<User>> GetUserFunction { get; set; } = () => [];
+    public Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; } = () => [];
     /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
     /// <inheritdoc/>
@@ -23,7 +23,7 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
     /// <inheritdoc/>
     public Action<EncryptedUserLoginModel> RemoveEncryptedUserLoginModelFunction { get; set; } = _ => { };
     /// <inheritdoc/>
-    public Action<User> AddUserFunction { get; set; } = _ => { };
+    public Action<IUserInfo> AddUserFunction { get; set; } = _ => { };
     /// <inheritdoc/>
     public Func<int> GetLoginKeepDays { get; set; } = () => 7;
     /// <inheritdoc/>
@@ -38,7 +38,7 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
     /// <inheritdoc/>
     public override void ServerStarted(object? sender, EventArgs e)
     {
-        Console.WriteLine("[DEBUG]用户登录到期清除服务已启动！");
+        Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})用户登录到期清除服务已启动！");
         var serverTimer = new System.Timers.Timer(TimeSpan.FromHours(12))
         {
             AutoReset = true
@@ -49,7 +49,7 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
 
     private void ServerTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        Console.WriteLine("[DEBUG]正在清理过期的Session...");
+        Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})正在清理过期的Session...");
         try
         {
             var expiredSessions = GetEncryptedUserLoginModelFunction().Where(user => user.UserLoginModel.EndDateTime < DateTime.Now).ToList();
@@ -60,11 +60,11 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
                     Console.WriteLine($"[DEBUG]用户 {expiredSession.UserLoginModel.UID} 的登录已过期，正在清理...");
                     RemoveEncryptedUserLoginModelFunction(expiredSession);
                 }
-                Console.WriteLine("[DEBUG]过期的Session已清理完毕！");
+                Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})过期的Session已清理完毕！");
             }
             else
             {
-                Console.WriteLine("[DEBUG]没有过期的Session需要清理。");
+                Console.WriteLine($"[DEBUG]服务器({XFEServerCore.CoreServerName})没有过期的Session需要清理。");
             }
             Console.WriteLine("[DEBUG]正在保存日志...");
             XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
@@ -72,7 +72,7 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR]清理过期Session时发生错误：{ex.Message}");
+            Console.WriteLine($"[ERROR]服务器({XFEServerCore.CoreServerName})清理过期Session时发生错误：{ex.Message}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
         }
     }
