@@ -8,10 +8,6 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 public interface IRequestServiceBase
 {
     /// <summary>
-    /// 获取请求地址
-    /// </summary>
-    Func<string> GetRequestAddress { get; set; }
-    /// <summary>
     /// XFE客户端请求器
     /// </summary>
     XFEClientRequester XFEClientRequester { get; set; }

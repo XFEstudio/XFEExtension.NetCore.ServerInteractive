@@ -18,5 +18,12 @@ public interface IXFERequestService : IRequestServiceBase
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
-    object PostRequestBody(params object[] parameters);
+    object PostRequest(params object[] parameters);
+    /// <summary>
+    /// 接收到返回后解析
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="response"></param>
+    /// <returns></returns>
+    Task<T> AnalyzeResponse<T>(string response);
 }
