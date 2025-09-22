@@ -3,7 +3,7 @@
 /// <summary>
 /// 异步服务器服务接口
 /// </summary>
-public interface IAsyncServerService : IXFEServerService
+public interface IAsyncServerService : IXFEServerServiceBase
 {
     /// <summary>
     /// 启动服务（异步）

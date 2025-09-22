@@ -3,7 +3,7 @@
 /// <summary>
 /// 核心服务器服务
 /// </summary>
-public interface ICoreServerService : IXFEServerService
+public interface ICoreServerService : IXFEServerServiceBase
 {
     /// <summary>
     /// 绑定的IP地址（服务初始化执行完成后才会刷新）

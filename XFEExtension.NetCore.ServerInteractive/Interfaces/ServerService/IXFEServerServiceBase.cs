@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.ServerService;
 /// <summary>
 /// XFE服务器服务接口
 /// </summary>
-public interface IXFEServerService
+public interface IXFEServerServiceBase
 {
     /// <summary>
     /// XFE服务器

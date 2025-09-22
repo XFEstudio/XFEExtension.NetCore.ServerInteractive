@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 /// <summary>
 /// 服务器标准核心服务
 /// </summary>
-public interface IServerCoreStandardRegisterService : IXFEServerCoreService
+public interface IServerCoreStandardRegisterService : IXFEServerCoreServiceBase
 {
     /// <summary>
     /// 服务器标准请求接收事件

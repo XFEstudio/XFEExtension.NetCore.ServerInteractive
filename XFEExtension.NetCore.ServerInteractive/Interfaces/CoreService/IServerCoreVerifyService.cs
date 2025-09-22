@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 /// <summary>
 /// 服务器核心初始化服务
 /// </summary>
-public interface IServerCoreVerifyService : IXFEServerCoreService
+public interface IServerCoreVerifyService : IXFEServerCoreServiceBase
 {
     /// <summary>
     /// 校验请求

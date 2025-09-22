@@ -3,7 +3,7 @@
 /// <summary>
 /// 服务器初始化服务
 /// </summary>
-public interface IServerInitializerService : IXFEServerService
+public interface IServerInitializerService : IXFEServerServiceBase
 {
     /// <summary>
     /// 初始化

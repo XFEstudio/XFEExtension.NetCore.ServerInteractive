@@ -3,7 +3,7 @@
 /// <summary>
 /// 服务器服务接口
 /// </summary>
-public interface IServerService : IXFEServerService
+public interface IServerService : IXFEServerServiceBase
 {
     /// <summary>
     /// 启动服务

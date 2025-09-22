@@ -3,7 +3,7 @@
 /// <summary>
 /// 核心服务器处理服务
 /// </summary>
-public interface ICoreServerProcessService : IXFEServerService
+public interface ICoreServerProcessService : IXFEServerServiceBase
 {
     /// <summary>
     /// 核心服务器列表
