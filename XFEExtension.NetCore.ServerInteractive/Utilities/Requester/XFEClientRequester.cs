@@ -3,11 +3,12 @@ using System.Text.Json;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 using XFEExtension.NetCore.StringExtension.Json;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 /// <summary>
 /// XFE客户端请求器
@@ -15,7 +16,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 [CreateImpl]
 public abstract class XFEClientRequester
 {
-    JsonSerializerOptions jsonSerializerOptions = new();
+    readonly JsonSerializerOptions jsonSerializerOptions = new();
     /// <summary>
     /// 请求消息返回事件
     /// </summary>

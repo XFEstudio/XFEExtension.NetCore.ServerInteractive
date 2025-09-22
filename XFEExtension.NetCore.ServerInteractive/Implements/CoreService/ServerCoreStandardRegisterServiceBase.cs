@@ -1,6 +1,6 @@
 ﻿using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Profiles;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;

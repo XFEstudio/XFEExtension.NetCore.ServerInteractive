@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using XFEExtension.NetCore.AutoImplement;
-using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;

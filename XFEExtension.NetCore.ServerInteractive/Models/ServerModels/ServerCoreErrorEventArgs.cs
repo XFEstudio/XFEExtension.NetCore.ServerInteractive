@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using XFEExtension.NetCore.CyberComm;
 
-namespace XFEExtension.NetCore.ServerInteractive.Models;
+namespace XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 
 /// <summary>
 /// 服务器核心错误事件参数

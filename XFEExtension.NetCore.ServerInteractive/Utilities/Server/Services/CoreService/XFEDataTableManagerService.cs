@@ -1,5 +1,5 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 

@@ -1,5 +1,6 @@
 ﻿using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -18,7 +19,7 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
         XFEServerCore.ServerCoreError += XFEServerCore_ServerCoreError;
     }
 
-    private async void XFEServerCore_ServerCoreError(XFEServerCore sender, Models.ServerCoreErrorEventArgs e)
+    private async void XFEServerCore_ServerCoreError(XFEServerCore sender, ServerCoreErrorEventArgs e)
     {
         if (!e.Handled && e.CyberCommRequestEventArgs is not null)
         {

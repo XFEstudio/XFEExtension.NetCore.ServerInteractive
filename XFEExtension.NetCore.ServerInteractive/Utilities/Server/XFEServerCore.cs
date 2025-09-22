@@ -6,6 +6,7 @@ using XFEExtension.NetCore.ServerInteractive.Exceptions;
 using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models;
+using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
