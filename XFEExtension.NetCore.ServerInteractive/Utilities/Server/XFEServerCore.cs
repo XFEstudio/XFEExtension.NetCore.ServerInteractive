@@ -25,31 +25,31 @@ public abstract class XFEServerCore : CoreServerServiceBase
     /// <summary>
     /// 核心服务列表
     /// </summary>
-    public List<IServerCoreRegisterService> ServerCoreServiceList { get; internal set; } = [];
+    internal List<IServerCoreRegisterService> serverCoreServiceList = [];
     /// <summary>
     /// 核心校验服务列表
     /// </summary>
-    public List<IServerCoreVerifyService> ServerCoreVerifyServiceList { get; internal set; } = [];
+    internal List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
     /// <summary>
     /// 核心异步校验服务列表
     /// </summary>
-    public List<IServerCoreVerifyAsyncService> ServerCoreVerifyAsyncServiceList { get; internal set; } = [];
+    internal List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
     /// <summary>
     /// 核心标准服务字典
     /// </summary>
-    public Dictionary<string, IServerCoreStandardRegisterService> StandardCoreServiceDictionary { get; internal set; } = [];
+    internal Dictionary<string, IServerCoreStandardRegisterService> standardCoreServiceDictionary = [];
     /// <summary>
     /// 核心标准服务字典
     /// </summary>
-    public Dictionary<string, IServerCoreStandardRegisterAsyncService> StandardCoreAsyncServiceDictionary { get; internal set; } = [];
+    internal Dictionary<string, IServerCoreStandardRegisterAsyncService> standardCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 核心多重标准服务字典
     /// </summary>
-    public Dictionary<List<string>, IServerCoreStandardRegisterService> StandardMultiCoreServiceDictionary { get; internal set; } = [];
+    internal Dictionary<List<string>, IServerCoreStandardRegisterService> standardMultiCoreServiceDictionary = [];
     /// <summary>
     /// 核心多重标准服务字典
     /// </summary>
-    public Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> StandardMultiCoreAsyncServiceDictionary { get; internal set; } = [];
+    internal Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> standardMultiCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>
@@ -68,10 +68,10 @@ public abstract class XFEServerCore : CoreServerServiceBase
         };
         try
         {
-            foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList)
+            foreach (var serverCoreVerifyService in serverCoreVerifyServiceList)
                 if (!serverCoreVerifyService.VerifyRequest(sender, e, r))
                     return;
-            foreach (var serverCoreVerifyAsyncService in ServerCoreVerifyAsyncServiceList)
+            foreach (var serverCoreVerifyAsyncService in serverCoreVerifyAsyncServiceList)
                 if (!await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
                     return;
         }
@@ -110,7 +110,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
             if (!execute.IsNullOrEmpty())
             {
                 Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
-                if (StandardCoreServiceDictionary.TryGetValue(execute, out var service))
+                if (standardCoreServiceDictionary.TryGetValue(execute, out var service))
                 {
                     try
                     {
@@ -129,7 +129,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
                     Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     return;
                 }
-                else if (StandardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsync))
+                else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsync))
                 {
                     try
                     {
@@ -148,13 +148,13 @@ public abstract class XFEServerCore : CoreServerServiceBase
                     Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     return;
                 }
-                foreach (var key in StandardMultiCoreServiceDictionary.Keys)
+                foreach (var key in standardMultiCoreServiceDictionary.Keys)
                 {
                     if (key.Contains(execute))
                     {
                         try
                         {
-                            StandardMultiCoreServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
+                            standardMultiCoreServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
                         }
                         catch (Exception ex)
                         {
@@ -170,13 +170,13 @@ public abstract class XFEServerCore : CoreServerServiceBase
                         return;
                     }
                 }
-                foreach (var key in StandardMultiCoreAsyncServiceDictionary.Keys)
+                foreach (var key in standardMultiCoreAsyncServiceDictionary.Keys)
                 {
                     if (key.Contains(execute))
                     {
                         try
                         {
-                            await StandardMultiCoreAsyncServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
+                            await standardMultiCoreAsyncServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
                         }
                         catch (Exception ex)
                         {

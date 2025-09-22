@@ -205,15 +205,15 @@ public abstract class XFEServerCoreBuilder
     {
         foreach (var serverCoreService in serverCoreServiceList)
         {
-            xFEServerCore.ServerCoreServiceList.Add(serverCoreService);
+            xFEServerCore.serverCoreServiceList.Add(serverCoreService);
             xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
         }
-        xFEServerCore.ServerCoreVerifyServiceList = serverCoreVerifyServiceList;
-        xFEServerCore.ServerCoreVerifyAsyncServiceList = serverCoreVerifyAsyncServiceList;
-        xFEServerCore.StandardCoreServiceDictionary = serverStandardCoreServiceDictionary;
-        xFEServerCore.StandardCoreAsyncServiceDictionary = serverStandardCoreAsyncServiceDictionary;
-        xFEServerCore.StandardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
-        xFEServerCore.StandardMultiCoreAsyncServiceDictionary = serverMultiStandardCoreAsyncServiceDictionary;
+        xFEServerCore.serverCoreVerifyServiceList = serverCoreVerifyServiceList;
+        xFEServerCore.serverCoreVerifyAsyncServiceList = serverCoreVerifyAsyncServiceList;
+        xFEServerCore.standardCoreServiceDictionary = serverStandardCoreServiceDictionary;
+        xFEServerCore.standardCoreAsyncServiceDictionary = serverStandardCoreAsyncServiceDictionary;
+        xFEServerCore.standardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
+        xFEServerCore.standardMultiCoreAsyncServiceDictionary = serverMultiStandardCoreAsyncServiceDictionary;
         if (!name.IsNullOrEmpty())
             xFEServerCore.CoreServerName = name;
         return xFEServerCore;
