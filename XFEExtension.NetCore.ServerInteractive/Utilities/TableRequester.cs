@@ -5,7 +5,6 @@ using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension.Json;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 
@@ -17,15 +16,15 @@ public class TableRequester
     /// <summary>
     /// 请求地址
     /// </summary>
-    public required string RequestAddress { get; set; }
+    public string RequestAddress { get; set; } = string.Empty;
     /// <summary>
     /// 电脑信息
     /// </summary>
-    public required string ComputerInfo { get; set; }
+    public string ComputerInfo { get; set; } = string.Empty;
     /// <summary>
     /// 用户登录Session
     /// </summary>
-    public required string Session { get; set; }
+    public string Session { get; set; } = string.Empty;
     /// <summary>
     /// Json序列化选项
     /// </summary>

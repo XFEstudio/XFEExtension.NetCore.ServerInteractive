@@ -1,5 +1,5 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
-using XFEExtension.NetCore.ServerInteractive.Utilities.Services.ServerService;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 

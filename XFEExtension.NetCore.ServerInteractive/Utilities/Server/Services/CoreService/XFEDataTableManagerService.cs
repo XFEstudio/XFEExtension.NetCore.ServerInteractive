@@ -3,7 +3,7 @@ using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
 /// XFE数据表格管理器服务

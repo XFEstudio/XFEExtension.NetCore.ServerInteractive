@@ -1,7 +1,7 @@
 ﻿using XFEExtension.NetCore.FileExtension;
 using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.ServerService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
 /// <summary>
 /// 服务器异常处理服务

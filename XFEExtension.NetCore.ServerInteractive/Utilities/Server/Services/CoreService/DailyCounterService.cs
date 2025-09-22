@@ -4,7 +4,7 @@ using XFEExtension.NetCore.FileExtension;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.ServerService;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
 /// 核心服务器天数服务

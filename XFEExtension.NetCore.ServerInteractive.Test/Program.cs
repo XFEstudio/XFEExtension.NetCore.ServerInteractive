@@ -6,7 +6,7 @@ using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 internal class Program
 {
-    static readonly ServerInteractive serverInteractive = new("http://localhost:8080/api", DeviceHelper.GetUniqueHardwareId(), string.Empty);
+    static readonly XFEClientRequester serverInteractive = new("http://localhost:8080/api", DeviceHelper.GetUniqueHardwareId(), string.Empty);
     //static readonly TableRequester tableRequester = new()
     //{
     //    RequestAddress = "http://localhost:8080/api",

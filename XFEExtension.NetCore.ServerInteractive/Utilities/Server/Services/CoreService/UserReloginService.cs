@@ -7,7 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
 /// 用户登录校验服务

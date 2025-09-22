@@ -7,7 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
 /// 用户登录到期清除服务

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -8,7 +9,11 @@ using XFEExtension.NetCore.StringExtension.Json;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 
-public class ServerInteractive
+/// <summary>
+/// XFE客户端请求器
+/// </summary>
+[CreateImpl]
+public abstract class XFEClientRequester
 {
     JsonSerializerOptions jsonSerializerOptions = new();
     /// <summary>
@@ -18,18 +23,14 @@ public class ServerInteractive
     /// <summary>
     /// 表格请求器
     /// </summary>
-    public TableRequester TableRequester { get; set; }
+    public TableRequester TableRequester { get; set; } = new();
 
-    public ServerInteractive(string requsetAddress, string computerInfo, string session)
+    /// <summary>
+    /// XFE客户端请求器
+    /// </summary>
+    public XFEClientRequester()
     {
         jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-        TableRequester = new()
-        {
-            RequestAddress = requsetAddress,
-            ComputerInfo = computerInfo,
-            Session = session,
-            JsonSerializerOptions = jsonSerializerOptions
-        };
         TableRequester.MessageReceived += TableRequester_MessageReceived;
     }
 

@@ -2,7 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Profiles;
 using XFEExtension.NetCore.StringExtension;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.ServerService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
 /// <summary>
 /// 服务器IP初始化服务

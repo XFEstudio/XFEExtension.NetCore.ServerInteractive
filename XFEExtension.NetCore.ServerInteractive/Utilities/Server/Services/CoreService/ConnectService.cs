@@ -2,7 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Services.CoreService;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
 /// 连接校验服务
