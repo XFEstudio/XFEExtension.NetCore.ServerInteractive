@@ -62,7 +62,6 @@ public abstract class XFEServerCore : CoreServerServiceBase
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
-        Console.WriteLine($"[DEBUG]接收到请求【{e.ClientIP}】");
         var r = new ServerCoreReturnArgs
         {
             Args = e

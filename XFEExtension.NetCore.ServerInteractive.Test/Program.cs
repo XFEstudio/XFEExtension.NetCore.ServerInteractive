@@ -34,7 +34,7 @@ internal class Program
         return JsonSerializer.Serialize(order);
     }
 
-    //[SMTest]
+    [SMTest]
     public static async Task<bool> AddOrder() => await serverInteractive.TableRequester.Add<Order>(new()
     {
         Description = "测试订单的描述",
@@ -51,7 +51,7 @@ internal class Program
         }
     }
 
-    [SMTest]
+    //[SMTest]
     public static async Task ChangeOrder()
     {
         var result = await serverInteractive.TableRequester.Get<Order>();
@@ -61,6 +61,7 @@ internal class Program
         order.Name = "Test001";
         await serverInteractive.TableRequester.Change(order);
     }
+
     [SMTest]
     public static async Task GetOrder2()
     {
@@ -69,5 +70,6 @@ internal class Program
         {
             Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
         }
+        Console.ReadLine();
     }
 }
