@@ -11,6 +11,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 public abstract class XFEClientRequesterBuilder
 {
     readonly Dictionary<string, object> parameterDictionary = [];
+    readonly Dictionary<string, IRequestService> requestServiceDictionary = [];
+    readonly Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
     /// <summary>
     /// 创建构建器
     /// </summary>
@@ -18,20 +20,44 @@ public abstract class XFEClientRequesterBuilder
     public static XFEClientRequesterBuilder CreateBuilder() => new XFEClientRequesterBuilderImpl();
 
     /// <summary>
-    /// 添加服务
+    /// 添加请求
     /// </summary>
+    /// <param name="serviceName">请求名称</param>
     /// <param name="requestService">请求服务对象</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddService(IRequestService requestService)
+    public XFEClientRequesterBuilder AddRequest(string serviceName, IRequestService requestService)
     {
         BuilderHelper.ApplyParameter(parameterDictionary, requestService);
+        requestServiceDictionary.Add(serviceName, requestService);
         return this;
     }
 
     /// <summary>
-    /// 添加服务
+    /// 添加请求
     /// </summary>
-    /// <typeparam name="T">服务泛型</typeparam>
+    /// <typeparam name="T">请求服务泛型</typeparam>
+    /// <param name="serviceName">请求名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddService<T>() where T : IRequestService, new() => AddService(new T());
+    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IRequestService, new() => AddRequest(serviceName, new T());
+
+    /// <summary>
+    /// 添加XFE请求器
+    /// </summary>
+    /// <param name="serviceName">请求服务名称</param>
+    /// <param name="xFERequestService">请求服务对象</param>
+    /// <returns></returns>
+    public XFEClientRequesterBuilder AddXFERequest(string serviceName, IXFERequestService xFERequestService)
+    {
+        BuilderHelper.ApplyParameter(parameterDictionary, xFERequestService);
+        xFERequestServiceDictionary.Add(serviceName, xFERequestService);
+        return this;
+    }
+
+    /// <summary>
+    /// 添加XFE请求器
+    /// </summary>
+    /// <typeparam name="T">请求服务泛型</typeparam>
+    /// <param name="serviceName">请求服务名称</param>
+    /// <returns></returns>
+    public XFEClientRequesterBuilder AddXFERequest<T>(string serviceName) where T : IXFERequestService, new() => AddXFERequest(serviceName, new T());
 }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
+using XFEExtension.NetCore.ServerInteractive.Exceptions;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
@@ -14,14 +15,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 public abstract class XFEClientRequester
 {
     readonly JsonSerializerOptions jsonSerializerOptions = new();
-    /// <summary>
-    /// 请求服务
-    /// </summary>
-    public List<IRequestService> RequestServices { get; set; } = [];
-    /// <summary>
-    /// XFE请求服务
-    /// </summary>
-    public List<IXFERequestService> XFERequestServices { get; set; } = [];
+    internal Dictionary<string, IRequestService> requestServiceDictionary = [];
+    internal Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
     /// <summary>
     /// 请求消息返回事件
     /// </summary>
@@ -41,4 +36,17 @@ public abstract class XFEClientRequester
     }
 
     private void TableRequester_MessageReceived(object? sender, ServerInteractiveEventArgs e) => MessageReceived?.Invoke(sender, e);
+
+    public async Task<T> Request<T>(string serviceName, params object[] parameters)
+    {
+        if (requestServiceDictionary.TryGetValue(serviceName, out var service))
+        {
+            return await service.Request<T>();
+        }
+        else if (xFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
+        {
+
+        }
+        throw new XFERequesterException();
+    }
 }
