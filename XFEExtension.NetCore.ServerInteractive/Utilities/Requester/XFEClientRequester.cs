@@ -15,23 +15,19 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 /// XFE客户端请求器
 /// </summary>
 [CreateImpl]
-public abstract class XFEClientRequester
+public abstract class XFEClientRequester : IRequesterBase
 {
     readonly JsonSerializerOptions jsonSerializerOptions = new();
     internal Dictionary<string, IRequestService> requestServiceDictionary = [];
     internal Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
-    /// <summary>
-    /// 请求地址
-    /// </summary>
+    /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
-    /// <summary>
-    /// 请求消息返回事件
-    /// </summary>
+    /// <inheritdoc/>
+    public string Session { get; set; } = string.Empty;
+    /// <inheritdoc/>
+    public string ComputerInfo { get; set; } = string.Empty;
+    /// <inheritdoc/>
     public event XFEEventHandler<object?, ServerInteractiveEventArgs>? MessageReceived;
-    /// <summary>
-    /// 表格请求器
-    /// </summary>
-    public TableRequester TableRequester { get; set; } = new();
 
     /// <summary>
     /// XFE客户端请求器
@@ -39,10 +35,7 @@ public abstract class XFEClientRequester
     public XFEClientRequester()
     {
         jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-        TableRequester.MessageReceived += TableRequester_MessageReceived;
     }
-
-    private void TableRequester_MessageReceived(object? sender, ServerInteractiveEventArgs e) => MessageReceived?.Invoke(sender, e);
 
     /// <summary>
     /// 请求
@@ -52,28 +45,41 @@ public abstract class XFEClientRequester
     /// <param name="parameters"></param>
     /// <returns></returns>
     /// <exception cref="XFERequesterException"></exception>
-    public async Task<T> Request<T>(string serviceName, params object[] parameters)
+    public async Task<ClientRequestResult<T>> Request<T>(string serviceName, params object[] parameters) => (await Request(serviceName, parameters)).ConvertTo<T>();
+
+    /// <summary>
+    /// 请求
+    /// </summary>
+    /// <param name="serviceName"></param>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    /// <exception cref="XFERequesterException"></exception>
+    public async Task<ClientRequestResult<object>> Request(string serviceName, params object[] parameters)
     {
         try
         {
             if (requestServiceDictionary.TryGetValue(serviceName, out var service))
             {
-                return await service.Request<T>(parameters);
+                return await service.Request<object>(parameters);
             }
             else if (xFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(parameters).ToJson());
+                var result = new ClientRequestResult<object>();
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters).ToJson());
+                result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
-                    var result = await xFEService.AnalyzeResponse<T>(response);
+                    var requestResult = xFEService.AnalyzeResponse(response);
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
-                    return result;
+                    result.Message = "Success";
+                    result.Result = requestResult;
                 }
                 else
                 {
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                    return default!;
+                    result.Message = response;
                 }
+                return result;
             }
         }
         catch (Exception ex)

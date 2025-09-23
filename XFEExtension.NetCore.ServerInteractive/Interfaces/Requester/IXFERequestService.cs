@@ -16,14 +16,14 @@ public interface IXFERequestService : IRequestServiceBase
     /// <summary>
     /// 提交请求体
     /// </summary>
+    /// <param name="execute">执行的操作名称</param>
     /// <param name="parameters"></param>
     /// <returns></returns>
-    object PostRequest(params object[] parameters);
+    object PostRequest(string execute, params object[] parameters);
     /// <summary>
     /// 接收到返回后解析
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="response"></param>
     /// <returns></returns>
-    Task<T> AnalyzeResponse<T>(string response);
+    object AnalyzeResponse(string response);
 }
