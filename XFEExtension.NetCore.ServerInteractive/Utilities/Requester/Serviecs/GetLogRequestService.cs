@@ -3,12 +3,12 @@
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
 
 /// <summary>
-/// 登录校验请求服务
+/// 获取日志请求服务
 /// </summary>
-public class ReloginRequestService : XFERequestServiceBase
+public class GetLogRequestService : XFERequestServiceBase
 {
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response) => true;
+    public override object AnalyzeResponse(string response) => response;
 
     /// <inheritdoc/>
     public override object PostRequest(string execute, params object[] parameters) => new
@@ -16,5 +16,7 @@ public class ReloginRequestService : XFERequestServiceBase
         execute,
         session = XFEClientRequester.Session,
         computerInfo = XFEClientRequester.ComputerInfo,
+        startDateTime = parameters[0],
+        endDateTime = parameters[1],
     };
 }

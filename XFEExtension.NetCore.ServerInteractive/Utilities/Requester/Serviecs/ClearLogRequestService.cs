@@ -3,9 +3,9 @@
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
 
 /// <summary>
-/// 登录校验请求服务
+/// 清除日志请求服务
 /// </summary>
-public class ReloginRequestService : XFERequestServiceBase
+public class ClearLogRequestService : XFERequestServiceBase
 {
     /// <inheritdoc/>
     public override object AnalyzeResponse(string response) => true;
@@ -15,6 +15,6 @@ public class ReloginRequestService : XFERequestServiceBase
     {
         execute,
         session = XFEClientRequester.Session,
-        computerInfo = XFEClientRequester.ComputerInfo,
+        computerInfo = XFEClientRequester.ComputerInfo
     };
 }
