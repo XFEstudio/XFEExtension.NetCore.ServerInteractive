@@ -12,9 +12,9 @@ public class LoginRequestService : XFERequestServiceBase
     public override object AnalyzeResponse(string response)
     {
         QueryableJsonNode jsonNode = response;
-        var session = jsonNode["session"];
+        string session = jsonNode["session"];
         XFEClientRequester.Session = session;
-        return (session, jsonNode["expireDate"]);
+        return (session, DateTime.Parse(jsonNode["expireDate"]));
     }
 
     /// <inheritdoc/>

@@ -1,5 +1,6 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
+using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.ServerService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -8,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 /// XFE服务器构建器
 /// </summary>
 [CreateImpl]
-public abstract class XFEServerBuilder
+public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
 {
     bool addedProcessServiced = false;
     ICoreServerProcessService? coreServerProcess;

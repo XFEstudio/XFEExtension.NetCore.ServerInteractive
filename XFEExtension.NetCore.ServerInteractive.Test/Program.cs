@@ -6,10 +6,17 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program
 {
-    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
+    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId())
         .UseXFEStandardRequest()
-        .Build("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId());
+        .Build();
     static readonly TableRequester tableRequester = new();
+
+    static Program() => xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
+
+    private static void XFEClientRequester_MessageReceived(object? sender, XFEExtension.NetCore.ServerInteractive.Models.RequesterModels.ServerInteractiveEventArgs e)
+    {
+        Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
+    }
 
     [SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)

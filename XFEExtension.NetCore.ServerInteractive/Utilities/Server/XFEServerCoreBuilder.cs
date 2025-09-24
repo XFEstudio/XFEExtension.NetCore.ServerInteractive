@@ -1,7 +1,6 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
-using XFEExtension.NetCore.ServerInteractive.Interfaces;
+using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -10,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 /// XFE服务器核心构建器
 /// </summary>
 [CreateImpl]
-public abstract class XFEServerCoreBuilder : IParameterService
+public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder>
 {
     readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
     readonly List<IServerCoreRegisterService> serverCoreServiceList = [];
@@ -20,7 +19,6 @@ public abstract class XFEServerCoreBuilder : IParameterService
     readonly Dictionary<string, IServerCoreStandardRegisterAsyncService> serverStandardCoreAsyncServiceDictionary = [];
     readonly Dictionary<List<string>, IServerCoreStandardRegisterService> serverMultiStandardCoreServiceDictionary = [];
     readonly Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> serverMultiStandardCoreAsyncServiceDictionary = [];
-    public Dictionary<string, object> ParameterDictionary { get; set; } = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -40,7 +38,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddService(IServerCoreRegisterService serverCoreRegisterService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreRegisterService);
+        ApplyParameter(serverCoreRegisterService);
         serverCoreServiceList.Add(serverCoreRegisterService);
         return this;
     }
@@ -59,7 +57,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddVerifyService(IServerCoreVerifyService serverCoreVerifyService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreVerifyService);
+        ApplyParameter(serverCoreVerifyService);
         serverCoreVerifyServiceList.Add(serverCoreVerifyService);
         return this;
     }
@@ -78,7 +76,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddVerifyAsyncService(IServerCoreVerifyAsyncService serverCoreVerifyAsyncService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreVerifyAsyncService);
+        ApplyParameter(serverCoreVerifyAsyncService);
         serverCoreVerifyAsyncServiceList.Add(serverCoreVerifyAsyncService);
         return this;
     }
@@ -98,7 +96,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder RegisterStandardService(string execute, IServerCoreStandardRegisterService serverCoreStandardRegisterService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreStandardRegisterService);
+        ApplyParameter(serverCoreStandardRegisterService);
         serverStandardCoreServiceDictionary.Add(execute, serverCoreStandardRegisterService);
         return this;
     }
@@ -119,7 +117,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder RegisterStandardAsyncService(string execute, IServerCoreStandardRegisterAsyncService serverCoreStandardAsyncRegisterService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreStandardAsyncRegisterService);
+        ApplyParameter(serverCoreStandardAsyncRegisterService);
         serverStandardCoreAsyncServiceDictionary.Add(execute, serverCoreStandardAsyncRegisterService);
         return this;
     }
@@ -140,7 +138,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder RegisterStandardService(List<string> executeList, IServerCoreStandardRegisterService serverCoreStandardRegisterService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreStandardRegisterService);
+        ApplyParameter(serverCoreStandardRegisterService);
         serverMultiStandardCoreServiceDictionary.Add(executeList, serverCoreStandardRegisterService);
         return this;
     }
@@ -161,7 +159,7 @@ public abstract class XFEServerCoreBuilder : IParameterService
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder RegisterStandardAsyncService(List<string> executeList, IServerCoreStandardRegisterAsyncService serverCoreStandardRegisterAsyncService)
     {
-        BuilderHelper.ApplyParameter(serviceParameterCacheDictionary, serverCoreStandardRegisterAsyncService);
+        ApplyParameter(serverCoreStandardRegisterAsyncService);
         serverMultiStandardCoreAsyncServiceDictionary.Add(executeList, serverCoreStandardRegisterAsyncService);
         return this;
     }

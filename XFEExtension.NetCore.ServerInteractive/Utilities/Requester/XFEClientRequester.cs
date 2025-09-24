@@ -66,7 +66,7 @@ public abstract class XFEClientRequester : IRequesterBase
             }
             else if (xFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters).ToJson());
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters), jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -83,7 +83,7 @@ public abstract class XFEClientRequester : IRequesterBase
             }
             else if (xFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters).ToJson());
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters), jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
@@ -26,4 +27,13 @@ public static class InteractiveHelper
             return (ex.Message, result.StatusCode);
         }
     }
+
+    /// <summary>
+    /// 获取响应
+    /// </summary>
+    /// <param name="requestAddress">请求地址</param>
+    /// <param name="postBody">请求体对象</param>
+    /// <param name="jsonSerializerOptions">序列化参数</param>
+    /// <returns></returns>
+    public static async Task<(string, HttpStatusCode)> GetServerResponse(string requestAddress, object postBody, JsonSerializerOptions jsonSerializerOptions) => await GetServerResponse(requestAddress, JsonSerializer.Serialize(postBody, jsonSerializerOptions));
 }
