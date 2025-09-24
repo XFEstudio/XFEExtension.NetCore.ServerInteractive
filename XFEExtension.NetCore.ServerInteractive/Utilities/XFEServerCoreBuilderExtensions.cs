@@ -28,11 +28,13 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <param name="addEncryptedUserLoginModelFunction"></param>
     /// <param name="removeEncryptedUserLoginModelFunction"></param>
+    /// <param name="getLoginKeepDays"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddUserParameterBase(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("GetUserFunction", getUserFunction)
+    public static XFEServerCoreBuilder AddUserParameterBase(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, Func<int> getLoginKeepDays) => xFEServerCoreBuilder.AddParameter("GetUserFunction", getUserFunction)
                             .AddParameter("GetEncryptedUserLoginModelFunction", getEncryptedUserLoginModelFunction)
                             .AddParameter("AddEncryptedUserLoginModelFunction", addEncryptedUserLoginModelFunction)
-                            .AddParameter("RemoveEncryptedUserLoginModelFunction", removeEncryptedUserLoginModelFunction);
+                            .AddParameter("RemoveEncryptedUserLoginModelFunction", removeEncryptedUserLoginModelFunction)
+                            .AddParameter("GetLoginKeepDays", getLoginKeepDays);
 
     /// <summary>
     /// 使用XFE标准登录服务
@@ -88,7 +90,7 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="removeEncryptedUserLoginModelFunction"></param>
     /// <param name="xFEDataTableManagerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder UseXFEStandardServerCore(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction)
+    public static XFEServerCoreBuilder UseXFEStandardServerCore(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, Func<int> getLoginKeepDays, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction, getLoginKeepDays)
             .AddDataTableManager(xFEDataTableManagerBuilder, getUserFunction, getEncryptedUserLoginModelFunction)
             .AddEntryPotinVerify()
             .AddDailyCounterService()

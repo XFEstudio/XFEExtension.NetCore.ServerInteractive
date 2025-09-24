@@ -9,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities;
 public static class XFEServerBuilderExtensions
 {
     /// <summary>
-    /// 使用XFE日志记录
+    /// 使用XFE标准服务器
     /// </summary>
     /// <param name="xFEServerBuilder"></param>
     /// <returns></returns>

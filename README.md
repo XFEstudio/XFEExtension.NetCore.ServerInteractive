@@ -1,58 +1,59 @@
 # XFEExtension.NetCore.ServerInteractive
 
-## ÃèÊö
+## æè¿°
 
-ServerInteractiveÊÇÒ»¸öC#µÄDLL¿â£¬Æä¸ºÔğ´î½¨ÒÔXFEExtension.NetCoreÌá¹©µÄCyberCommÍøÂç¼Ü¹¹£¬ÈÃÊ¹ÓÃÕß¿ÉÒÔ¿ìËÙ¹¹½¨·şÎñÆ÷ºÍ¿Í»§¶ËÍøÂç¿ò¼Ü
+ServerInteractiveæ˜¯ä¸€ä¸ªC#çš„DLLåº“ï¼Œå…¶è´Ÿè´£æ­å»ºä»¥XFEExtension.NetCoreæä¾›çš„CyberCommç½‘ç»œæ¶æ„ï¼Œè®©ä½¿ç”¨è€…å¯ä»¥å¿«é€Ÿæ„å»ºæœåŠ¡å™¨å’Œå®¢æˆ·ç«¯ç½‘ç»œæ¡†æ¶
 
-# Ê¾Àı£¨Ê¹ÓÃÇ°¼ÇµÃ½øĞĞÏàÓ¦µÄÒıÓÃ£©
+# ç¤ºä¾‹ï¼ˆä½¿ç”¨å‰è®°å¾—è¿›è¡Œç›¸åº”çš„å¼•ç”¨ï¼‰
 
 ---
 
-## ´î½¨·şÎñÆ÷¶ËÍøÂç¿ò¼Ü
+## æ­å»ºæœåŠ¡å™¨ç«¯ç½‘ç»œæ¡†æ¶
 
-#### Ê¹ÓÃXFE±ê×¼ÍøÂç¼Ü¹¹
+#### ä½¿ç”¨XFEæ ‡å‡†ç½‘ç»œæ¶æ„
 
 ```csharp
-var server = XFEServerBuilder.CreateBuilder() // ´´½¨·şÎñÆ÷¹¹½¨Æ÷
-    .UseXFEServer()                           // Ê¹ÓÃXFE·şÎñÆ÷¼Ü¹¹
-    .AddCoreServer(                           // Ìí¼ÓºËĞÄ·şÎñÆ÷
-                   XFEServerCoreBuilder.CreateBuilder()                                           // ´´½¨ºËĞÄ·şÎñÆ÷¹¹½¨Æ÷
-                                       .UseXFEStandardServerCore(                                 // Ê¹ÓÃXFE±ê×¼·şÎñÆ÷ºËĞÄ
-                                                static () => UserProfile.UserTable,               // »ñÈ¡ÓÃ»§±íµÄ·½·¨
-                                                static () => UserProfile.EncryptedUserLoginModelTable,  // »ñÈ¡ÓÃ»§¼ÓÃÜÄ£ĞÍµÄ·½·¨
-                                                UserProfile.EncryptedUserLoginModelTable.Add,           // Ìí¼ÓÓÃ»§¼ÓÃÜÄ£ĞÍµÄ·½·¨
-                                                static user => UserProfile.EncryptedUserLoginModelTable.Remove(user),   // ÒÆ³ıÓÃ»§¼ÓÃÜÄ£ĞÍµÄ·½·¨
-                                                XFEDataTableManagerBuilder.CreateBuilder()              // ´´½¨DataTable¹ÜÀíÆ÷¹¹½¨Æ÷
-                                                                          .AddTable<Person, DataProfile>("ÈËÎï", (int)UserRole.ÒµÎñÔ±, (int)UserRole.¾­Àí, (int)UserRole.ÒµÎñÔ±, (int)UserRole.ÒµÎñÔ±) // Ìí¼ÓÃûÎªÈËÎïµÄ±í¸ñ£¬PersonÀàĞÍ£¬AutoConfigÎªDataProfile¡£Ìí¼Ó¸ü¸Ä»ñÈ¡È¨ÏŞÎªÒµÎñÔ±£¬ÒÆ³ıÈ¨ÏŞÎª¾­Àí
-                                                                          .AddTable<Order, DataProfile>("¶©µ¥", (int)UserRole.ÒµÎñÔ±, (int)UserRole.¾­Àí, (int)UserRole.ÒµÎñÔ±, (int)UserRole.ÒµÎñÔ±)  // Ìí¼ÓÃûÎª¶©µ¥µÄ±í¸ñ£¬OrderÀàĞÍ£¬AutoConfigÎªDataProfile¡£Ìí¼Ó¸ü¸Ä»ñÈ¡È¨ÏŞÎªÒµÎñÔ±£¬ÒÆ³ıÈ¨ÏŞÎª¾­Àí
-                                                                          .AddTable<User, UserProfile>("ÓÃ»§", (int)UserRole.¾­Àí, (int)UserRole.¾­Àí, (int)UserRole.¾­Àí, (int)UserRole.ÒµÎñÔ±))      // Ìí¼ÓÃûÎªÓÃ»§µÄ±í¸ñ£¬UserÀàĞÍ£¬AutoConfigÎªUserProfile¡£»ñÈ¡È¨ÏŞÎªÒµÎñÔ±£¬Ìí¼ÓÒÆ³ı¸ü¸ÄÈ¨ÏŞÎª¾­Àí
-                                       .Build()) // ¹¹½¨ºËĞÄ·şÎñÆ÷
-    .Build(); // ¹¹½¨·şÎñÆ÷
-await server.Start(); // Æô¶¯·şÎñ
+var server = XFEServerBuilder.CreateBuilder() // åˆ›å»ºæœåŠ¡å™¨æ„å»ºå™¨
+    .UseXFEServer()                           // ä½¿ç”¨XFEæœåŠ¡å™¨æ¶æ„
+    .AddCoreServer(                           // æ·»åŠ æ ¸å¿ƒæœåŠ¡å™¨
+                   XFEServerCoreBuilder.CreateBuilder()                                           // åˆ›å»ºæ ¸å¿ƒæœåŠ¡å™¨æ„å»ºå™¨
+                                       .UseXFEStandardServerCore(                                 // ä½¿ç”¨XFEæ ‡å‡†æœåŠ¡å™¨æ ¸å¿ƒ
+                                                static () => UserProfile.UserTable,               // è·å–ç”¨æˆ·è¡¨çš„æ–¹æ³•
+                                                static () => UserProfile.EncryptedUserLoginModelTable,  // è·å–ç”¨æˆ·åŠ å¯†æ¨¡å‹çš„æ–¹æ³•
+                                                UserProfile.EncryptedUserLoginModelTable.Add,           // æ·»åŠ ç”¨æˆ·åŠ å¯†æ¨¡å‹çš„æ–¹æ³•
+                                                static user => UserProfile.EncryptedUserLoginModelTable.Remove(user),   // ç§»é™¤ç”¨æˆ·åŠ å¯†æ¨¡å‹çš„æ–¹æ³•
+                                                static () => 7,                                   // è·å–ç™»å½•ç»´æŒå¤©æ•°æ–¹æ³•
+                                                XFEDataTableManagerBuilder.CreateBuilder()              // åˆ›å»ºDataTableç®¡ç†å™¨æ„å»ºå™¨
+                                                                          .AddTable<Person, DataProfile>("äººç‰©", (int)UserRole.ä¸šåŠ¡å‘˜, (int)UserRole.ç»ç†, (int)UserRole.ä¸šåŠ¡å‘˜, (int)UserRole.ä¸šåŠ¡å‘˜) // æ·»åŠ åä¸ºäººç‰©çš„è¡¨æ ¼ï¼ŒPersonç±»å‹ï¼ŒAutoConfigä¸ºDataProfileã€‚æ·»åŠ æ›´æ”¹è·å–æƒé™ä¸ºä¸šåŠ¡å‘˜ï¼Œç§»é™¤æƒé™ä¸ºç»ç†
+                                                                          .AddTable<Order, DataProfile>("è®¢å•", (int)UserRole.ä¸šåŠ¡å‘˜, (int)UserRole.ç»ç†, (int)UserRole.ä¸šåŠ¡å‘˜, (int)UserRole.ä¸šåŠ¡å‘˜)  // æ·»åŠ åä¸ºè®¢å•çš„è¡¨æ ¼ï¼ŒOrderç±»å‹ï¼ŒAutoConfigä¸ºDataProfileã€‚æ·»åŠ æ›´æ”¹è·å–æƒé™ä¸ºä¸šåŠ¡å‘˜ï¼Œç§»é™¤æƒé™ä¸ºç»ç†
+                                                                          .AddTable<User, UserProfile>("ç”¨æˆ·", (int)UserRole.ç»ç†, (int)UserRole.ç»ç†, (int)UserRole.ç»ç†, (int)UserRole.ä¸šåŠ¡å‘˜))      // æ·»åŠ åä¸ºç”¨æˆ·çš„è¡¨æ ¼ï¼ŒUserç±»å‹ï¼ŒAutoConfigä¸ºUserProfileã€‚è·å–æƒé™ä¸ºä¸šåŠ¡å‘˜ï¼Œæ·»åŠ ç§»é™¤æ›´æ”¹æƒé™ä¸ºç»ç†
+                                       .Build()) // æ„å»ºæ ¸å¿ƒæœåŠ¡å™¨
+    .Build(); // æ„å»ºæœåŠ¡å™¨
+await server.Start(); // å¯åŠ¨æœåŠ¡
 ```
 
-#### Ìí¼Ó×Ô¶¨Òå·şÎñ
+#### æ·»åŠ è‡ªå®šä¹‰æœåŠ¡
 
 ```csharp
 var server = XFEServerBuilder.CreateBuilder()
-                             .AddInitializer<MyInitilizerService>() // ×Ô¶¨Òå³õÊ¼»¯·şÎñ
-                             .AddService<MyService>()               // ×Ô¶¨Òå·şÎñ
-                             .AddAsyncService<MyAsyncService>()     // ×Ô¶¨ÒåÒì²½·şÎñ
+                             .AddInitializer<MyInitilizerService>() // è‡ªå®šä¹‰åˆå§‹åŒ–æœåŠ¡
+                             .AddService<MyService>()               // è‡ªå®šä¹‰æœåŠ¡
+                             .AddAsyncService<MyAsyncService>()     // è‡ªå®šä¹‰å¼‚æ­¥æœåŠ¡
                              .Build();
 ```
 
 ---
 
-## ´î½¨¿Í»§¶ËÇëÇóÆ÷
+## æ­å»ºå®¢æˆ·ç«¯è¯·æ±‚å™¨
 
-#### Ê¹ÓÃXFE±ê×¼ÇëÇóÆ÷
+#### ä½¿ç”¨XFEæ ‡å‡†è¯·æ±‚å™¨
 
 ```csharp
-var xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId()) // ·şÎñÆ÷IPµØÖ·£¬ÓÃ»§SessionÒÔ¼°Ó²¼ş±àÂë
-                                                  .UseXFEStandardRequest() // Ê¹ÓÃXFE±ê×¼ÇëÇóÆ÷
-                                                  .Build();                // ¹¹½¨¿Í»§¶ËÇëÇóÆ÷
+var xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId()) // æœåŠ¡å™¨IPåœ°å€ï¼Œç”¨æˆ·Sessionä»¥åŠç¡¬ä»¶ç¼–ç 
+                                                  .UseXFEStandardRequest() // ä½¿ç”¨XFEæ ‡å‡†è¯·æ±‚å™¨
+                                                  .Build();                // æ„å»ºå®¢æˆ·ç«¯è¯·æ±‚å™¨
 
-var result = await xFEClientRequester.Request<(string session, DateTime expireDate)>("login", account, password); // µ÷ÓÃlogin·½·¨
+var result = await xFEClientRequester.Request<(string session, DateTime expireDate)>("login", account, password); // è°ƒç”¨loginæ–¹æ³•
 if (result.StatusCode == System.Net.HttpStatusCode.OK)
 {
     Console.WriteLine(result.Result.session);
