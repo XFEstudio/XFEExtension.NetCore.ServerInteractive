@@ -20,6 +20,7 @@ public abstract class XFEClientRequester : IRequesterBase
     readonly JsonSerializerOptions jsonSerializerOptions = new();
     internal Dictionary<string, IRequestService> requestServiceDictionary = [];
     internal Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
+    internal Dictionary<string, XFEClientInstanceRequest> xFEClientInstanceRequestDictionary = [];
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
     /// <inheritdoc/>
@@ -45,7 +46,7 @@ public abstract class XFEClientRequester : IRequesterBase
     /// <param name="parameters"></param>
     /// <returns></returns>
     /// <exception cref="XFERequesterException"></exception>
-    public async Task<ClientRequestResult<T>> Request<T>(string serviceName, params object[] parameters) => (await Request(serviceName, parameters)).ConvertTo<T>();
+    public async Task<ClientRequestResult<T>> Request<T>(string serviceName, params object[] parameters) => (await Request(serviceName, parameters)).TryConvertTo<T>();
 
     /// <summary>
     /// 请求
@@ -58,13 +59,13 @@ public abstract class XFEClientRequester : IRequesterBase
     {
         try
         {
+            var result = new ClientRequestResult<object>();
             if (requestServiceDictionary.TryGetValue(serviceName, out var service))
             {
-                return await service.Request<object>(parameters);
+                result = await service.Request<object>(parameters);
             }
             else if (xFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
             {
-                var result = new ClientRequestResult<object>();
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters).ToJson());
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
@@ -79,8 +80,25 @@ public abstract class XFEClientRequester : IRequesterBase
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
                     result.Message = response;
                 }
-                return result;
             }
+            else if (xFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
+            {
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters).ToJson());
+                result.StatusCode = code;
+                if (code == HttpStatusCode.OK)
+                {
+                    var requestResult = instance.ProcessResponse?.Invoke(response);
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
+                    result.Message = "Success";
+                    result.Result = requestResult ?? new();
+                }
+                else
+                {
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+                    result.Message = response;
+                }
+            }
+            return result;
         }
         catch (Exception ex)
         {

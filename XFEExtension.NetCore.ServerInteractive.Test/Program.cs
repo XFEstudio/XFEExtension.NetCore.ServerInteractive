@@ -1,26 +1,33 @@
 ﻿using System.Text.Json;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
+using XFEExtension.NetCore.ServerInteractive.Utilities;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 internal class Program
 {
-    static readonly XFEClientRequester serverInteractive = new("http://localhost:8080/api", DeviceHelper.GetUniqueHardwareId(), string.Empty);
-    //static readonly TableRequester tableRequester = new()
-    //{
-    //    RequestAddress = "http://localhost:8080/api",
-    //    ComputerInfo = DeviceHelper.GetUniqueHardwareId()!,
-    //    Session = string.Empty
-    //};
+    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
+        .UseXFEStandardRequest()
+        .Build("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId());
+    static readonly TableRequester tableRequester = new();
 
     [SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)
     {
-        var session = await serverInteractive.Login(account, password);
-        Console.WriteLine(session);
-        QueryableJsonNode jsonNode = session;
-        serverInteractive.TableRequester.Session = jsonNode["session"];
+        var result = await xFEClientRequester.Request<(string session, DateTime expireDate)>("login", account, password);
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine(result.Result.session);
+            Console.WriteLine(result.Result.expireDate);
+            tableRequester.RequestAddress = xFEClientRequester.RequestAddress;
+            tableRequester.Session = result.Result.session;
+            tableRequester.ComputerInfo = xFEClientRequester.ComputerInfo;
+        }
+        else
+        {
+            Console.WriteLine(result.StatusCode);
+            Console.WriteLine(result.Message);
+        }
     }
 
     //[SMTest]
@@ -35,7 +42,7 @@ internal class Program
     }
 
     [SMTest]
-    public static async Task<bool> AddOrder() => await serverInteractive.TableRequester.Add<Order>(new()
+    public static async Task<bool> AddOrder() => await tableRequester.Add<Order>(new()
     {
         Description = "测试订单的描述",
         Name = "测试订单"
@@ -44,7 +51,7 @@ internal class Program
     [SMTest]
     public static async Task GetOrder()
     {
-        var result = await serverInteractive.TableRequester.Get<Order>();
+        var result = await tableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
             Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
@@ -54,18 +61,18 @@ internal class Program
     //[SMTest]
     public static async Task ChangeOrder()
     {
-        var result = await serverInteractive.TableRequester.Get<Order>();
+        var result = await tableRequester.Get<Order>();
         var order = result.DataList[0];
         Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
         order.Description = "这是一条修改后的测试订单";
         order.Name = "Test001";
-        await serverInteractive.TableRequester.Change(order);
+        await tableRequester.Change(order);
     }
 
-    [SMTest]
+    //[SMTest]
     public static async Task GetOrder2()
     {
-        var result = await serverInteractive.TableRequester.Get<Order>();
+        var result = await tableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
             Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");

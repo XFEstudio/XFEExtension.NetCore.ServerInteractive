@@ -23,10 +23,10 @@ public class ClientRequestResult<T> : IRequestResult<T>
     /// </summary>
     /// <typeparam name="F">指定泛型</typeparam>
     /// <returns></returns>
-    public ClientRequestResult<F> ConvertTo<F>() => new()
+    public ClientRequestResult<F> TryConvertTo<F>() => new()
     {
         Message = Message,
         StatusCode = StatusCode,
-        Result = (F)(object)Result!
+        Result = Result is not null ? (F)(object)Result : default!
     };
 }

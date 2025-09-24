@@ -6,14 +6,6 @@
 public interface IXFERequestService : IRequestServiceBase
 {
     /// <summary>
-    /// 获取Session方法
-    /// </summary>
-    Func<string> GetSession { get; set; }
-    /// <summary>
-    /// 获取电脑信息方法
-    /// </summary>
-    Func<string> GetComputerInfo { get; set; }
-    /// <summary>
     /// 提交请求体
     /// </summary>
     /// <param name="execute">执行的操作名称</param>

@@ -9,10 +9,6 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 public abstract class XFERequestServiceBase : IXFERequestService
 {
     /// <inheritdoc/>
-    public Func<string> GetSession { get; set; } = () => string.Empty;
-    /// <inheritdoc/>
-    public Func<string> GetComputerInfo { get; set; } = () => string.Empty;
-    /// <inheritdoc/>
     public XFEClientRequester XFEClientRequester { get; set; }
 
     /// <inheritdoc/>

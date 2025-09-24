@@ -23,10 +23,24 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
     {
         if (!e.Handled && e.CyberCommRequestEventArgs is not null)
         {
-            Console.WriteLine($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{e.ServerException?.Message}");
+            var currentException = e.ServerException?.InnerException;
+            var errorMessage = e.ServerException?.Message ?? "服务器内部异常";
+            for (int i = 0; i < 5; i++)
+            {
+                if (currentException is null)
+                {
+                    break;
+                }
+                else
+                {
+                    errorMessage += $"：{currentException.Message}";
+                    currentException = currentException.InnerException;
+                }
+            }
+            Console.WriteLine($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{errorMessage}");
             if (e.ServerException?.StackTrace is not null)
                 Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
-            await e.CyberCommRequestEventArgs.ReplyAndClose(e.ServerException?.Message ?? "服务器内部异常", e.StatusCode);
+            await e.CyberCommRequestEventArgs.ReplyAndClose(errorMessage, e.StatusCode);
         }
     }
 }

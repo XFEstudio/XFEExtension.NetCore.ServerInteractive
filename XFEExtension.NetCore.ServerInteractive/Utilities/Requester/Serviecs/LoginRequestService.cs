@@ -21,6 +21,7 @@ public class LoginRequestService : XFERequestServiceBase
     public override object PostRequest(string execute, params object[] parameters) => new
     {
         execute,
+        computerInfo = XFEClientRequester.ComputerInfo,
         account = parameters[0],
         password = parameters[1]
     };

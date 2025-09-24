@@ -1,4 +1,5 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
@@ -9,7 +10,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 /// XFE服务器核心构建器
 /// </summary>
 [CreateImpl]
-public abstract class XFEServerCoreBuilder
+public abstract class XFEServerCoreBuilder : IParameterService
 {
     readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
     readonly List<IServerCoreRegisterService> serverCoreServiceList = [];
@@ -19,7 +20,7 @@ public abstract class XFEServerCoreBuilder
     readonly Dictionary<string, IServerCoreStandardRegisterAsyncService> serverStandardCoreAsyncServiceDictionary = [];
     readonly Dictionary<List<string>, IServerCoreStandardRegisterService> serverMultiStandardCoreServiceDictionary = [];
     readonly Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> serverMultiStandardCoreAsyncServiceDictionary = [];
-    readonly Dictionary<string, object> serviceParameterCacheDictionary = [];
+    public Dictionary<string, object> ParameterDictionary { get; set; } = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -28,32 +29,8 @@ public abstract class XFEServerCoreBuilder
     public static XFEServerCoreBuilder CreateBuilder()
     {
         var builder = new XFEServerCoreBuilderImpl();
-        builder.serviceParameterCacheDictionary.Add("XFEServerCore", builder.xFEServerCore);
+        builder.AddParameter("XFEServerCore", builder.xFEServerCore);
         return builder;
-    }
-
-    /// <summary>
-    /// 添加参数列表
-    /// </summary>
-    /// <param name="name">名称</param>
-    /// <param name="value">数值</param>
-    /// <returns></returns>
-    public XFEServerCoreBuilder AddParameter(string name, object value)
-    {
-        serviceParameterCacheDictionary.Add(name, value);
-        return this;
-    }
-
-    /// <summary>
-    /// 添加参数列表
-    /// </summary>
-    /// <param name="keyValuePairList"></param>
-    /// <returns></returns>
-    public XFEServerCoreBuilder AddParameterList(params KeyValuePair<string, object>[] keyValuePairList)
-    {
-        foreach (var keyValuePair in keyValuePairList)
-            serviceParameterCacheDictionary.Add(keyValuePair.Key, keyValuePair.Value);
-        return this;
     }
 
     /// <summary>
