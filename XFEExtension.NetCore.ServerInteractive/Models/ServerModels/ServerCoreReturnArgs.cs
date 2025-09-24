@@ -49,9 +49,11 @@ public class ServerCoreReturnArgs : Exception
     /// </summary>
     /// <param name="message"></param>
     /// <param name="code"></param>
-    public ServerCoreReturnArgs GetError(string message, HttpStatusCode code = HttpStatusCode.InternalServerError)
+    /// <param name="handled"></param>
+    public ServerCoreReturnArgs GetError(string message, HttpStatusCode code = HttpStatusCode.InternalServerError, bool handled = false)
     {
         ReturnMessage = message;
+        Handled = handled;
         StatusCode = code;
         return this;
     }

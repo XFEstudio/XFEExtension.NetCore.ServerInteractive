@@ -6,9 +6,10 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program
 {
-    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/", string.Empty, DeviceHelper.GetUniqueHardwareId())
+    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/api", string.Empty, DeviceHelper.GetUniqueHardwareId())
         .UseXFEStandardRequest()
         .Build();
+
     static readonly TableRequester tableRequester = new();
 
     static Program() => xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
