@@ -15,7 +15,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 public abstract class XFEDataTableManagerBuilder
 {
     readonly List<IXFEDataTable> dataTableList = [];
-    JsonSerializerOptions userJsonSerializerOptions = new();
+    readonly JsonSerializerOptions userJsonSerializerOptions = new();
     /// <summary>
     /// 执行语句列表
     /// </summary>
@@ -41,6 +41,7 @@ public abstract class XFEDataTableManagerBuilder
     public XFEDataTableManagerBuilder AddTable<T>(XFEDataTable<T> xFEDataTable) where T : IIDModel
     {
         dataTableList.Add(xFEDataTable);
+        ExecuteList.AddRange([$"get_{xFEDataTable.TableNameInRequest}", $"add_{xFEDataTable.TableNameInRequest}", $"change_{xFEDataTable.TableNameInRequest}", $"remove_{xFEDataTable.TableNameInRequest}"]);
         return this;
     }
 
@@ -56,22 +57,16 @@ public abstract class XFEDataTableManagerBuilder
     /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
     /// <param name="jsonSerializerOptions">JSON转换器</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T, P>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where P : XFEProfile
+    public XFEDataTableManagerBuilder AddTable<T, P>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where P : XFEProfile => AddTable<T>(new XFEDataTable<T>(typeof(P))
     {
-        var dataTable = new XFEDataTable<T>(typeof(P))
-        {
-            TableShowName = tabelShowName,
-            AddPermissionLevel = addPermissionLevel,
-            RemovePermissionLevel = removePermissionLevel,
-            ChangePermissionLevel = changePermissionLevel,
-            GetPermissionLevel = getPermissionLevel,
-            UserJsonSerializerOptions = userJsonSerializerOptions,
-            JsonSerializerOptions = jsonSerializerOptions
-        };
-        dataTableList.Add(dataTable);
-        ExecuteList.AddRange([$"get_{dataTable.TableNameInRequest}", $"add_{dataTable.TableNameInRequest}", $"change_{dataTable.TableNameInRequest}", $"remove_{dataTable.TableNameInRequest}"]);
-        return this;
-    }
+        TableShowName = tabelShowName,
+        AddPermissionLevel = addPermissionLevel,
+        RemovePermissionLevel = removePermissionLevel,
+        ChangePermissionLevel = changePermissionLevel,
+        GetPermissionLevel = getPermissionLevel,
+        UserJsonSerializerOptions = userJsonSerializerOptions,
+        JsonSerializerOptions = jsonSerializerOptions
+    });
 
     /// <summary>
     /// 构建数据表管理器
