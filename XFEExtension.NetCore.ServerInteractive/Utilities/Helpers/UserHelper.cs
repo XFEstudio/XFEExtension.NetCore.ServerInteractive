@@ -18,7 +18,7 @@ public static class UserHelper
     /// <param name="id"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static IUserInfo? GetUser(string id, IEnumerable<IUserInfo> userInfoList) => userInfoList.FirstOrDefault(user => user.ID == id);
+    public static IUserFaceInfo? GetUser(string id, IEnumerable<IUserFaceInfo> userInfoList) => userInfoList.FirstOrDefault(user => user.ID == id);
 
     /// <summary>
     /// 获取用户（通过Session）
@@ -31,7 +31,7 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static UserOperateResult GetUser(string sessionId, string computerInfo, string ipAddress, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, out IUserInfo? user)
+    public static UserOperateResult GetUser(string sessionId, string computerInfo, string ipAddress, JsonSerializerOptions? jsonSerializerOptions, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
         if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.ComputerInfo == computerInfo) is not EncryptedUserLoginModel encryptedUserLoginModel)

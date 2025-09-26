@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
@@ -72,16 +73,18 @@ public static class XFEClientRequesterBuilderExtensions
     /// <summary>
     /// 添加登录服务
     /// </summary>
+    /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEClientRequesterBuilder"></param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder AddLoginRequest(this XFEClientRequesterBuilder xFEClientRequesterBuilder) => xFEClientRequesterBuilder.AddXFERequest<LoginRequestService>("login").AddXFERequest<ReloginRequestService>("relogin");
+    public static XFEClientRequesterBuilder AddLoginRequest<T>(this XFEClientRequesterBuilder xFEClientRequesterBuilder) where T : IUserFaceInfo => xFEClientRequesterBuilder.AddXFERequest<LoginRequestService<T>>("login").AddXFERequest<ReloginRequestService>("relogin");
 
     /// <summary>
     /// 使用XFE标准服务器服务请求
     /// </summary>
+    /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEClientRequesterBuilder"></param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder UseXFEStandardRequest(this XFEClientRequesterBuilder xFEClientRequesterBuilder) => xFEClientRequesterBuilder.AddLoginRequest()
+    public static XFEClientRequesterBuilder UseXFEStandardRequest<T>(this XFEClientRequesterBuilder xFEClientRequesterBuilder) where T : IUserFaceInfo => xFEClientRequesterBuilder.AddLoginRequest<T>()
         .AddBannedIpRequest()
         .AddLogRequest()
         .AddCheckConnectRequest();

@@ -1,4 +1,5 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+﻿using XFEExtension.NetCore.ServerInteractive.Interfaces;
+using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.TServer;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
@@ -10,7 +11,7 @@ var server = XFEServerBuilder.CreateBuilder() //创建服务器构建器
     .UseXFEServer()                           //使用XFE服务器架构
     .AddCoreServer(                           //添加核心服务器
                    XFEServerCoreBuilder.CreateBuilder()                                           //创建核心服务器构建器
-                                       .UseXFEStandardServerCore(                                 //使用XFE标准服务器核心
+                                       .UseXFEStandardServerCore<IUserFaceInfo>(                                 //使用XFE标准服务器核心
                                                 static () => UserProfile.UserTable,               //获取用户表的方法
                                                 static () => UserProfile.EncryptedUserLoginModelTable,  //获取用户加密模型的方法
                                                 UserProfile.EncryptedUserLoginModelTable.Add,           //添加用户加密模型的方法

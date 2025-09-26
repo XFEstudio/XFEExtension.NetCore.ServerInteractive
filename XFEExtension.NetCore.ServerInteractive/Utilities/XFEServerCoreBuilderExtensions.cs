@@ -1,4 +1,5 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+﻿using XFEExtension.NetCore.ServerInteractive.Interfaces;
+using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
@@ -39,9 +40,10 @@ public static class XFEServerCoreBuilderExtensions
     /// <summary>
     /// 使用XFE标准登录服务
     /// </summary>
+    /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddStandardLoginService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService>("login")
+    public static XFEServerCoreBuilder AddStandardLoginService<T>(this XFEServerCoreBuilder xFEServerCoreBuilder) where T : IUserFaceInfo => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService<T>>("login")
             .RegisterStandardAsyncService<UserReloginService>("relogin")
             .AddService<UserLoginAutoCleanService>();
 
@@ -83,19 +85,21 @@ public static class XFEServerCoreBuilderExtensions
     /// <summary>
     /// 使用XFE标准服务器核心
     /// </summary>
+    /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <param name="getUserFunction"></param>
     /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <param name="addEncryptedUserLoginModelFunction"></param>
     /// <param name="removeEncryptedUserLoginModelFunction"></param>
+    /// <param name="getLoginKeepDays"></param>
     /// <param name="xFEDataTableManagerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder UseXFEStandardServerCore(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, Func<int> getLoginKeepDays, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction, getLoginKeepDays)
+    public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, Func<int> getLoginKeepDays, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) where T : IUserFaceInfo => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction, getLoginKeepDays)
             .AddDataTableManager(xFEDataTableManagerBuilder, getUserFunction, getEncryptedUserLoginModelFunction)
             .AddEntryPotinVerify()
             .AddDailyCounterService()
             .AddXFEErrorProcessService()
             .AddConnectService()
-            .AddStandardLoginService()
+            .AddStandardLoginService<T>()
             .AddIpBannerService();
 }
