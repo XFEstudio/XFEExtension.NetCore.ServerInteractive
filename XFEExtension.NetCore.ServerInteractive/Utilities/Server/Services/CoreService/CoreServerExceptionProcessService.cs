@@ -40,7 +40,11 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
             Console.WriteLine($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{errorMessage}");
             if (e.ServerException?.StackTrace is not null)
                 Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
-            await e.CyberCommRequestEventArgs.ReplyAndClose(errorMessage, e.StatusCode);
+            try
+            {
+                await e.CyberCommRequestEventArgs.ReplyAndClose(errorMessage, e.StatusCode);
+            }
+            catch { }
         }
     }
 }

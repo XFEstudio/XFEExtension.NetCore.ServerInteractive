@@ -44,7 +44,7 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
     public static XFEServerCoreBuilder AddStandardLoginService<T>(this XFEServerCoreBuilder xFEServerCoreBuilder) where T : IUserFaceInfo => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService<T>>("login")
-            .RegisterStandardAsyncService<UserReloginService>("relogin")
+            .RegisterStandardAsyncService<UserReloginService<T>>("relogin")
             .AddService<UserLoginAutoCleanService>();
 
     /// <summary>

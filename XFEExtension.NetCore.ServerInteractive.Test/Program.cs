@@ -43,6 +43,23 @@ internal class Program
         }
     }
 
+    [SMTest]
+    public static async Task ReLogin()
+    {
+        var result = await xFEClientRequester.Request<UserFaceInfo>("relogin");
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine(result.Result.ID);
+            Console.WriteLine(result.Result.NickName);
+            Console.WriteLine(result.Result.PermissionLevel);
+        }
+        else
+        {
+            Console.WriteLine(result.StatusCode);
+            Console.WriteLine(result.Message);
+        }
+    }
+
     //[SMTest]
     public static string ConvertOrder()
     {

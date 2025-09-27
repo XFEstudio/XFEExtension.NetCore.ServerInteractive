@@ -76,7 +76,7 @@ public static class XFEClientRequesterBuilderExtensions
     /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEClientRequesterBuilder"></param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder AddLoginRequest<T>(this XFEClientRequesterBuilder xFEClientRequesterBuilder) where T : IUserFaceInfo => xFEClientRequesterBuilder.AddXFERequest<LoginRequestService<T>>("login").AddXFERequest<ReloginRequestService>("relogin");
+    public static XFEClientRequesterBuilder AddLoginRequest<T>(this XFEClientRequesterBuilder xFEClientRequesterBuilder) where T : IUserFaceInfo => xFEClientRequesterBuilder.AddXFERequest<LoginRequestService<T>>("login").AddXFERequest<ReloginRequestService<T>>("relogin");
 
     /// <summary>
     /// 使用XFE标准服务器服务请求
