@@ -51,7 +51,7 @@ public class XFECoreServerProcessService : CoreServerProcessServiceBase
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine($"[ERROR]服务器({coreServerService.CoreServerName})错误：{ex.Message}");
+                                Console.WriteLine($"[ERROR]服务器({coreServerService.CoreServerName})错误：{ex.Message}：{ex.InnerException?.Message}");
                                 Console.WriteLine($"[TRACE]{ex.StackTrace}");
                                 Console.WriteLine($"[DEBUG]准备重启服务器({coreServerService.CoreServerName})");
                                 await Task.Delay(1000);

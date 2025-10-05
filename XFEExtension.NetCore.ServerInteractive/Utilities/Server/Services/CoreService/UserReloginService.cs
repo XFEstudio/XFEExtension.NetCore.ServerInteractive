@@ -25,7 +25,7 @@ public class UserReloginService<T> : ServerCoreUserServiceBase where T : IUserFa
         if (session.IsNullOrWhiteSpace()) r.Error("Session值不能为空", HttpStatusCode.BadRequest);
         if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
         if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.ComputerInfo == computerInfo) is not EncryptedUserLoginModel encryptedUserLoginModel) throw r.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
-        var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, session, JsonSerializerOptions);
+        var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, session);
         if (userLoginModel.UID.IsNullOrWhiteSpace() || userLoginModel.UID != encryptedUserLoginModel.UserLoginModel.UID)
             r.Error("登录用户ID不匹配", HttpStatusCode.Forbidden);
         var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw r.GetError("用户ID未注册", HttpStatusCode.Forbidden);

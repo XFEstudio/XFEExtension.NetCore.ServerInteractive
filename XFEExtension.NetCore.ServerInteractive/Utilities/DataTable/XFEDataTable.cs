@@ -136,7 +136,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
             {
                 case "get":
                      Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, UserJsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<T> tableList = [.. GetTableFunction()];
                     int pageCount = requestJsonNode["pageCount"].GetValue<int>();
                     if (pageCount == -1)
@@ -168,7 +168,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
                     Console.Write($"：{item.ID}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, AddPermissionLevel, UserJsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, AddPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (item.ID.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -183,7 +183,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     Console.Write($"【{r.Args.ClientIP}】删除{TableShowName}请求");
                     var id = requestJsonNode["id"].ToString();
                     Console.Write($"：{id}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, RemovePermissionLevel, UserJsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, RemovePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -211,7 +211,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");
                     }
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, ChangePermissionLevel, UserJsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, ChangePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     Change(item);
                     r.Args.Close();
                     break;

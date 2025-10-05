@@ -25,14 +25,14 @@ public class CoreLogService : ServerCoreUserServiceBase
         switch (execute)
         {
             case "get_log":
-                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, GetPermission, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
+                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
                 if (!DateTime.TryParse(queryableJsonNode["startDateTime"], out var startDatetime)) r.Error("起始日期格式不正确", HttpStatusCode.BadRequest);
                 if (!DateTime.TryParse(queryableJsonNode["endDateTime"], out var endDatetime)) r.Error("结束日期格式不正确", HttpStatusCode.BadRequest);
                 await r.Args.ReplyAndClose(XFEConsole.XFEConsole.Log.Export(startDatetime, endDatetime));
                 break;
             case "clear_log":
                 Console.Write($"【{r.Args.ClientIP}】清除服务器日志请求");
-                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, ClearPermission, JsonSerializerOptions, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
+                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, ClearPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
                 if (File.Exists("server.log"))
                     File.Delete("server.log");
                 XFEConsole.XFEConsole.Log.Clear();

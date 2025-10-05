@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,7 @@
 		<PackageReleaseNotes>
 			## 调整
 
-			为服务器和客户端的用户校验登录服务添加泛型T，用以在校验登录时返回用户信息
+			修复用户登录模型的Json转换问题
 
 			## 新增
 
@@ -55,7 +55,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Management" Version="9.0.9" />
-		<PackageReference Include="XFEExtension.NetCore" Version="3.3.8" />
+		<PackageReference Include="XFEExtension.NetCore" Version="3.3.9" />
 		<PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
 		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="1.1.*" />

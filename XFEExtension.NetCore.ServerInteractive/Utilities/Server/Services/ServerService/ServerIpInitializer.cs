@@ -19,7 +19,9 @@ public class ServerIpInitializer : ServerInitializerServiceBase
             {
                 Console.WriteLine($"正在设置服务器：{coreServerService.CoreServerName}");
                 Console.WriteLine($"是否绑定上一次IP：{ipAddress}？(Y/N)");
-                if (Console.ReadKey().Key == ConsoleKey.N)
+                var key = Console.ReadKey();
+                Console.WriteLine(key.Key.ToString());
+                if (key.Key == ConsoleKey.N)
                 {
                     ipAddress = string.Empty;
                     while (ipAddress.IsNullOrWhiteSpace())
