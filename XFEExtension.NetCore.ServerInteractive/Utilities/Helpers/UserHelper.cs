@@ -3,7 +3,6 @@ using System.Text.Json;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
-using XFEExtension.NetCore.StringExtension.Json;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
@@ -23,19 +22,21 @@ public static class UserHelper
     /// <summary>
     /// 获取用户（通过Session）
     /// </summary>
-    /// <param name="sessionId"></param>
+    /// <param name="session"></param>
     /// <param name="computerInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static UserOperateResult GetUser(string sessionId, string computerInfo, string ipAddress, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
+    public static UserOperateResult GetUser(string session, string computerInfo, string ipAddress, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
-        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.ComputerInfo == computerInfo) is not EncryptedUserLoginModel encryptedUserLoginModel)
+        var split = session.Split('|');
+        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel)
             return UserOperateResult.LoginExpired;
-        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, sessionId) is not UserLoginModel targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.UID != targetUserLoginModel.UID)
+        if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) return UserOperateResult.LoginExpired;
+        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not UserLoginModel targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.UID != targetUserLoginModel.UID)
             return UserOperateResult.UserNotFound;
         if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !((encryptedUserLoginModel.UserLoginModel.LastIPAddress == "127.0.0.1" || encryptedUserLoginModel.UserLoginModel.LastIPAddress == "::1") && (ipAddress == "127.0.0.1" || ipAddress == "::1"))))
             return UserOperateResult.LoginExpired;

@@ -24,8 +24,10 @@ public class UserReloginService<T> : ServerCoreUserServiceBase where T : IUserFa
         var computerInfo = queryableJsonNode["computerInfo"].ToString();
         if (session.IsNullOrWhiteSpace()) r.Error("Session值不能为空", HttpStatusCode.BadRequest);
         if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
-        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.ComputerInfo == computerInfo) is not EncryptedUserLoginModel encryptedUserLoginModel) throw r.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
-        var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, session);
+        var split = session.Split('|');
+        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel) throw r.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
+        if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) r.Error("电脑信息不匹配", HttpStatusCode.Forbidden);
+        var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
         if (userLoginModel.UID.IsNullOrWhiteSpace() || userLoginModel.UID != encryptedUserLoginModel.UserLoginModel.UID)
             r.Error("登录用户ID不匹配", HttpStatusCode.Forbidden);
         var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw r.GetError("用户ID未注册", HttpStatusCode.Forbidden);
