@@ -23,6 +23,7 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                                 UserProfile.EncryptedUserLoginModelTable.Add,           // 添加用户加密模型的方法
                                                 static user => UserProfile.EncryptedUserLoginModelTable.Remove(user),   // 移除用户加密模型的方法
                                                 static () => 7,                                   // 获取登录维持天数方法
+                                                static user => (IUserFaceInfo)user,               // 登录结果转换方法
                                                 XFEDataTableManagerBuilder.CreateBuilder()              // 创建DataTable管理器构建器
                                                                           .AddTable<Person, DataProfile>("人物", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员) // 添加名为人物的表格，Person类型，AutoConfig为DataProfile。添加更改获取权限为业务员，移除权限为经理
                                                                           .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)  // 添加名为订单的表格，Order类型，AutoConfig为DataProfile。添加更改获取权限为业务员，移除权限为经理

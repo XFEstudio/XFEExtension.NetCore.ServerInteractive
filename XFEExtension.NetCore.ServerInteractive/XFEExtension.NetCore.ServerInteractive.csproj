@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.8</Version>
+		<Version>1.0.9</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,7 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      修复构建器扩展中未添加泛型参数的问题
+      调换构建器扩展方法UseXFEStandardServerCore的传参顺序
 
       ## 新增
 
