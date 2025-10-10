@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -12,7 +11,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录服务
 /// </summary>
-public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFaceInfo
+public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
     /// <inheritdoc/>
     public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
@@ -57,7 +56,7 @@ public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFace
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
-                userInfo = (T)user
+                userInfo = LoginResultConvertFunction(user)
             }.ToJson(), HttpStatusCode.OK);
         }
         else
@@ -70,7 +69,7 @@ public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFace
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
-                userInfo = (T)user
+                userInfo = LoginResultConvertFunction(user)
             }.ToJson(), HttpStatusCode.OK);
         }
     }
