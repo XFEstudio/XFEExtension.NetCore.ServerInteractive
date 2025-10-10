@@ -13,7 +13,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录校验服务
 /// </summary>
-public class UserReloginService<T, F> : ServerCoreUserLoginServiceBase<T, F> where T : IUserInfo where F : class
+public class UserReloginService<T> : ServerCoreUserServiceBase where T : IUserFaceInfo
 {
     /// <inheritdoc/>
     public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
@@ -30,10 +30,10 @@ public class UserReloginService<T, F> : ServerCoreUserLoginServiceBase<T, F> whe
         var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
         if (userLoginModel.UID.IsNullOrWhiteSpace() || userLoginModel.UID != encryptedUserLoginModel.UserLoginModel.UID)
             r.Error("登录用户ID不匹配", HttpStatusCode.Forbidden);
-        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction().Cast<IUserFaceInfo>()) ?? throw r.GetError("用户ID未注册", HttpStatusCode.Forbidden);
+        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw r.GetError("用户ID未注册", HttpStatusCode.Forbidden);
         if (userLoginModel.LastIPAddress != r.Args.ClientIP) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
         if (userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
         if (userLoginModel.EndDateTime < DateTime.Now) r.Error("登录已过期", HttpStatusCode.Forbidden);
-        await r.Args.ReplyAndClose(LoginResultConverter((T)user).ToJson());
+        await r.Args.ReplyAndClose(((T)user).ToJson());
     }
 }

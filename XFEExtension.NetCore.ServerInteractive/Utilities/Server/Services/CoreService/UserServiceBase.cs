@@ -6,10 +6,10 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <inheritdoc/>
-public abstract class UserServiceBase<T> : IUserServiceBase<T> where T : IUserInfo
+public abstract class UserServiceBase : IUserServiceBase
 {
     /// <inheritdoc/>
-    public Func<IEnumerable<T>> GetUserFunction { get; set; } = () => [];
+    public Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; } = () => [];
     /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
     /// <inheritdoc/>
@@ -17,7 +17,7 @@ public abstract class UserServiceBase<T> : IUserServiceBase<T> where T : IUserIn
     /// <inheritdoc/>
     public Action<EncryptedUserLoginModel> RemoveEncryptedUserLoginModelFunction { get; set; } = _ => { };
     /// <inheritdoc/>
-    public Action<T> AddUserFunction { get; set; } = _ => { };
+    public Action<IUserInfo> AddUserFunction { get; set; } = _ => { };
     /// <inheritdoc/>
     public Func<int> GetLoginKeepDays { get; set; } = () => 7;
     /// <inheritdoc/>
