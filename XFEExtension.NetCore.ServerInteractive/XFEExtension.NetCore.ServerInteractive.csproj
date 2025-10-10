@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.7</Version>
+		<Version>1.0.8</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,7 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      现在，可以返回自己的用户登录模型，而非固定的继承于IUserFaceInfo的模型
+      修复构建器扩展中未添加泛型参数的问题
 
       ## 新增
 
