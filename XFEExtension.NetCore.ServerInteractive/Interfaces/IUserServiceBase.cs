@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces;
 /// <summary>
 /// 用户服务基类
 /// </summary>
-public interface IUserServiceBase
+public interface IUserServiceBase<T> where T : IUserInfo
 {
     /// <summary>
     /// Json序列化设置
@@ -23,7 +23,7 @@ public interface IUserServiceBase
     /// <summary>
     /// 添加用户方法
     /// </summary>
-    Action<IUserInfo> AddUserFunction { get; set; }
+    Action<T> AddUserFunction { get; set; }
     /// <summary>
     /// 获取加密用户模型方法
     /// </summary>
@@ -35,5 +35,5 @@ public interface IUserServiceBase
     /// <summary>
     /// 获取用户方法
     /// </summary>
-    Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; }
+    Func<IEnumerable<T>> GetUserFunction { get; set; }
 }

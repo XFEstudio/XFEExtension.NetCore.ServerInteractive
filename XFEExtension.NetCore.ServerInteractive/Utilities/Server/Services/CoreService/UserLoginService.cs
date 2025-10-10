@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录服务
 /// </summary>
-public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFaceInfo
+public class UserLoginService<T, F> : ServerCoreUserLoginServiceBase<T, F> where T : IUserInfo where F : class
 {
     /// <inheritdoc/>
     public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
@@ -24,7 +24,7 @@ public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFace
         if (account.IsNullOrWhiteSpace()) r.Error("账户名不能为空", HttpStatusCode.BadRequest);
         if (password.IsNullOrWhiteSpace()) r.Error("登录密码不能为空", HttpStatusCode.BadRequest);
         if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
-        var user = UserHelper.GetUser(queryableJsonNode["account"], queryableJsonNode["password"], GetUserFunction(), r);
+        var user = UserHelper.GetUser(queryableJsonNode["account"], queryableJsonNode["password"], GetUserFunction().Cast<IUserInfo>(), r);
         Console.WriteLine($"{account}（{computerInfo}）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
         var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
@@ -57,7 +57,7 @@ public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFace
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
-                userInfo = (T)user
+                userInfo = LoginResultConverter((T)user)
             }.ToJson(), HttpStatusCode.OK);
         }
         else
@@ -70,7 +70,7 @@ public class UserLoginService<T> : ServerCoreUserServiceBase where T : IUserFace
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
-                userInfo = (T)user
+                userInfo = LoginResultConverter((T)user)
             }.ToJson(), HttpStatusCode.OK);
         }
     }
