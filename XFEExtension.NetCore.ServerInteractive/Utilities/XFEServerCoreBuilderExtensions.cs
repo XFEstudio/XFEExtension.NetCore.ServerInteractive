@@ -85,6 +85,13 @@ public static class XFEServerCoreBuilderExtensions
     public static XFEServerCoreBuilder AddEntryPotinVerify(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyServer>();
 
     /// <summary>
+    /// 添加服务器日志请求
+    /// </summary>
+    /// <param name="xFEServerCoreBuilder"></param>
+    /// <returns></returns>
+    public static XFEServerCoreBuilder AddServerLogService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<CoreLogService>(["get_log", "clear_log"]);
+
+    /// <summary>
     /// 使用XFE标准服务器核心
     /// </summary>
     /// <typeparam name="T">登录返回用户接口类型</typeparam>
@@ -104,5 +111,6 @@ public static class XFEServerCoreBuilderExtensions
             .AddXFEErrorProcessService()
             .AddConnectService()
             .AddStandardLoginService<T>()
+            .AddServerLogService()
             .AddIpBannerService();
 }
