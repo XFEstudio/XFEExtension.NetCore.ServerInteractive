@@ -55,8 +55,9 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
             var expiredSessions = GetEncryptedUserLoginModelFunction().Where(user => user.UserLoginModel.EndDateTime < DateTime.Now).ToList();
             if (expiredSessions.Count > 0)
             {
-                foreach (var expiredSession in expiredSessions)
+                for (int i = expiredSessions.Count - 1; i >= 0; i--)
                 {
+                    var expiredSession = expiredSessions[i];
                     Console.WriteLine($"[DEBUG]用户 {expiredSession.UserLoginModel.UID} 的登录已过期，正在清理...");
                     RemoveEncryptedUserLoginModelFunction(expiredSession);
                 }

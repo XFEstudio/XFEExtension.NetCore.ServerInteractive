@@ -35,5 +35,6 @@ public class ServerIpInitializer : ServerInitializerServiceBase
                 Console.WriteLine($"服务器{coreServerService.CoreServerName}设置完成！IP为：{ipAddress}");
             }
         }
+        ServerBaseProfile.SaveProfile();
     }
 }

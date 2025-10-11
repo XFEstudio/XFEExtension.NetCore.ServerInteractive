@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.9</Version>
+		<Version>1.0.10</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,8 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      调换构建器扩展方法UseXFEStandardServerCore的传参顺序
+      修复UserLoginAutoCleanService服务中，对用户信息清理进行foreach时，可能会抛出集合修改异常的问题
+      修复服务器基础配置文件无法保存数据的问题
 
       ## 新增
 
