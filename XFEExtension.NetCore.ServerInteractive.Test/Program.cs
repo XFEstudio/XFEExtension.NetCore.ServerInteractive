@@ -60,6 +60,21 @@ internal class Program
         }
     }
 
+    [SMTest]
+    public static async Task GetLog()
+    {
+        var result = await xFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine(result.Result);
+        }
+        else
+        {
+            Console.WriteLine(result.StatusCode);
+            Console.WriteLine(result.Message);
+        }
+    }
+
     //[SMTest]
     public static string ConvertOrder()
     {

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
@@ -32,6 +33,7 @@ public static class UserHelper
     public static UserOperateResult GetUser(string session, string computerInfo, string ipAddress, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
+        session = Regex.Unescape(session);
         var split = session.Split('|');
         if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel)
             return UserOperateResult.LoginExpired;
