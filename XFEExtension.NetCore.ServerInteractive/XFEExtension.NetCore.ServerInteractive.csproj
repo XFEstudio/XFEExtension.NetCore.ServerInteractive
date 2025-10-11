@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.12</Version>
+		<Version>1.0.13</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,12 +20,8 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
-
-      新增 GetLog 方法及优化 UserHelper 处理逻辑
-
-      在 Program.cs 中新增异步方法 GetLog，并添加 [SMTest] 特性，用于获取日志数据并输出结果。
-      在 UserHelper.cs 中引入 System.Text.RegularExpressions，并在 GetUser 方法中增加对 session 参数的转义字符解析。
-      更新 XFEExtension.NetCore.ServerInteractive.csproj 的发布说明，标明此次更新无新增功能。
+      
+      添加日志请求时的日志提示
 
       ## 新增
 

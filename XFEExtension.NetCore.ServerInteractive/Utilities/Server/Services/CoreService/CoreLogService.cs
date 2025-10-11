@@ -25,6 +25,7 @@ public class CoreLogService : ServerCoreUserServiceBase
         switch (execute)
         {
             case "get_log":
+                Console.Write($"【{r.Args.ClientIP}】获取服务器日志请求");
                 UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
                 if (!DateTime.TryParse(queryableJsonNode["startDateTime"], out var startDatetime)) r.Error("起始日期格式不正确", HttpStatusCode.BadRequest);
                 if (!DateTime.TryParse(queryableJsonNode["endDateTime"], out var endDatetime)) r.Error("结束日期格式不正确", HttpStatusCode.BadRequest);
