@@ -75,7 +75,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
         var property = type.GetProperty($"{typeof(T).Name}Table", BindingFlags.Public | BindingFlags.Static);
         var profileListType = typeof(ProfileList<T>);
         var addMethod = profileListType.GetMethod("Add", [typeof(T)]);
-        var removeMethod = profileListType.GetMethod("RemoveAt");
+        var removeMethod = profileListType.GetMethod("Remove", [typeof(T)]);
         var saveMethod = type.GetMethod("SaveProfile", BindingFlags.Public | BindingFlags.Static);
         if (property is not null && addMethod is not null && removeMethod is not null && saveMethod is not null)
         {
@@ -135,7 +135,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
             switch (execute)
             {
                 case "get":
-                     Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
+                    Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<T> tableList = [.. GetTableFunction()];
                     int pageCount = requestJsonNode["pageCount"].GetValue<int>();

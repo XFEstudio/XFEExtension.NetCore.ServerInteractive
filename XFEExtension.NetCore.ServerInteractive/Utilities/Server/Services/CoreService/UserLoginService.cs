@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -52,12 +53,12 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
             };
             AddEncryptedUserLoginModelFunction(userLogin);
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
-            await r.Args.ReplyAndClose(new
+            await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
                 userInfo = LoginResultConvertFunction(user)
-            }.ToJson(), HttpStatusCode.OK);
+            }, JsonSerializerOptions), HttpStatusCode.OK);
         }
         else
         {
@@ -65,12 +66,12 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
             userLogin.UserLoginModel.LastIPAddress = r.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
-            await r.Args.ReplyAndClose(new
+            await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
                 userInfo = LoginResultConvertFunction(user)
-            }.ToJson(), HttpStatusCode.OK);
+            }, JsonSerializerOptions), HttpStatusCode.OK);
         }
     }
 }
