@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.14</Version>
+		<Version>1.0.15</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,7 @@
 		<PackageReleaseNotes>
       ## 调整
       
-      修复部分Json序列化转化问题
+      修复用户重新登录时的校验问题
 
       ## 新增
 

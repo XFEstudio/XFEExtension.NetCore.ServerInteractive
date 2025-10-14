@@ -33,6 +33,8 @@ public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T :
         if (userLoginModel.LastIPAddress != r.Args.ClientIP) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
         if (userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
         if (userLoginModel.EndDateTime < DateTime.Now) r.Error("登录已过期", HttpStatusCode.Forbidden);
+        if (userLoginModel.EndDateTime != encryptedUserLoginModel.UserLoginModel.EndDateTime) r.Error("登录已过期", HttpStatusCode.Forbidden);
+        if (userLoginModel.ComputerInfo != encryptedUserLoginModel.UserLoginModel.ComputerInfo) r.Error("电脑信息不匹配", HttpStatusCode.Forbidden);
         await r.Args.ReplyAndClose(JsonSerializer.Serialize(LoginResultConvertFunction(user), JsonSerializerOptions));
     }
 }
