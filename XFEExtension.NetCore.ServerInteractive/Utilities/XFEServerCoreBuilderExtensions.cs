@@ -113,4 +113,21 @@ public static class XFEServerCoreBuilderExtensions
             .AddStandardLoginService<T>()
             .AddServerLogService()
             .AddIpBannerService();
+
+    /// <summary>
+    /// 使用XFE标准服务器核心（Options）
+    /// </summary>
+    public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEStandardServerCoreOptions<T> options) where T : class
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        var dataTableBuilder = options.DataTableManagerBuilder ?? XFEDataTableManagerBuilder.CreateBuilder();
+        return xFEServerCoreBuilder.UseXFEStandardServerCore(
+            options.GetUserFunction ?? throw new ArgumentNullException(nameof(options.GetUserFunction)),
+            options.GetEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.GetEncryptedUserLoginModelFunction)),
+            options.AddEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.AddEncryptedUserLoginModelFunction)),
+            options.RemoveEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.RemoveEncryptedUserLoginModelFunction)),
+            options.GetLoginKeepDays ?? throw new ArgumentNullException(nameof(options.GetLoginKeepDays)),
+            options.LoginResultConvertFunction ?? throw new ArgumentNullException(nameof(options.LoginResultConvertFunction)),
+            dataTableBuilder);
+    }
 }
