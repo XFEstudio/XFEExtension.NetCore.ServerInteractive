@@ -15,16 +15,16 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
+    public override async Task StandardRequestReceived()
     {
-        Console.Write($"【{r.Args.ClientIP}】登录请求：");
-        var account = queryableJsonNode["account"].ToString();
-        var password = queryableJsonNode["password"].ToString();
-        var computerInfo = queryableJsonNode["computerInfo"].ToString();
-        if (account.IsNullOrWhiteSpace()) r.Error("账户名不能为空", HttpStatusCode.BadRequest);
-        if (password.IsNullOrWhiteSpace()) r.Error("登录密码不能为空", HttpStatusCode.BadRequest);
-        if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
-        var user = UserHelper.GetUser(queryableJsonNode["account"], queryableJsonNode["password"], GetUserFunction(), r);
+        Console.Write($"【{ReturnArgs!.Args.ClientIP}】登录请求：");
+        var account = QueryableJsonNode!["account"].ToString();
+        var password = QueryableJsonNode!["password"].ToString();
+        var computerInfo = QueryableJsonNode!["computerInfo"].ToString();
+        if (account.IsNullOrWhiteSpace()) Close("账户名不能为空", HttpStatusCode.BadRequest);
+        if (password.IsNullOrWhiteSpace()) Close("登录密码不能为空", HttpStatusCode.BadRequest);
+        if (computerInfo.IsNullOrWhiteSpace()) Close("电脑信息不能为空", HttpStatusCode.BadRequest);
+        var user = UserHelper.GetUser(QueryableJsonNode!["account"], QueryableJsonNode!["password"], GetUserFunction(), ReturnArgs!);
         Console.WriteLine($"{account}（{computerInfo}）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
         var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
@@ -47,13 +47,13 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 {
                     UID = user.ID,
                     ComputerInfo = computerInfo,
-                    LastIPAddress = r.Args.ClientIP,
+                    LastIPAddress = ReturnArgs!.Args.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
             };
             AddEncryptedUserLoginModelFunction(userLogin);
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
-            await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
+            await ReturnArgs!.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
@@ -63,10 +63,10 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         else
         {
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
-            userLogin.UserLoginModel.LastIPAddress = r.Args.ClientIP;
+            userLogin.UserLoginModel.LastIPAddress = ReturnArgs!.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.WriteLine($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
-            await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
+            await ReturnArgs!.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,

@@ -25,31 +25,31 @@ public class IpBannerService : ServerCoreUserServiceBase
     /// </summary>
     public int RemovePermission { get; set; } = 0;
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
+    public override async Task StandardRequestReceived()
     {
-        switch (execute)
+        switch (Execute)
         {
             case "get_bannedIpList":
-                Console.Write($"【{r.Args.ClientIP}】获取禁止的IP地址列表请求");
-                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
-                await r.Args.ReplyAndClose(ServerBaseProfile.BannedIPAddressList.ToJson());
+                Console.Write($"【{ReturnArgs!.Args.ClientIP}】获取禁止的IP地址列表请求");
+                UserHelper.ValidatePermission(QueryableJsonNode!["session"], QueryableJsonNode!["computerInfo"], ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+                await ReturnArgs.Args.ReplyAndClose(ServerBaseProfile.BannedIPAddressList.ToJson());
                 break;
             case "add_bannedIp":
-                Console.WriteLine($"【{r.Args.ClientIP}】添加禁止的IP地址请求 添加：{queryableJsonNode["bannedIp"]}");
-                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, AddPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
-                if (queryableJsonNode["bannedIp"] is null) r.Error("无IP地址传入", HttpStatusCode.BadRequest);
+                Console.WriteLine($"【{ReturnArgs!.Args.ClientIP}】添加禁止的IP地址请求 添加：{QueryableJsonNode!["bannedIp"]}");
+                UserHelper.ValidatePermission(QueryableJsonNode!["session"], QueryableJsonNode!["computerInfo"], ReturnArgs.Args.ClientIP, AddPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+                if (QueryableJsonNode!["bannedIp"] is null) Close("无IP地址传入", HttpStatusCode.BadRequest);
                 ServerBaseProfile.BannedIPAddressList.Add(new()
                 {
-                    IPAddress = queryableJsonNode["bannedIp"],
-                    Notes = queryableJsonNode["notes"]
+                    IPAddress = QueryableJsonNode!["bannedIp"],
+                    Notes = QueryableJsonNode!["notes"]
                 });
-                r.Args.Close();
+                ReturnArgs.Args.Close();
                 break;
             case "remove_bannedIp":
-                Console.WriteLine($"【{r.Args.ClientIP}】删除禁止的IP地址请求 移除：{queryableJsonNode["bannedIp"]}");
-                UserHelper.ValidatePermission(queryableJsonNode["session"], queryableJsonNode["computerInfo"], r.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), r);
-                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == queryableJsonNode["bannedIp"].ToString()) ?? throw r.GetError("无IP地址传入", HttpStatusCode.BadRequest);
-                await r.Args.ReplyAndClose(ServerBaseProfile.BannedIPAddressList.Remove(targetIp).ToString());
+                Console.WriteLine($"【{ReturnArgs!.Args.ClientIP}】删除禁止的IP地址请求 移除：{QueryableJsonNode!["bannedIp"]}");
+                UserHelper.ValidatePermission(QueryableJsonNode!["session"], QueryableJsonNode!["computerInfo"], ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == QueryableJsonNode!["bannedIp"].ToString()) ?? throw ReturnArgs.GetError("无IP地址传入", HttpStatusCode.BadRequest);
+                await ReturnArgs.Args.ReplyAndClose(ServerBaseProfile.BannedIPAddressList.Remove(targetIp).ToString());
                 break;
             default:
                 break;

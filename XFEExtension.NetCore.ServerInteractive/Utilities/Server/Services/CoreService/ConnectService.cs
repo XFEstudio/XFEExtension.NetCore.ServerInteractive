@@ -10,5 +10,5 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class ConnectService : ServerCoreStandardRegisterAsyncServiceBase
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r) => await r.Args.ReplyAndClose(DateTime.Now.ToString());
+    public override async Task StandardRequestReceived() => await ReturnArgs!.Args.ReplyAndClose(DateTime.Now.ToString());
 }

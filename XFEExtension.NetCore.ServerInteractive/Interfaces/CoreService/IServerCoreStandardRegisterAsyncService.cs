@@ -12,9 +12,7 @@ public interface IServerCoreStandardRegisterAsyncService : IXFEServerCoreService
 {
     /// <summary>
     /// 服务器标准请求接收事件
+    /// 子类可直接通过属性访问 Execute / QueryableJsonNode / ReturnArgs
     /// </summary>
-    /// <param name="execute">执行语句</param>
-    /// <param name="queryableJsonNode">json请求节点</param>
-    /// <param name="r">返回参数</param>
-    Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r);
+    Task StandardRequestReceived();
 }

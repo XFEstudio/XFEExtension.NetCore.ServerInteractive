@@ -35,21 +35,21 @@ public abstract class XFEServerCore : CoreServerServiceBase
     /// </summary>
     internal List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
     /// <summary>
-    /// 核心标准服务字典
+    /// 核心标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<string, IServerCoreStandardRegisterService> standardCoreServiceDictionary = [];
+    internal Dictionary<string, Func<IServerCoreStandardRegisterService>> standardCoreServiceDictionary = [];
     /// <summary>
-    /// 核心标准服务字典
+    /// 核心标准异步服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<string, IServerCoreStandardRegisterAsyncService> standardCoreAsyncServiceDictionary = [];
+    internal Dictionary<string, Func<IServerCoreStandardRegisterAsyncService>> standardCoreAsyncServiceDictionary = [];
     /// <summary>
-    /// 核心多重标准服务字典
+    /// 核心多重标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<List<string>, IServerCoreStandardRegisterService> standardMultiCoreServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IServerCoreStandardRegisterService>> standardMultiCoreServiceDictionary = [];
     /// <summary>
-    /// 核心多重标准服务字典
+    /// 核心多重标准异步服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> standardMultiCoreAsyncServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IServerCoreStandardRegisterAsyncService>> standardMultiCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>
@@ -110,11 +110,17 @@ public abstract class XFEServerCore : CoreServerServiceBase
             if (!execute.IsNullOrEmpty())
             {
                 Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
-                if (standardCoreServiceDictionary.TryGetValue(execute, out var service))
+                if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
+                    var serviceInstance = serviceFactory();
+                    // inject server core reference and set context
                     try
                     {
-                        service.StandardRequestReceived(execute, queryableJsonNode, r);
+                        serviceInstance.XFEServerCore = this;
+                        serviceInstance.Execute = execute;
+                        serviceInstance.QueryableJsonNode = queryableJsonNode;
+                        serviceInstance.ReturnArgs = r;
+                        serviceInstance.StandardRequestReceived();
                     }
                     catch (Exception ex)
                     {
@@ -129,11 +135,16 @@ public abstract class XFEServerCore : CoreServerServiceBase
                     Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     return;
                 }
-                else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsync))
+                else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsyncFactory))
                 {
+                    var serviceAsyncInstance = serviceAsyncFactory();
                     try
                     {
-                        await serviceAsync.StandardRequestReceived(execute, queryableJsonNode, r);
+                        serviceAsyncInstance.XFEServerCore = this;
+                        serviceAsyncInstance.Execute = execute;
+                        serviceAsyncInstance.QueryableJsonNode = queryableJsonNode;
+                        serviceAsyncInstance.ReturnArgs = r;
+                        await serviceAsyncInstance.StandardRequestReceived();
                     }
                     catch (Exception ex)
                     {
@@ -152,9 +163,15 @@ public abstract class XFEServerCore : CoreServerServiceBase
                 {
                     if (key.Contains(execute))
                     {
+                        var factory = standardMultiCoreServiceDictionary[key];
+                        var instance = factory();
                         try
                         {
-                            standardMultiCoreServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
+                            instance.XFEServerCore = this;
+                            instance.Execute = execute;
+                            instance.QueryableJsonNode = queryableJsonNode;
+                            instance.ReturnArgs = r;
+                            instance.StandardRequestReceived();
                         }
                         catch (Exception ex)
                         {
@@ -174,9 +191,15 @@ public abstract class XFEServerCore : CoreServerServiceBase
                 {
                     if (key.Contains(execute))
                     {
+                        var factory = standardMultiCoreAsyncServiceDictionary[key];
+                        var instance = factory();
                         try
                         {
-                            await standardMultiCoreAsyncServiceDictionary[key].StandardRequestReceived(execute, queryableJsonNode, r);
+                            instance.XFEServerCore = this;
+                            instance.Execute = execute;
+                            instance.QueryableJsonNode = queryableJsonNode;
+                            instance.ReturnArgs = r;
+                            await instance.StandardRequestReceived();
                         }
                         catch (Exception ex)
                         {

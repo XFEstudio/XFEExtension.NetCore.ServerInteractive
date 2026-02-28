@@ -15,26 +15,26 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived(string execute, QueryableJsonNode queryableJsonNode, ServerCoreReturnArgs r)
+    public override async Task StandardRequestReceived()
     {
-        Console.Write($"【{r.Args.ClientIP}】校验登录请求：");
-        var session = Regex.Unescape(queryableJsonNode["session"].ToString());
+        Console.Write($"【{ReturnArgs!.Args.ClientIP}】校验登录请求：");
+        var session = Regex.Unescape(QueryableJsonNode!["session"].ToString());
         Console.WriteLine(session);
-        var computerInfo = queryableJsonNode["computerInfo"].ToString();
-        if (session.IsNullOrWhiteSpace()) r.Error("Session值不能为空", HttpStatusCode.BadRequest);
-        if (computerInfo.IsNullOrWhiteSpace()) r.Error("电脑信息不能为空", HttpStatusCode.BadRequest);
+        var computerInfo = QueryableJsonNode!["computerInfo"].ToString();
+        if (session.IsNullOrWhiteSpace()) Close("Session值不能为空", HttpStatusCode.BadRequest);
+        if (computerInfo.IsNullOrWhiteSpace()) Close("电脑信息不能为空", HttpStatusCode.BadRequest);
         var split = session.Split('|');
-        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel) throw r.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
-        if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) r.Error("电脑信息不匹配", HttpStatusCode.Forbidden);
+        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel) throw ReturnArgs.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
+        if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) Close("电脑信息不匹配", HttpStatusCode.Forbidden);
         var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
         if (userLoginModel.UID.IsNullOrWhiteSpace() || userLoginModel.UID != encryptedUserLoginModel.UserLoginModel.UID)
-            r.Error("登录用户ID不匹配", HttpStatusCode.Forbidden);
-        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw r.GetError("用户ID未注册", HttpStatusCode.Forbidden);
-        if (userLoginModel.LastIPAddress != r.Args.ClientIP) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
-        if (userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) r.Error("IP地址不匹配", HttpStatusCode.Forbidden);
-        if (userLoginModel.EndDateTime < DateTime.Now) r.Error("登录已过期", HttpStatusCode.Forbidden);
-        if (userLoginModel.EndDateTime != encryptedUserLoginModel.UserLoginModel.EndDateTime) r.Error("登录已过期", HttpStatusCode.Forbidden);
-        if (userLoginModel.ComputerInfo != encryptedUserLoginModel.UserLoginModel.ComputerInfo) r.Error("电脑信息不匹配", HttpStatusCode.Forbidden);
-        await r.Args.ReplyAndClose(JsonSerializer.Serialize(LoginResultConvertFunction(user), JsonSerializerOptions));
+            Close("登录用户ID不匹配", HttpStatusCode.Forbidden);
+        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw ReturnArgs.GetError("用户ID未注册", HttpStatusCode.Forbidden);
+        if (userLoginModel.LastIPAddress != ReturnArgs.Args.ClientIP) Close("IP地址不匹配", HttpStatusCode.Forbidden);
+        if (userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) Close("IP地址不匹配", HttpStatusCode.Forbidden);
+        if (userLoginModel.EndDateTime < DateTime.Now) Close("登录已过期", HttpStatusCode.Forbidden);
+        if (userLoginModel.EndDateTime != encryptedUserLoginModel.UserLoginModel.EndDateTime) Close("登录已过期", HttpStatusCode.Forbidden);
+        if (userLoginModel.ComputerInfo != encryptedUserLoginModel.UserLoginModel.ComputerInfo) Close("电脑信息不匹配", HttpStatusCode.Forbidden);
+        await ReturnArgs.Args.ReplyAndClose(JsonSerializer.Serialize(LoginResultConvertFunction(user), JsonSerializerOptions));
     }
 }

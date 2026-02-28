@@ -15,10 +15,10 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     readonly List<IServerCoreRegisterService> serverCoreServiceList = [];
     readonly List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
     readonly List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
-    readonly Dictionary<string, IServerCoreStandardRegisterService> serverStandardCoreServiceDictionary = [];
-    readonly Dictionary<string, IServerCoreStandardRegisterAsyncService> serverStandardCoreAsyncServiceDictionary = [];
-    readonly Dictionary<List<string>, IServerCoreStandardRegisterService> serverMultiStandardCoreServiceDictionary = [];
-    readonly Dictionary<List<string>, IServerCoreStandardRegisterAsyncService> serverMultiStandardCoreAsyncServiceDictionary = [];
+    readonly Dictionary<string, Func<IServerCoreStandardRegisterService>> serverStandardCoreServiceDictionary = [];
+    readonly Dictionary<string, Func<IServerCoreStandardRegisterAsyncService>> serverStandardCoreAsyncServiceDictionary = [];
+    readonly Dictionary<List<string>, Func<IServerCoreStandardRegisterService>> serverMultiStandardCoreServiceDictionary = [];
+    readonly Dictionary<List<string>, Func<IServerCoreStandardRegisterAsyncService>> serverMultiStandardCoreAsyncServiceDictionary = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -97,7 +97,8 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder RegisterStandardService(string execute, IServerCoreStandardRegisterService serverCoreStandardRegisterService)
     {
         ApplyParameter(serverCoreStandardRegisterService);
-        serverStandardCoreServiceDictionary.Add(execute, serverCoreStandardRegisterService);
+        // store as factory returning the provided instance (singleton behavior)
+        serverStandardCoreServiceDictionary.Add(execute, () => serverCoreStandardRegisterService);
         return this;
     }
 
@@ -118,7 +119,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder RegisterStandardAsyncService(string execute, IServerCoreStandardRegisterAsyncService serverCoreStandardAsyncRegisterService)
     {
         ApplyParameter(serverCoreStandardAsyncRegisterService);
-        serverStandardCoreAsyncServiceDictionary.Add(execute, serverCoreStandardAsyncRegisterService);
+        serverStandardCoreAsyncServiceDictionary.Add(execute, () => serverCoreStandardAsyncRegisterService);
         return this;
     }
 
@@ -139,7 +140,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder RegisterStandardService(List<string> executeList, IServerCoreStandardRegisterService serverCoreStandardRegisterService)
     {
         ApplyParameter(serverCoreStandardRegisterService);
-        serverMultiStandardCoreServiceDictionary.Add(executeList, serverCoreStandardRegisterService);
+        serverMultiStandardCoreServiceDictionary.Add(executeList, () => serverCoreStandardRegisterService);
         return this;
     }
 
@@ -160,7 +161,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder RegisterStandardAsyncService(List<string> executeList, IServerCoreStandardRegisterAsyncService serverCoreStandardRegisterAsyncService)
     {
         ApplyParameter(serverCoreStandardRegisterAsyncService);
-        serverMultiStandardCoreAsyncServiceDictionary.Add(executeList, serverCoreStandardRegisterAsyncService);
+        serverMultiStandardCoreAsyncServiceDictionary.Add(executeList, () => serverCoreStandardRegisterAsyncService);
         return this;
     }
 
