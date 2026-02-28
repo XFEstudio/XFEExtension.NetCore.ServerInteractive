@@ -119,15 +119,49 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEStandardServerCoreOptions<T> options) where T : class
     {
-        ArgumentNullException.ThrowIfNull(options);
-        var dataTableBuilder = options.DataTableManagerBuilder ?? XFEDataTableManagerBuilder.CreateBuilder();
-        return xFEServerCoreBuilder.UseXFEStandardServerCore(
-            options.GetUserFunction ?? throw new ArgumentNullException(nameof(options.GetUserFunction)),
-            options.GetEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.GetEncryptedUserLoginModelFunction)),
-            options.AddEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.AddEncryptedUserLoginModelFunction)),
-            options.RemoveEncryptedUserLoginModelFunction ?? throw new ArgumentNullException(nameof(options.RemoveEncryptedUserLoginModelFunction)),
-            options.GetLoginKeepDays ?? throw new ArgumentNullException(nameof(options.GetLoginKeepDays)),
-            options.LoginResultConvertFunction ?? throw new ArgumentNullException(nameof(options.LoginResultConvertFunction)),
-            dataTableBuilder);
+        if (options is null) return xFEServerCoreBuilder;
+
+        // start with base builder
+        var builder = xFEServerCoreBuilder;
+
+        // If user-related functions are provided, add user parameters and login services
+        var hasUserFunctions = options.GetUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null
+            && options.AddEncryptedUserLoginModelFunction is not null && options.RemoveEncryptedUserLoginModelFunction is not null
+            && options.GetLoginKeepDays is not null && options.LoginResultConvertFunction is not null;
+
+        if (hasUserFunctions)
+        {
+            builder = builder.AddUserParameterBase(options.GetUserFunction!, options.GetEncryptedUserLoginModelFunction!, options.AddEncryptedUserLoginModelFunction!, options.RemoveEncryptedUserLoginModelFunction!, options.GetLoginKeepDays!, options.LoginResultConvertFunction!);
+        }
+
+        // DataTableManager requires both user functions and a builder
+        if (options.DataTableManagerBuilder is not null && options.GetUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null)
+        {
+            builder = builder.AddDataTableManager(options.DataTableManagerBuilder, options.GetUserFunction, options.GetEncryptedUserLoginModelFunction);
+        }
+
+        // Common services that don't strictly require user functions
+        builder = builder.AddEntryPotinVerify()
+                         .AddDailyCounterService()
+                         .AddXFEErrorProcessService()
+                         .AddConnectService();
+
+        // Add services that depend on user functions if available
+        if (hasUserFunctions)
+        {
+            builder = builder.AddStandardLoginService<T>().AddServerLogService().AddIpBannerService();
+        }
+
+        return builder;
+    }
+
+    /// <summary>
+    /// 使用 XFE 标准服务器核心，提供 options lambda 初始化器
+    /// </summary>
+    public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, Action<XFEStandardServerCoreOptions<T>> optionsBuilder) where T : class
+    {
+        var options = new XFEStandardServerCoreOptions<T>();
+        optionsBuilder?.Invoke(options);
+        return xFEServerCoreBuilder.UseXFEStandardServerCore(options);
     }
 }

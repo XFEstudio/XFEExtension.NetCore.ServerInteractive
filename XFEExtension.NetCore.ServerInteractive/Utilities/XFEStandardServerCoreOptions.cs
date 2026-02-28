@@ -27,7 +27,7 @@ public class XFEStandardServerCoreOptions<T> where T : class
     /// <summary>
     /// 获取登录保持天数函数
     /// </summary>
-    public Func<int>? GetLoginKeepDays { get; set; }
+    public Func<int> GetLoginKeepDays { get; set; } = () => 7;
     /// <summary>
     /// 登录结果转换函数（将用户模型转换为要返回给客户端的登录结果模型）
     /// </summary>
