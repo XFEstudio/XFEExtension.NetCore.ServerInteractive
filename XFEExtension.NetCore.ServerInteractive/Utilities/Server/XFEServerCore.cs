@@ -112,7 +112,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             if (!execute.IsNullOrEmpty())
             {
                 //Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
-                Console.Write($"【{e.ClientIP}】请求方法：{execute}：");
+                Console.Write($"【{e.ClientIP}】请求方法-{execute}：");
                 var stopWatch = Stopwatch.StartNew();
                 if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
@@ -133,12 +133,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             StatusCode = r.StatusCode,
                             Handled = r.Handled,
                             CyberCommRequestEventArgs = e,
-                            ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
+                            ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                         });
                     }
                     //Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     stopWatch.Stop();
-                    Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                    Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
                 else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsyncFactory))
@@ -159,11 +159,11 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             StatusCode = r.StatusCode,
                             Handled = r.Handled,
                             CyberCommRequestEventArgs = e,
-                            ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
+                            ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                         });
                     }
                     stopWatch.Stop();
-                    Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                    Console.WriteLine($"\t成功！请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
                 foreach (var key in standardMultiCoreServiceDictionary.Keys)
@@ -187,11 +187,11 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                                 StatusCode = r.StatusCode,
                                 Handled = r.Handled,
                                 CyberCommRequestEventArgs = e,
-                                ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
+                                ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                             });
                         }
                         stopWatch.Stop();
-                        Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                        Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }
@@ -216,11 +216,11 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                                 StatusCode = r.StatusCode,
                                 Handled = r.Handled,
                                 CyberCommRequestEventArgs = e,
-                                ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
+                                ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                             });
                         }
                         stopWatch.Stop();
-                        Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                        Console.WriteLine($"\t成功！请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }
@@ -228,7 +228,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     CyberCommRequestEventArgs = e,
-                    ServerException = new ExecutionUnregisteredException($"请求的方法未注册：{execute}")
+                    ServerException = new ExecutionUnregisteredException($"请求的方法未注册-{execute}")
                 });
             }
         }
