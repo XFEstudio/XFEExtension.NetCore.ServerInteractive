@@ -16,5 +16,5 @@ public class XFEDataTableManagerService : ServerCoreStandardRegisterAsyncService
     public XFEDataTableManager TableManager { get; set; }
 
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived() => await TableManager.Execute(Execute, QueryableJsonNode!, ReturnArgs!);
+    public override async Task StandardRequestReceived() => await TableManager.Execute(Execute, Json!, ReturnArgs!);
 }

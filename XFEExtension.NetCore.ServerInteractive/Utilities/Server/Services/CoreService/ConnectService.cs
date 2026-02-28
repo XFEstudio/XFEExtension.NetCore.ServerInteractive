@@ -1,6 +1,4 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -10,5 +8,5 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class ConnectService : ServerCoreStandardRegisterAsyncServiceBase
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived() => await ReturnArgs!.Args.ReplyAndClose(DateTime.Now.ToString());
+    public override async Task StandardRequestReceived() => await Close(DateTime.Now.ToString());
 }

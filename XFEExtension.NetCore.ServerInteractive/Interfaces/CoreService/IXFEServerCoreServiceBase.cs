@@ -23,12 +23,12 @@ public interface IXFEServerCoreServiceBase
     /// <summary>
     /// 当前请求的 json 节点
     /// </summary>
-    QueryableJsonNode? QueryableJsonNode { get; set; }
+    QueryableJsonNode Json { get; set; }
 
     /// <summary>
     /// 当前请求的返回参数
     /// </summary>
-    ServerCoreReturnArgs? ReturnArgs { get; set; }
+    ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <summary>
     /// 关闭并返回 OK
@@ -36,7 +36,15 @@ public interface IXFEServerCoreServiceBase
     void OK();
 
     /// <summary>
+    /// 返回信息并关闭
+    /// </summary>
+    /// <param name="message">要返回的信息</param>
+    Task Close(string message);
+
+    /// <summary>
     /// 返回错误信息并关闭
     /// </summary>
-    void Close(string message, HttpStatusCode code = HttpStatusCode.InternalServerError);
+    /// <param name="message">要返回的错误信息</param>
+    /// <param name="code">HTTP 状态码</param>
+    void Error(string message, HttpStatusCode code = HttpStatusCode.InternalServerError);
 }

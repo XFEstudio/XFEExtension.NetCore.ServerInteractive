@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.DelegateExtension;
@@ -109,7 +110,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (!execute.IsNullOrEmpty())
             {
-                Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
+                //Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
+                Console.Write($"【{e.ClientIP}】请求方法：{execute}：");
+                var stopWatch = Stopwatch.StartNew();
                 if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
                     var serviceInstance = serviceFactory();
@@ -118,7 +121,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     {
                         serviceInstance.XFEServerCore = this;
                         serviceInstance.Execute = execute;
-                        serviceInstance.QueryableJsonNode = queryableJsonNode;
+                        serviceInstance.Json = queryableJsonNode;
                         serviceInstance.ReturnArgs = r;
                         serviceInstance.StandardRequestReceived();
                     }
@@ -132,7 +135,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                         });
                     }
-                    Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                    //Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                    stopWatch.Stop();
+                    Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
                     return;
                 }
                 else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsyncFactory))
@@ -142,7 +147,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     {
                         serviceAsyncInstance.XFEServerCore = this;
                         serviceAsyncInstance.Execute = execute;
-                        serviceAsyncInstance.QueryableJsonNode = queryableJsonNode;
+                        serviceAsyncInstance.Json = queryableJsonNode;
                         serviceAsyncInstance.ReturnArgs = r;
                         await serviceAsyncInstance.StandardRequestReceived();
                     }
@@ -156,7 +161,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                         });
                     }
-                    Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                    stopWatch.Stop();
+                    Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
                     return;
                 }
                 foreach (var key in standardMultiCoreServiceDictionary.Keys)
@@ -169,7 +175,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         {
                             instance.XFEServerCore = this;
                             instance.Execute = execute;
-                            instance.QueryableJsonNode = queryableJsonNode;
+                            instance.Json = queryableJsonNode;
                             instance.ReturnArgs = r;
                             instance.StandardRequestReceived();
                         }
@@ -183,7 +189,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                                 ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                             });
                         }
-                        Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                        stopWatch.Stop();
+                        Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
                         return;
                     }
                 }
@@ -197,7 +204,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         {
                             instance.XFEServerCore = this;
                             instance.Execute = execute;
-                            instance.QueryableJsonNode = queryableJsonNode;
+                            instance.Json = queryableJsonNode;
                             instance.ReturnArgs = r;
                             await instance.StandardRequestReceived();
                         }
@@ -211,7 +218,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                                 ServerException = new XFEServerCoreRequestInnerException($"请求异常：{execute}", ex)
                             });
                         }
-                        Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                        stopWatch.Stop();
+                        Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
                         return;
                     }
                 }

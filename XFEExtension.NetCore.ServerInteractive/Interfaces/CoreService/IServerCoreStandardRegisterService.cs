@@ -1,9 +1,4 @@
-﻿using System.Net;
-using XFEExtension.NetCore.CyberComm;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
-
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 /// <summary>
 /// 服务器标准核心服务
