@@ -1,6 +1,7 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Profiles;
 using XFEExtension.NetCore.StringExtension;
+using XFEExtension.NetCore.XFEConsole;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
@@ -26,7 +27,7 @@ public class ServerIpInitializer : ServerInitializerServiceBase
                     ipAddress = string.Empty;
                     while (ipAddress.IsNullOrWhiteSpace())
                     {
-                        Console.Write("请输入绑定的IP：");
+                        XFEConsole.XFEConsole.CurrentConsoleTextWriter?.OriginalTextWriter.Write("请输入绑定的IP：");
                         ipAddress = Console.ReadLine();
                     }
                     ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;

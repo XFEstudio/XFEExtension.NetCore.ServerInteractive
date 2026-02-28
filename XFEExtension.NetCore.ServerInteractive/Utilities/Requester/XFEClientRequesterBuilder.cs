@@ -2,6 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
@@ -29,6 +30,21 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         builder.xFEClientRequester.RequestAddress = requestAddress;
         builder.xFEClientRequester.Session = session;
         builder.xFEClientRequester.ComputerInfo = computerInfo;
+        builder.AddParameter("XFEClientRequester", builder.xFEClientRequester);
+        return builder;
+    }
+
+    /// <summary>
+    /// 创建构建器
+    /// </summary>
+    /// <param name="requestAddress">请求地址</param>
+    /// <returns></returns>
+    public static XFEClientRequesterBuilder CreateBuilder(string requestAddress = "http://localhost:8080/")
+    {
+        var builder = new XFEClientRequesterBuilderImpl();
+        builder.xFEClientRequester.RequestAddress = requestAddress;
+        builder.xFEClientRequester.Session = string.Empty;
+        builder.xFEClientRequester.ComputerInfo = DeviceHelper.GetUniqueHardwareId();
         builder.AddParameter("XFEClientRequester", builder.xFEClientRequester);
         return builder;
     }

@@ -17,14 +17,14 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
     /// <inheritdoc/>
     public override async Task StandardRequestReceived()
     {
-        Console.Write($"【{ReturnArgs!.Args.ClientIP}】登录请求：");
-        var account = Json!["account"].ToString();
-        var password = Json!["password"].ToString();
-        var computerInfo = Json!["computerInfo"].ToString();
+        Console.Write($"登录请求：");
+        var account = Json["account"].ToString();
+        var password = Json["password"].ToString();
+        var computerInfo = Json["computerInfo"].ToString();
         if (account.IsNullOrWhiteSpace()) Error("账户名不能为空");
         if (password.IsNullOrWhiteSpace()) Error("登录密码不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) Error("电脑信息不能为空");
-        var user = UserHelper.GetUser(Json!["account"], Json!["password"], GetUserFunction(), ReturnArgs!);
+        var user = UserHelper.GetUser(Json["account"], Json["password"], GetUserFunction(), ReturnArgs!);
         Console.WriteLine($"{account}（{computerInfo}）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
         var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);

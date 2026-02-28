@@ -57,9 +57,9 @@ public abstract class XFEClientRequester : IRequesterBase
     /// <exception cref="XFERequesterException"></exception>
     public async Task<ClientRequestResult<object>> Request(string serviceName, params object[] parameters)
     {
+        var result = new ClientRequestResult<object>();
         try
         {
-            var result = new ClientRequestResult<object>();
             if (requestServiceDictionary.TryGetValue(serviceName, out var service))
             {
                 result = await service.Request<object>(parameters);
@@ -103,7 +103,8 @@ public abstract class XFEClientRequester : IRequesterBase
         catch (Exception ex)
         {
             MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(ex.Message, HttpStatusCode.InternalServerError));
-            return default!;
+            result.Message = ex.Message;
+            return result;
         }
         throw new XFERequesterException("请求的方法未注册");
     }

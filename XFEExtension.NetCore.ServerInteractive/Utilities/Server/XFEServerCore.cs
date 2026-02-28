@@ -7,6 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.Exceptions;
 using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
@@ -137,7 +138,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     }
                     //Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     stopWatch.Stop();
-                    Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
+                    Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
                 else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsyncFactory))
@@ -162,7 +163,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         });
                     }
                     stopWatch.Stop();
-                    Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
+                    Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
                 foreach (var key in standardMultiCoreServiceDictionary.Keys)
@@ -190,7 +191,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             });
                         }
                         stopWatch.Stop();
-                        Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
+                        Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }
@@ -219,7 +220,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             });
                         }
                         stopWatch.Stop();
-                        Console.WriteLine($"\t{execute} 请求处理完成！[{stopWatch.ElapsedMilliseconds:F1}ms]");
+                        Console.WriteLine($"\t{execute} 请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }

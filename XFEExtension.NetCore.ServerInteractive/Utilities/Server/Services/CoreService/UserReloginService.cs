@@ -1,11 +1,9 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -17,10 +15,10 @@ public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T :
     /// <inheritdoc/>
     public override async Task StandardRequestReceived()
     {
-        Console.Write($"【{ReturnArgs!.Args.ClientIP}】校验登录请求：");
-        var session = Regex.Unescape(Json!["session"].ToString());
+        Console.Write($"校验登录请求：");
+        var session = Regex.Unescape(Json["session"].ToString());
         Console.WriteLine(session);
-        var computerInfo = Json!["computerInfo"].ToString();
+        var computerInfo = Json["computerInfo"].ToString();
         if (session.IsNullOrWhiteSpace()) Error("Session值不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) Error("电脑信息不能为空");
         var split = session.Split('|');

@@ -8,7 +8,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program
 {
-    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://27.18.158.23:27177/api", string.Empty, DeviceHelper.GetUniqueHardwareId())
+    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:27177/api")
         .UseXFEStandardRequest<UserFaceInfo>()
         .Build();
 
@@ -21,7 +21,7 @@ internal class Program
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    //[SMTest("Admin", "123456")]
+    [SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)
     {
         var result = await xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
@@ -43,7 +43,7 @@ internal class Program
         }
     }
 
-    //[SMTest]
+    [SMTest]
     public static async Task ReLogin()
     {
         var result = await xFEClientRequester.Request<UserFaceInfo>("relogin");
@@ -63,15 +63,22 @@ internal class Program
     [SMTest]
     public static async Task Check()
     {
-        var result = await xFEClientRequester.Request<string>("check_connect");
-        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        try
         {
-            Console.WriteLine(result.Result);
+            var result = await xFEClientRequester.Request<DateTime>("check_connect");
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                Console.WriteLine(result.Result);
+            }
+            else
+            {
+                Console.WriteLine(result.StatusCode);
+                Console.WriteLine(result.Message);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine(result.StatusCode);
-            Console.WriteLine(result.Message);
+            Console.WriteLine(ex);
         }
     }
 
