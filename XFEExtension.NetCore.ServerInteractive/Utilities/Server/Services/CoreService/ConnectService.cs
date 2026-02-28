@@ -8,5 +8,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class ConnectService : ServerCoreStandardRegisterAsyncServiceBase
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived() => await Close(DateTime.Now.ToString());
+    public override async Task StandardRequestReceived()
+    {
+        Console.Write("检查连接");
+        await Close(DateTime.Now.ToString());
+    }
 }

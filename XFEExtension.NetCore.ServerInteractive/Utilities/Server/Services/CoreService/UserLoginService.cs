@@ -1,11 +1,8 @@
 ﻿using System.Net;
 using System.Text.Json;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
-using XFEExtension.NetCore.StringExtension.Json;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -17,7 +14,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
     /// <inheritdoc/>
     public override async Task StandardRequestReceived()
     {
-        Console.Write($"登录请求：");
+        Console.Write("登录请求");
         var account = Json["account"].ToString();
         var password = Json["password"].ToString();
         var computerInfo = Json["computerInfo"].ToString();
@@ -52,7 +49,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 }
             };
             AddEncryptedUserLoginModelFunction(userLogin);
-            Console.WriteLine($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
+            Console.Write($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
             await ReturnArgs!.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
@@ -65,7 +62,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
             userLogin.UserLoginModel.LastIPAddress = ReturnArgs!.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
-            Console.WriteLine($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
+            Console.Write($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
             await Close(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",

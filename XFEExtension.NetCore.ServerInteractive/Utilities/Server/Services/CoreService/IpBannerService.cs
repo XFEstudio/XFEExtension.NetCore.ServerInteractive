@@ -28,7 +28,7 @@ public class IpBannerService : ServerCoreUserServiceBase
         switch (Execute)
         {
             case "get_bannedIpList":
-                Console.Write($"获取禁止的IP地址列表请求");
+                Console.Write("获取禁止的IP地址列表请求");
                 UserHelper.ValidatePermission(Json["session"], Json["computerInfo"], ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
                 await Close(ServerBaseProfile.BannedIPAddressList.ToJson());
                 break;

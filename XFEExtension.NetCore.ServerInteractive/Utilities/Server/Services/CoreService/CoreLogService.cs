@@ -22,14 +22,14 @@ public class CoreLogService : ServerCoreUserServiceBase
         switch (Execute)
         {
             case "get_log":
-                Console.Write($"获取服务器日志请求");
+                Console.Write("获取服务器日志请求");
                 UserHelper.ValidatePermission(Json["session"], Json["computerInfo"], ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
                 if (!DateTime.TryParse(Json["startDateTime"], out var startDatetime)) Error("起始日期格式不正确");
                 if (!DateTime.TryParse(Json["endDateTime"], out var endDatetime)) Error("结束日期格式不正确");
                 await Close(XFEConsole.XFEConsole.Log.Export(startDatetime, endDatetime));
                 break;
             case "clear_log":
-                Console.Write($"清除服务器日志请求");
+                Console.Write("清除服务器日志请求");
                 UserHelper.ValidatePermission(Json["session"], Json["computerInfo"], ReturnArgs.Args.ClientIP, ClearPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
                 if (File.Exists("server.log"))
                     File.Delete("server.log");

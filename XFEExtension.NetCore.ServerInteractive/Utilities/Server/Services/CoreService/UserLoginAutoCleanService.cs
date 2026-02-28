@@ -67,9 +67,6 @@ public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserSer
             {
                 Console.WriteLine($"[DEBUG]服务器({XFEServerCore.ServerCoreName})没有过期的Session需要清理。");
             }
-            Console.WriteLine("[DEBUG]正在保存日志...");
-            XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-            Console.WriteLine("[DEBUG]日志已保存！");
         }
         catch (Exception ex)
         {
