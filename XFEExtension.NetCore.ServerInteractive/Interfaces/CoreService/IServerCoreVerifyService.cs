@@ -1,4 +1,5 @@
-﻿using XFEExtension.NetCore.CyberComm;
+﻿using System.Net;
+using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 
 namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;

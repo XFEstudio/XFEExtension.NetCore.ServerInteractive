@@ -7,7 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 核心服务器异常处理服务
 /// </summary>
-public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
+public class ServerCoreExceptionProcessService : ServerCoreRegisterServiceBase
 {
     /// <inheritdoc/>
     public override void RequestReceived(object? sender, CyberCommRequestEventArgs e) { }
@@ -15,7 +15,7 @@ public class CoreServerExceptionProcessService : ServerCoreRegisterServiceBase
     /// <inheritdoc/>
     public override void ServerStarted(object? sender, EventArgs e)
     {
-        Console.WriteLine($"服务器({XFEServerCore.CoreServerName})已启动！");
+        Console.WriteLine($"服务器({XFEServerCore.ServerCoreName})已启动！");
         XFEServerCore.ServerCoreError += XFEServerCore_ServerCoreError;
     }
 

@@ -12,12 +12,12 @@ public class ServerIpInitializer : ServerInitializerServiceBase
     /// <inheritdoc/>
     public override void Initialize()
     {
-        foreach (var coreServerService in XFEServer.CoreServerProcessService.CoreServerServiceList)
+        foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
-            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(coreServerService.CoreServerName, "http://localhost:8080/");
-            if (ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(coreServerService.CoreServerName, out var ipAddress))
+            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, "http://localhost:8080/");
+            if (ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress))
             {
-                Console.WriteLine($"正在设置服务器：{coreServerService.CoreServerName}");
+                Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");
                 Console.WriteLine($"是否绑定上一次IP：{ipAddress}？(Y/N)");
                 var key = Console.ReadKey();
                 Console.WriteLine(key.Key.ToString());
@@ -29,10 +29,10 @@ public class ServerIpInitializer : ServerInitializerServiceBase
                         Console.Write("请输入绑定的IP：");
                         ipAddress = Console.ReadLine();
                     }
-                    ServerBaseProfile.ServerLastBindingAddressDictionary[coreServerService.CoreServerName] = ipAddress;
+                    ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;
                 }
-                coreServerService.BindingIPAddress = ipAddress;
-                Console.WriteLine($"服务器{coreServerService.CoreServerName}设置完成！IP为：{ipAddress}");
+                serverCoreService.BindingIPAddress = ipAddress;
+                Console.WriteLine($"服务器{serverCoreService.ServerCoreName}设置完成！IP为：{ipAddress}");
             }
         }
         ServerBaseProfile.SaveProfile();

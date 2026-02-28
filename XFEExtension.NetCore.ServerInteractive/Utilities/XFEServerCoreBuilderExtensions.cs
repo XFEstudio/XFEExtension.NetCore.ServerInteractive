@@ -68,7 +68,7 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddXFEErrorProcessService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddService<CoreServerExceptionProcessService>();
+    public static XFEServerCoreBuilder AddXFEErrorProcessService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddService<ServerCoreExceptionProcessService>();
 
     /// <summary>
     /// 添加连接检查服务

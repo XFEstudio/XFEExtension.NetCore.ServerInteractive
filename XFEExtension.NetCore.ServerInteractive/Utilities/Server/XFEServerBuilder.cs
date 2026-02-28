@@ -12,8 +12,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
 {
     bool addedProcessServiced = false;
-    ICoreServerProcessService? coreServerProcess;
-    readonly List<ICoreServerService> coreServerServiceList = [];
+    IServerCoreProcessService? serverCoreProcess;
+    readonly List<IServerCoreService> serverCoreServiceList = [];
 
     /// <summary>
     /// 服务器实例
@@ -86,12 +86,12 @@ public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
     /// <summary>
     /// 添加核心服务
     /// </summary>
-    /// <param name="coreServerService">核心服务对象</param>
+    /// <param name="serverCoreService">核心服务对象</param>
     /// <returns>XFE服务器构建器</returns>
-    public XFEServerBuilder AddCoreServer(ICoreServerService coreServerService)
+    public XFEServerBuilder AddServerCore(IServerCoreService serverCoreService)
     {
-        coreServerService.XFEServer = XFEServer;
-        coreServerServiceList.Add(coreServerService);
+        serverCoreService.XFEServer = XFEServer;
+        serverCoreServiceList.Add(serverCoreService);
         return this;
     }
 
@@ -100,22 +100,22 @@ public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
     /// </summary>
     /// <typeparam name="T">核心服务泛型</typeparam>
     /// <returns>XFE服务器构建器</returns>
-    public XFEServerBuilder AddCoreServer<T>() where T : ICoreServerService, new() => AddCoreServer(new T());
+    public XFEServerBuilder AddServerCore<T>() where T : IServerCoreService, new() => AddServerCore(new T());
 
     /// <summary>
     /// 添加核心服务处理程序
     /// </summary>
-    /// <param name="coreServerProcessService">核心服务处理程序对象</param>
+    /// <param name="serverCoreProcessService">核心服务处理程序对象</param>
     /// <returns>XFE服务器构建器</returns>
     /// <exception cref="XFEServerBuilderException">XFE服务器构建器异常</exception>
-    public XFEServerBuilder AddCoreProcessor(ICoreServerProcessService coreServerProcessService)
+    public XFEServerBuilder AddCoreProcessor(IServerCoreProcessService serverCoreProcessService)
     {
         if (addedProcessServiced)
             throw new XFEServerBuilderException("已经添加过处理器，处理器仅能添加一个！");
-        if (coreServerProcessService is null)
-            throw new XFEServerBuilderException("处理器为空", new ArgumentNullException(nameof(coreServerProcessService)));
+        if (serverCoreProcessService is null)
+            throw new XFEServerBuilderException("处理器为空", new ArgumentNullException(nameof(serverCoreProcessService)));
         addedProcessServiced = true;
-        coreServerProcess = coreServerProcessService;
+        serverCoreProcess = serverCoreProcessService;
         return this;
     }
 
@@ -124,7 +124,7 @@ public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
     /// </summary>
     /// <typeparam name="T">核心服务处理程序泛型</typeparam>
     /// <returns>XFE服务器构建器</returns>
-    public XFEServerBuilder AddCoreProcessor<T>() where T : ICoreServerProcessService, new() => AddCoreProcessor(new T());
+    public XFEServerBuilder AddCoreProcessor<T>() where T : IServerCoreProcessService, new() => AddCoreProcessor(new T());
 
     /// <summary>
     /// 构建XFE服务器
@@ -133,10 +133,10 @@ public abstract class XFEServerBuilder : XFEBuilderBase<XFEServerBuilder>
     /// <exception cref="XFEServerBuilderException">未添加核心处理器异常</exception>
     public XFEServer Build()
     {
-        if (!addedProcessServiced || coreServerProcess is null)
+        if (!addedProcessServiced || serverCoreProcess is null)
             throw new XFEServerBuilderException("未添加核心处理器！");
-        coreServerProcess.CoreServerServiceList = coreServerServiceList;
-        XFEServer.CoreServerProcessService = coreServerProcess;
+        serverCoreProcess.ServerCoreServiceList = serverCoreServiceList;
+        XFEServer.ServerCoreProcessService = serverCoreProcess;
         return XFEServer;
     }
 }

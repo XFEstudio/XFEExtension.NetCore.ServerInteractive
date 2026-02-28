@@ -15,7 +15,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 /// XFE服务器核心
 /// </summary>
 [CreateImpl]
-public abstract class XFEServerCore : CoreServerServiceBase
+public abstract class XFEServerCore : ServerCoreServiceBase
 {
     static int serverCount = 1;
     /// <summary>
@@ -58,7 +58,7 @@ public abstract class XFEServerCore : CoreServerServiceBase
     /// <summary>
     /// XFE核心服务器
     /// </summary>
-    public XFEServerCore() => CoreServerName = $"XFE服务器-{serverCount++}";
+    public XFEServerCore() => ServerCoreName = $"XFE服务器-{serverCount++}";
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {

@@ -1,7 +1,7 @@
 ﻿namespace XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 
-internal partial class CoreServerProcessServiceBaseImpl
+internal partial class ServerCoreProcessServiceBaseImpl
 {
     /// <inheritdoc/>
-    public override Task ProcessCoreServer() => Task.CompletedTask;
+    public override Task ProcessServerCore() => Task.CompletedTask;
 }

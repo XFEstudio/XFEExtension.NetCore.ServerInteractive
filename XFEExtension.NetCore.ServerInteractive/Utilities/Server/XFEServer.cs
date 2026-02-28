@@ -16,7 +16,7 @@ public class XFEServer
     /// <summary>
     /// 核心服务器处理服务
     /// </summary>
-    public ICoreServerProcessService CoreServerProcessService { get; set; } = new CoreServerProcessServiceBaseImpl();
+    public IServerCoreProcessService ServerCoreProcessService { get; set; } = new ServerCoreProcessServiceBaseImpl();
 
     /// <summary>
     /// 启动服务器
@@ -30,6 +30,6 @@ public class XFEServer
             serverService.StartService();
         foreach (var asyncServerService in asyncServerServiceList)
             await asyncServerService.StartServiceAsync();
-        await CoreServerProcessService.ProcessCoreServer();
+        await ServerCoreProcessService.ProcessServerCore();
     }
 }

@@ -36,7 +36,7 @@ public static class XFEServerBuilderExtensions
     /// </summary>
     /// <param name="xFEServerBuilder"></param>
     /// <returns></returns>
-    public static XFEServerBuilder AddXFECoreProcessor(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddCoreProcessor<XFECoreServerProcessService>();
+    public static XFEServerBuilder AddXFECoreProcessor(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddCoreProcessor<XFEServerCoreProcessService>();
 
     /// <summary>
     /// 使用XFEIP初始化器

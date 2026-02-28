@@ -191,7 +191,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         xFEServerCore.standardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
         xFEServerCore.standardMultiCoreAsyncServiceDictionary = serverMultiStandardCoreAsyncServiceDictionary;
         if (!name.IsNullOrEmpty())
-            xFEServerCore.CoreServerName = name;
+            xFEServerCore.ServerCoreName = name;
         return xFEServerCore;
     }
 }

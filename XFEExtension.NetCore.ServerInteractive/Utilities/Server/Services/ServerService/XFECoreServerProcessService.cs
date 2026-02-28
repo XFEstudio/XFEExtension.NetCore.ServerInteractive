@@ -6,10 +6,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 /// <summary>
 /// XFE核心服务器处理程序
 /// </summary>
-public class XFECoreServerProcessService : CoreServerProcessServiceBase
+public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
 {
     /// <inheritdoc/>
-    public override async Task ProcessCoreServer()
+    public override async Task ProcessServerCore()
     {
         while (true)
         {
@@ -27,7 +27,7 @@ public class XFECoreServerProcessService : CoreServerProcessServiceBase
                     Console.WriteLine("[DEBUG]未找到日志文件！");
                 }
                 var taskList = new List<Task>();
-                foreach (var coreServerService in CoreServerServiceList)
+                foreach (var serverCoreService in ServerCoreServiceList)
                 {
                     taskList.Add(Task.Run(async () =>
                     {
@@ -35,31 +35,31 @@ public class XFECoreServerProcessService : CoreServerProcessServiceBase
                         {
                             try
                             {
-                                Console.WriteLine($"[DEBUG]正在启动服务器：{coreServerService.CoreServerName}({coreServerService.BindingIPAddress})...");
-                                await coreServerService.StartServerCore();
-                                Console.WriteLine($"[ERROR]服务器({coreServerService.CoreServerName})因未知原因自行结束！");
-                                Console.WriteLine("[DEBUG]准备重启服务器({coreServerService.CoreServerName})");
+                                Console.WriteLine($"[DEBUG]正在启动服务器：{serverCoreService.ServerCoreName}({serverCoreService.BindingIPAddress})...");
+                                await serverCoreService.StartServerCore();
+                                Console.WriteLine($"[ERROR]服务器({serverCoreService.ServerCoreName})因未知原因自行结束！");
+                                Console.WriteLine("[DEBUG]准备重启服务器({serverCoreService.ServerCoreName})");
                                 await Task.Delay(1000);
-                                Console.WriteLine("[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 3...");
+                                Console.WriteLine("[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 3...");
                                 await Task.Delay(1000);
-                                Console.WriteLine("[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 2...");
+                                Console.WriteLine("[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 2...");
                                 await Task.Delay(1000);
-                                Console.WriteLine("[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 1...");
+                                Console.WriteLine("[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 1...");
                                 Console.WriteLine("[DEBUG]正在保存日志...");
                                 XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
                                 Console.WriteLine("[DEBUG]日志已保存！");
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine($"[ERROR]服务器({coreServerService.CoreServerName})错误：{ex.Message}：{ex.InnerException?.Message}");
+                                Console.WriteLine($"[ERROR]服务器({serverCoreService.ServerCoreName})错误：{ex.Message}：{ex.InnerException?.Message}");
                                 Console.WriteLine($"[TRACE]{ex.StackTrace}");
-                                Console.WriteLine($"[DEBUG]准备重启服务器({coreServerService.CoreServerName})");
+                                Console.WriteLine($"[DEBUG]准备重启服务器({serverCoreService.ServerCoreName})");
                                 await Task.Delay(1000);
-                                Console.WriteLine($"[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 3...");
+                                Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 3...");
                                 await Task.Delay(1000);
-                                Console.WriteLine($"[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 2...");
+                                Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 2...");
                                 await Task.Delay(1000);
-                                Console.WriteLine($"[DEBUG]正在重启服务器({coreServerService.CoreServerName}) 1...");
+                                Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 1...");
                                 Console.WriteLine("[DEBUG]正在保存日志...");
                                 XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
                                 Console.WriteLine("[DEBUG]日志已保存！");
