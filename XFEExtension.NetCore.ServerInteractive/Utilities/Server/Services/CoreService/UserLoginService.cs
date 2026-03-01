@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived()
+    public override async Task RequestReceiveAsync()
     {
         Console.Write("登录请求");
         var account = Json["account"].ToString();

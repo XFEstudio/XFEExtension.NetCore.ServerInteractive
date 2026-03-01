@@ -41,17 +41,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     internal Dictionary<string, Func<IServerCoreStandardService>> standardCoreServiceDictionary = [];
     /// <summary>
-    /// 核心标准异步服务工厂字典（按请求创建实例）
-    /// </summary>
-    internal Dictionary<string, Func<IServerCoreStandardAsyncService>> standardCoreAsyncServiceDictionary = [];
-    /// <summary>
     /// 核心多重标准服务工厂字典（按请求创建实例）
     /// </summary>
     internal Dictionary<List<string>, Func<IServerCoreStandardService>> standardMultiCoreServiceDictionary = [];
-    /// <summary>
-    /// 核心多重标准异步服务工厂字典（按请求创建实例）
-    /// </summary>
-    internal Dictionary<List<string>, Func<IServerCoreStandardAsyncService>> standardMultiCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>
@@ -124,7 +116,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         serviceInstance.Execute = execute;
                         serviceInstance.Json = queryableJsonNode;
                         serviceInstance.ReturnArgs = r;
-                        serviceInstance.StandardRequestReceived();
+                        serviceInstance.RequestReceive();
+                        await serviceInstance.RequestReceiveAsync();
                     }
                     catch (Exception ex)
                     {
@@ -141,31 +134,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
-                else if (standardCoreAsyncServiceDictionary.TryGetValue(execute, out var serviceAsyncFactory))
-                {
-                    var serviceAsyncInstance = serviceAsyncFactory();
-                    try
-                    {
-                        serviceAsyncInstance.XFEServerCore = this;
-                        serviceAsyncInstance.Execute = execute;
-                        serviceAsyncInstance.Json = queryableJsonNode;
-                        serviceAsyncInstance.ReturnArgs = r;
-                        await serviceAsyncInstance.StandardRequestReceived();
-                    }
-                    catch (Exception ex)
-                    {
-                        ServerCoreError?.Invoke(this, new()
-                        {
-                            StatusCode = r.StatusCode,
-                            Handled = r.Handled,
-                            CyberCommRequestEventArgs = e,
-                            ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
-                        });
-                    }
-                    stopWatch.Stop();
-                    Console.WriteLine($"\t成功！请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                    return;
-                }
                 foreach (var key in standardMultiCoreServiceDictionary.Keys)
                 {
                     if (key.Contains(execute))
@@ -178,7 +146,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             instance.Execute = execute;
                             instance.Json = queryableJsonNode;
                             instance.ReturnArgs = r;
-                            instance.StandardRequestReceived();
+                            instance.RequestReceive();
+                            await instance.RequestReceiveAsync();
                         }
                         catch (Exception ex)
                         {
@@ -192,35 +161,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         }
                         stopWatch.Stop();
                         Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                        return;
-                    }
-                }
-                foreach (var key in standardMultiCoreAsyncServiceDictionary.Keys)
-                {
-                    if (key.Contains(execute))
-                    {
-                        var factory = standardMultiCoreAsyncServiceDictionary[key];
-                        var instance = factory();
-                        try
-                        {
-                            instance.XFEServerCore = this;
-                            instance.Execute = execute;
-                            instance.Json = queryableJsonNode;
-                            instance.ReturnArgs = r;
-                            await instance.StandardRequestReceived();
-                        }
-                        catch (Exception ex)
-                        {
-                            ServerCoreError?.Invoke(this, new()
-                            {
-                                StatusCode = r.StatusCode,
-                                Handled = r.Handled,
-                                CyberCommRequestEventArgs = e,
-                                ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
-                            });
-                        }
-                        stopWatch.Stop();
-                        Console.WriteLine($"\t成功！请求处理完成！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }

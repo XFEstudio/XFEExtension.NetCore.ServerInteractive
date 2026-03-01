@@ -13,7 +13,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived()
+    public override async Task RequestReceiveAsync()
     {
         Console.Write($"校验登录请求：");
         var session = Regex.Unescape(Json["session"].ToString());

@@ -5,10 +5,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 连接校验服务
 /// </summary>
-public class ConnectService : ServerCoreStandardAsyncServiceBase
+public class ConnectService : ServerCoreStandardServiceBase
 {
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived()
+    public override async Task RequestReceiveAsync()
     {
         Console.Write("检查连接");
         await Close(DateTime.Now.ToString());

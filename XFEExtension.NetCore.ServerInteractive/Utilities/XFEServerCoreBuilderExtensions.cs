@@ -18,7 +18,7 @@ public static class XFEServerCoreBuilderExtensions
     /// <param name="getUserFunction"></param>
     /// <param name="getEncryptedUserLoginModelFunction"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddDataTableManager(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction)).RegisterStandardAsyncService<XFEDataTableManagerService>(xFEDataTableManagerBuilder.ExecuteList);
+    public static XFEServerCoreBuilder AddDataTableManager(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction)).AddStandardService<XFEDataTableManagerService>(xFEDataTableManagerBuilder.ExecuteList);
 
     /// <summary>
     /// 添加用户基本参数
@@ -45,8 +45,8 @@ public static class XFEServerCoreBuilderExtensions
     /// <typeparam name="T">登录返回用户接口类型</typeparam>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddStandardLoginService<T>(this XFEServerCoreBuilder xFEServerCoreBuilder) where T : class => xFEServerCoreBuilder.RegisterStandardAsyncService<UserLoginService<T>>("login")
-            .RegisterStandardAsyncService<UserReloginService<T>>("relogin")
+    public static XFEServerCoreBuilder AddStandardLoginService<T>(this XFEServerCoreBuilder xFEServerCoreBuilder) where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>("login")
+            .AddStandardService<UserReloginService<T>>("relogin")
             .AddService<UserLoginAutoCleanService>();
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddIpBannerService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
+    public static XFEServerCoreBuilder AddIpBannerService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddStandardService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
 
     /// <summary>
     /// 添加日期统计服务
@@ -75,7 +75,7 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddConnectService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<ConnectService>("check_connect");
+    public static XFEServerCoreBuilder AddConnectService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddStandardService<ConnectService>("check_connect");
 
     /// <summary>
     /// 添加服务器入口点校验
@@ -89,7 +89,7 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddServerLogService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.RegisterStandardAsyncService<CoreLogService>(["get_log", "clear_log"]);
+    public static XFEServerCoreBuilder AddServerLogService(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddStandardService<CoreLogService>(["get_log", "clear_log"]);
 
     /// <summary>
     /// 使用XFE标准服务器核心

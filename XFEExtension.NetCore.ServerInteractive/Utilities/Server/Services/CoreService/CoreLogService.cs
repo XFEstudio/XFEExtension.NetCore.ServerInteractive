@@ -17,7 +17,7 @@ public class CoreLogService : ServerCoreUserServiceBase
     public int ClearPermission { get; set; }
 
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived()
+    public override async Task RequestReceiveAsync()
     {
         switch (Execute)
         {

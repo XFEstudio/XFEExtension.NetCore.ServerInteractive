@@ -7,8 +7,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 /// </summary>
 public abstract class ServerCoreStandardServiceBase : XFEServerCoreServiceBase, IServerCoreStandardService
 {
-    /// <summary>
-    /// 处理请求（无参，子类直接使用属性）
-    /// </summary>
-    public abstract void StandardRequestReceived();
+    /// <inheritdoc/>
+    public void Initialize() { }
+    /// <inheritdoc/>
+    public virtual void RequestReceive() { }
+    /// <inheritdoc/>
+    public virtual async Task RequestReceiveAsync() { }
 }

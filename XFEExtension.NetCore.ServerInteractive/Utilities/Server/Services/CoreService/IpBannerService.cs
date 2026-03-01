@@ -23,7 +23,7 @@ public class IpBannerService : ServerCoreUserServiceBase
     /// </summary>
     public int RemovePermission { get; set; } = 0;
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived()
+    public override async Task RequestReceiveAsync()
     {
         switch (Execute)
         {

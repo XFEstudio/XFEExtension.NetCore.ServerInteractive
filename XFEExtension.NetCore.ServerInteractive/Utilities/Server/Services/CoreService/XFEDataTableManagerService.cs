@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// XFE数据表格管理器服务
 /// </summary>
-public class XFEDataTableManagerService : ServerCoreStandardAsyncServiceBase
+public class XFEDataTableManagerService : ServerCoreStandardServiceBase
 {
     /// <summary>
     /// 数据表格管理器
@@ -14,5 +14,5 @@ public class XFEDataTableManagerService : ServerCoreStandardAsyncServiceBase
     public XFEDataTableManager TableManager { get; set; }
 
     /// <inheritdoc/>
-    public override async Task StandardRequestReceived() => await TableManager.Execute(Execute, Json, ReturnArgs!);
+    public override async Task RequestReceiveAsync() => await TableManager.Execute(Execute, Json, ReturnArgs!);
 }
