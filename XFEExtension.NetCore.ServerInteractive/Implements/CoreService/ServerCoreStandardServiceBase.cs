@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class ServerCoreStandardServiceBase : XFEServerCoreServiceBase, IServerCoreStandardService
 {
     /// <inheritdoc/>
-    public void Initialize() { }
+    public virtual void Initialize() { }
     /// <inheritdoc/>
     public virtual void RequestReceive() { }
     /// <inheritdoc/>

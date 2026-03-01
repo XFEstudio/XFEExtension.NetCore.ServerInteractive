@@ -112,6 +112,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     // inject server core reference and set context
                     try
                     {
+                        serviceInstance.Initialize();
                         serviceInstance.XFEServerCore = this;
                         serviceInstance.Execute = execute;
                         serviceInstance.Json = queryableJsonNode;
@@ -142,6 +143,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         var instance = factory();
                         try
                         {
+                            instance.Initialize();
                             instance.XFEServerCore = this;
                             instance.Execute = execute;
                             instance.Json = queryableJsonNode;
