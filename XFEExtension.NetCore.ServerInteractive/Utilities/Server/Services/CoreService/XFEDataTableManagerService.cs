@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// XFE数据表格管理器服务
 /// </summary>
-public class XFEDataTableManagerService : ServerCoreStandardRegisterAsyncServiceBase
+public class XFEDataTableManagerService : ServerCoreStandardAsyncServiceBase
 {
     /// <summary>
     /// 数据表格管理器

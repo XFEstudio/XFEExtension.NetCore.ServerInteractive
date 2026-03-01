@@ -12,13 +12,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder>
 {
     readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
-    readonly List<IServerCoreRegisterService> serverCoreServiceList = [];
+    readonly List<IServerCoreOriginalService> serverCoreServiceList = [];
     readonly List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
     readonly List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
-    readonly Dictionary<string, Func<IServerCoreStandardRegisterService>> serverStandardCoreServiceDictionary = [];
-    readonly Dictionary<string, Func<IServerCoreStandardRegisterAsyncService>> serverStandardCoreAsyncServiceDictionary = [];
-    readonly Dictionary<List<string>, Func<IServerCoreStandardRegisterService>> serverMultiStandardCoreServiceDictionary = [];
-    readonly Dictionary<List<string>, Func<IServerCoreStandardRegisterAsyncService>> serverMultiStandardCoreAsyncServiceDictionary = [];
+    readonly Dictionary<string, Func<IServerCoreStandardService>> serverStandardCoreServiceDictionary = [];
+    readonly Dictionary<string, Func<IServerCoreStandardAsyncService>> serverStandardCoreAsyncServiceDictionary = [];
+    readonly Dictionary<List<string>, Func<IServerCoreStandardService>> serverMultiStandardCoreServiceDictionary = [];
+    readonly Dictionary<List<string>, Func<IServerCoreStandardAsyncService>> serverMultiStandardCoreAsyncServiceDictionary = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -36,7 +36,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <param name="serverCoreRegisterService">服务对象</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService(IServerCoreRegisterService serverCoreRegisterService)
+    public XFEServerCoreBuilder AddService(IServerCoreOriginalService serverCoreRegisterService)
     {
         ApplyParameter(serverCoreRegisterService);
         serverCoreServiceList.Add(serverCoreRegisterService);
@@ -48,7 +48,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreRegisterService, new() => AddService(new T());
+    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreOriginalService, new() => AddService(new T());
 
     /// <summary>
     /// 添加校验服务
@@ -94,28 +94,11 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="execute">注册执行语句</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardService<T>(string execute) where T : IServerCoreStandardRegisterService, new()
+    public XFEServerCoreBuilder RegisterStandardService<T>(string execute) where T : IServerCoreStandardService, new()
     {
         serverStandardCoreServiceDictionary.Add(execute, () =>
         {
-            ApplyParameter(new T());
-            return new T();
-        });
-        return this;
-    }
-
-    /// <summary>
-    /// 注册标准服务
-    /// </summary>
-    /// <param name="execute">注册执行语句</param>
-    /// <param name="serverCoreStandardAsyncRegisterService">标准服务对象</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardAsyncService(string execute, IServerCoreStandardRegisterAsyncService serverCoreStandardAsyncRegisterService)
-    {
-        var type = serverCoreStandardAsyncRegisterService.GetType();
-        serverStandardCoreAsyncServiceDictionary.Add(execute, () =>
-        {
-            var inst = (IServerCoreStandardRegisterAsyncService)Activator.CreateInstance(type)!;
+            var inst = new T();
             ApplyParameter(inst);
             return inst;
         });
@@ -128,7 +111,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="execute">注册执行语句</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(string execute) where T : IServerCoreStandardRegisterAsyncService, new()
+    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(string execute) where T : IServerCoreStandardAsyncService, new()
     {
         serverStandardCoreAsyncServiceDictionary.Add(execute, () =>
         {
@@ -145,12 +128,12 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <param name="executeList">执行语句列表</param>
     /// <param name="serverCoreStandardRegisterService">标准服务对象</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardService(List<string> executeList, IServerCoreStandardRegisterService serverCoreStandardRegisterService)
+    public XFEServerCoreBuilder RegisterStandardService(List<string> executeList, IServerCoreStandardService serverCoreStandardRegisterService)
     {
         var type = serverCoreStandardRegisterService.GetType();
         serverMultiStandardCoreServiceDictionary.Add(executeList, () =>
         {
-            var inst = (IServerCoreStandardRegisterService)Activator.CreateInstance(type)!;
+            var inst = (IServerCoreStandardService)Activator.CreateInstance(type)!;
             ApplyParameter(inst);
             return inst;
         });
@@ -163,7 +146,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="executeList">执行语句列表</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerCoreStandardRegisterService, new() => RegisterStandardService(executeList, new T());
+    public XFEServerCoreBuilder RegisterStandardService<T>(List<string> executeList) where T : IServerCoreStandardService, new() => RegisterStandardService(executeList, new T());
 
     /// <summary>
     /// 注册多个执行语句的标准服务
@@ -171,12 +154,12 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <param name="executeList">执行语句列表</param>
     /// <param name="serverCoreStandardRegisterAsyncService">标准服务对象</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardAsyncService(List<string> executeList, IServerCoreStandardRegisterAsyncService serverCoreStandardRegisterAsyncService)
+    public XFEServerCoreBuilder RegisterStandardAsyncService(List<string> executeList, IServerCoreStandardAsyncService serverCoreStandardRegisterAsyncService)
     {
         var type = serverCoreStandardRegisterAsyncService.GetType();
         serverMultiStandardCoreAsyncServiceDictionary.Add(executeList, () =>
         {
-            var inst = (IServerCoreStandardRegisterAsyncService)Activator.CreateInstance(type)!;
+            var inst = (IServerCoreStandardAsyncService)Activator.CreateInstance(type)!;
             ApplyParameter(inst);
             return inst;
         });
@@ -189,7 +172,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <param name="executeList">执行语句列表</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(List<string> executeList) where T : IServerCoreStandardRegisterAsyncService, new() => RegisterStandardAsyncService(executeList, new T());
+    public XFEServerCoreBuilder RegisterStandardAsyncService<T>(List<string> executeList) where T : IServerCoreStandardAsyncService, new() => RegisterStandardAsyncService(executeList, new T());
 
     /// <summary>
     /// 构建XFE服务器核心

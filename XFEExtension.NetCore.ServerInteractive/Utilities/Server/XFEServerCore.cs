@@ -27,7 +27,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 核心服务列表
     /// </summary>
-    internal List<IServerCoreRegisterService> serverCoreServiceList = [];
+    internal List<IServerCoreOriginalService> serverCoreServiceList = [];
     /// <summary>
     /// 核心校验服务列表
     /// </summary>
@@ -39,19 +39,19 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 核心标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<string, Func<IServerCoreStandardRegisterService>> standardCoreServiceDictionary = [];
+    internal Dictionary<string, Func<IServerCoreStandardService>> standardCoreServiceDictionary = [];
     /// <summary>
     /// 核心标准异步服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<string, Func<IServerCoreStandardRegisterAsyncService>> standardCoreAsyncServiceDictionary = [];
+    internal Dictionary<string, Func<IServerCoreStandardAsyncService>> standardCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 核心多重标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<List<string>, Func<IServerCoreStandardRegisterService>> standardMultiCoreServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IServerCoreStandardService>> standardMultiCoreServiceDictionary = [];
     /// <summary>
     /// 核心多重标准异步服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<List<string>, Func<IServerCoreStandardRegisterAsyncService>> standardMultiCoreAsyncServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IServerCoreStandardAsyncService>> standardMultiCoreAsyncServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>

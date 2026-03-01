@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录到期清除服务
 /// </summary>
-public class UserLoginAutoCleanService : ServerCoreRegisterServiceBase, IUserServiceBase
+public class UserLoginAutoCleanService : ServerCoreOriginalServiceBase, IUserServiceBase
 {
     /// <inheritdoc/>
     public Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; } = () => [];

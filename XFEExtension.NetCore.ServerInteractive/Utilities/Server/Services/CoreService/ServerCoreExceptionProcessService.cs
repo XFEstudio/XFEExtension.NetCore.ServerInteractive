@@ -7,7 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 核心服务器异常处理服务
 /// </summary>
-public class ServerCoreExceptionProcessService : ServerCoreRegisterServiceBase
+public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
 {
     /// <inheritdoc/>
     public override void RequestReceived(object? sender, CyberCommRequestEventArgs e) { }

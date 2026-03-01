@@ -7,7 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <inheritdoc/>
-public abstract class ServerCoreUserServiceBase : ServerCoreStandardRegisterAsyncServiceBase, IUserServiceBase
+public abstract class ServerCoreUserServiceBase : ServerCoreStandardAsyncServiceBase, IUserServiceBase
 {
     /// <inheritdoc/>
     public Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; } = () => [];

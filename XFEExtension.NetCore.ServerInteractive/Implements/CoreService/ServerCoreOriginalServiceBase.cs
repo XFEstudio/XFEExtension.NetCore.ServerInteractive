@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 /// <summary>
 /// 服务器核心服务基类
 /// </summary>
-public abstract class ServerCoreRegisterServiceBase : XFEServerCoreServiceBase, IServerCoreRegisterService
+public abstract class ServerCoreOriginalServiceBase : XFEServerCoreServiceBase, IServerCoreOriginalService
 {
     /// <inheritdoc/>
     public abstract void ServerStarted(object? sender, EventArgs e);

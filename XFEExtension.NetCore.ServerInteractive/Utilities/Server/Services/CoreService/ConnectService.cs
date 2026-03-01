@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 连接校验服务
 /// </summary>
-public class ConnectService : ServerCoreStandardRegisterAsyncServiceBase
+public class ConnectService : ServerCoreStandardAsyncServiceBase
 {
     /// <inheritdoc/>
     public override async Task StandardRequestReceived()

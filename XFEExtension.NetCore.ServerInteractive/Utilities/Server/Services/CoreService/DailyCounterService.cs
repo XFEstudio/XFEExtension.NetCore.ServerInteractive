@@ -7,7 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 核心服务器天数服务
 /// </summary>
-public class DailyCounterService : ServerCoreRegisterServiceBase
+public class DailyCounterService : ServerCoreOriginalServiceBase
 {
     private int runningDays = 0;
     private DateTime startTime;
