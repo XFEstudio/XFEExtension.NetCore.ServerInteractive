@@ -22,7 +22,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         if (password.IsNullOrWhiteSpace()) Error("登录密码不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) Error("电脑信息不能为空");
         var user = UserHelper.GetUser(Json["account"], Json["password"], GetUserFunction(), ReturnArgs!);
-        Console.WriteLine($"{account}（{computerInfo}）");
+        Console.Write($"{account}（{computerInfo[..10]}...）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
         var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
         //for (int i = 0; i < userLoginList.Count(); i++)
@@ -49,7 +49,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 }
             };
             AddEncryptedUserLoginModelFunction(userLogin);
-            Console.Write($"[DEBUG]用户 {user.UserName} 登录成功，登录到期时间 {userLogin.UserLoginModel.EndDateTime}");
+            Console.Write($"到期时间 {userLogin.UserLoginModel.EndDateTime}");
             await ReturnArgs!.Args.ReplyAndClose(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
@@ -62,7 +62,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
             userLogin.UserLoginModel.LastIPAddress = ReturnArgs!.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
-            Console.Write($"[DEBUG]用户 {user.UserName} 已登录，登录到期时间：{userLogin.UserLoginModel.EndDateTime}");
+            Console.Write($"到期时间：{userLogin.UserLoginModel.EndDateTime}");
             await Close(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
