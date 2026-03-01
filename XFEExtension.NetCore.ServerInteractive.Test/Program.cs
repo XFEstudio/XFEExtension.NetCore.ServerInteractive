@@ -3,13 +3,16 @@ using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities;
-using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program
 {
     static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:27177/api")
         .UseXFEStandardRequest<UserFaceInfo>()
+        .AddRequest("test", (_, _, _) => new
+        {
+            execute = "test"
+        }, response => response)
         .Build();
 
     static readonly TableRequester tableRequester = new();
@@ -21,7 +24,7 @@ internal class Program
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    [SMTest("Admin", "123456")]
+    //[SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)
     {
         var result = await xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
@@ -44,6 +47,21 @@ internal class Program
     }
 
     [SMTest]
+    public static async Task Test()
+    {
+        var result = await xFEClientRequester.Request<string>("test");
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine(result.Result);
+        }
+        else
+        {
+            Console.WriteLine(result.StatusCode);
+            Console.WriteLine(result.Message);
+        }
+    }
+
+    //[SMTest]
     public static async Task ReLogin()
     {
         var result = await xFEClientRequester.Request<UserFaceInfo>("relogin");
@@ -60,7 +78,7 @@ internal class Program
         }
     }
 
-    [SMTest]
+    //[SMTest]
     public static async Task Check()
     {
         try
