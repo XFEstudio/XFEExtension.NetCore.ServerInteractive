@@ -6,7 +6,7 @@
 public interface IServerCoreStandardService : IXFEServerCoreServiceBase
 {
     /// <summary>
-    /// 服务器标准核心服务初始化事件
+    /// 服务器标准核心服务初始化事件（在请求初始化的时候执行）
     /// </summary>
     void Initialize();
     /// <summary>
