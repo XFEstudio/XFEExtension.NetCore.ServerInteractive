@@ -22,12 +22,12 @@ public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T :
         if (session.IsNullOrWhiteSpace()) Error("Session值不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) Error("电脑信息不能为空");
         var split = session.Split('|');
-        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel) throw ReturnArgs.GetError("Session值不正确或已过期", HttpStatusCode.Forbidden);
+        if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel) throw ReturnArgs.Error("Session值不正确或已过期", HttpStatusCode.Forbidden);
         if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) Error("电脑信息不匹配");
         var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
         if (userLoginModel.UID.IsNullOrWhiteSpace() || userLoginModel.UID != encryptedUserLoginModel.UserLoginModel.UID)
             Error("登录用户ID不匹配");
-        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw ReturnArgs.GetError("用户ID未注册", HttpStatusCode.Forbidden);
+        var user = UserHelper.GetUser(userLoginModel.UID, GetUserFunction()) ?? throw ReturnArgs.Error("用户ID未注册", HttpStatusCode.Forbidden);
         if (userLoginModel.LastIPAddress != ReturnArgs.Args.ClientIP) Error("IP地址不匹配");
         if (userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) Error("IP地址不匹配");
         if (userLoginModel.EndDateTime < DateTime.Now) Error("登录已过期");

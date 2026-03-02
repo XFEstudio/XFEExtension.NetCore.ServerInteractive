@@ -26,15 +26,27 @@ public class ServerCoreReturnArgs : Exception
     public required CyberCommRequestEventArgs Args { get; set; }
 
     /// <summary>
+    /// 正常结束与客户端的通讯
+    /// </summary>
+    public void OK() => Args.Close();
+
+    /// <summary>
     /// 结束与客户端的通讯
     /// </summary>
+    /// <param name="message"></param>
+    public async Task Close(string message) => await Args.ReplyAndClose(message);
+
+    /// <summary>
+    /// 以异常结束与客户端的通讯
+    /// </summary>
+    /// <param name="message"></param>
     /// <param name="code"></param>
-    public void Close(HttpStatusCode code = HttpStatusCode.OK)
+    public async Task Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
     {
-        StatusCode = code;
+        ReturnMessage = message;
         Handled = true;
-        Args.Close(StatusCode);
-        throw this;
+        StatusCode = code;
+        await Args.ReplyAndClose(message, code);
     }
 
     /// <summary>
@@ -42,15 +54,8 @@ public class ServerCoreReturnArgs : Exception
     /// </summary>
     /// <param name="message"></param>
     /// <param name="code"></param>
-    public void Error(string message, HttpStatusCode code = HttpStatusCode.InternalServerError) => throw GetError(message, code);
-
-    /// <summary>
-    /// 以异常结束与客户端的通讯
-    /// </summary>
-    /// <param name="message"></param>
-    /// <param name="code"></param>
     /// <param name="handled"></param>
-    public ServerCoreReturnArgs GetError(string message, HttpStatusCode code = HttpStatusCode.InternalServerError, bool handled = false)
+    public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false)
     {
         ReturnMessage = message;
         Handled = handled;

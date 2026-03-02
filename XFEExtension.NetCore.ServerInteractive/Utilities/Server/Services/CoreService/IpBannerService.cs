@@ -46,7 +46,7 @@ public class IpBannerService : ServerCoreUserServiceBase
             case "remove_bannedIp":
                 Console.WriteLine($"删除禁止的IP地址请求 移除：{Json["bannedIp"]}");
                 UserHelper.ValidatePermission(Json["session"], Json["computerInfo"], ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == Json["bannedIp"].ToString()) ?? throw ReturnArgs.GetError("无IP地址传入", HttpStatusCode.BadRequest);
+                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == Json["bannedIp"].ToString()) ?? throw ReturnArgs.Error("无IP地址传入", HttpStatusCode.BadRequest);
                 await Close(ServerBaseProfile.BannedIPAddressList.Remove(targetIp).ToString());
                 break;
             default:
