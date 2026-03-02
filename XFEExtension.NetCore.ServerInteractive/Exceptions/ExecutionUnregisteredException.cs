@@ -1,5 +1,4 @@
-﻿
-namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
 
 /// <summary>
 /// 执行的方法未注册异常

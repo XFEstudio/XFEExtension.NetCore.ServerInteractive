@@ -1,5 +1,4 @@
-﻿
-namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
 
 /// <summary>
 /// XFE服务器核心请求内补异常

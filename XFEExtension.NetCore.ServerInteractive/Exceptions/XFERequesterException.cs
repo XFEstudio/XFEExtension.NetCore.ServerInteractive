@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Exceptions;
 
 /// <summary>
 /// XFE请求器异常
