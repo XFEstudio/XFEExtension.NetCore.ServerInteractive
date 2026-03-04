@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.2</Version>
+		<Version>1.1.3</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,10 +20,13 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
 			## 调整
+			
+			优化日志输出及版本号升级至1.1.3
 
-			优化错误处理机制，提升代码一致性与性能
+			- 异常警告信息输出由 Console.WriteLine 改为 Console.Write，避免自动换行，堆栈信息仍保持换行输出。
+			- 请求处理完成日志由“成功！”改为“[耗时 xxx]”，突出耗时信息。
+			- 项目版本号由 1.1.2 升级至 1.1.3。
 
-			本次更新统一错误处理为抛出异常，重构 Error 方法并新增 CloseWithError，接口同步调整。服务类错误逻辑简化，部分 Console 输出优化。版本号升级至 1.1.2，提升整体性能与代码结构。
 
 			## 新增
 

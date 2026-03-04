@@ -132,7 +132,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     }
                     //Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
                     stopWatch.Stop();
-                    Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                    Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
                 foreach (var key in standardMultiCoreServiceDictionary.Keys)
@@ -162,7 +162,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             });
                         }
                         stopWatch.Stop();
-                        Console.WriteLine($"\t成功！[{InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                        Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                         return;
                     }
                 }

@@ -37,7 +37,7 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                     currentException = currentException.InnerException;
                 }
             }
-            Console.WriteLine($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{errorMessage}");
+            Console.Write($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{errorMessage}");
             if (e.ServerException?.StackTrace is not null)
                 Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
             try
