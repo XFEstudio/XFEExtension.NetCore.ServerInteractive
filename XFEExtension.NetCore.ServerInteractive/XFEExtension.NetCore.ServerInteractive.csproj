@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.1</Version>
+		<Version>1.1.2</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,9 @@
 		<PackageReleaseNotes>
 			## 调整
 
-			现在已经全面完成基于对象的请求处理
+			优化错误处理机制，提升代码一致性与性能
+
+			本次更新统一错误处理为抛出异常，重构 Error 方法并新增 CloseWithError，接口同步调整。服务类错误逻辑简化，部分 Console 输出优化。版本号升级至 1.1.2，提升整体性能与代码结构。
 
 			## 新增
 

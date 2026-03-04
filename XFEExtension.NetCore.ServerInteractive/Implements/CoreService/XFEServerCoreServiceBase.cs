@@ -21,11 +21,14 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     public ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <inheritdoc/>
-    public async Task Close(string message) => await ReturnArgs!.Args.ReplyAndClose(message);
+    public async Task Close(string message) => await ReturnArgs!.Close(message);
 
     /// <inheritdoc/>
-    public void Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest) => ReturnArgs?.Error(message, code);
+    public void OK() => ReturnArgs?.OK();
 
     /// <inheritdoc/>
-    public void OK() => ReturnArgs?.Close(HttpStatusCode.OK);
+    public Task CloseWithError(string message, HttpStatusCode code) => ReturnArgs!.CloseWithError(message, code);
+
+    /// <inheritdoc/>
+    public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false) => ReturnArgs!.Error(message, code, handled);
 }

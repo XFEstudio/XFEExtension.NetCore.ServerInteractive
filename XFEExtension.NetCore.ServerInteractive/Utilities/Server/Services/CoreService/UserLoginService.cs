@@ -18,9 +18,9 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         var account = Json["account"].ToString();
         var password = Json["password"].ToString();
         var computerInfo = Json["computerInfo"].ToString();
-        if (account.IsNullOrWhiteSpace()) Error("账户名不能为空");
-        if (password.IsNullOrWhiteSpace()) Error("登录密码不能为空");
-        if (computerInfo.IsNullOrWhiteSpace()) Error("电脑信息不能为空");
+        if (account.IsNullOrWhiteSpace()) throw Error("账户名不能为空");
+        if (password.IsNullOrWhiteSpace()) throw Error("登录密码不能为空");
+        if (computerInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
         var user = UserHelper.GetUser(Json["account"], Json["password"], GetUserFunction(), ReturnArgs!);
         Console.Write($"{account}（{computerInfo[..10]}...）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
@@ -50,12 +50,12 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
             };
             AddEncryptedUserLoginModelFunction(userLogin);
             Console.Write($"到期时间 {userLogin.UserLoginModel.EndDateTime}");
-            await ReturnArgs!.Args.ReplyAndClose(JsonSerializer.Serialize(new
+            await Close(JsonSerializer.Serialize(new
             {
                 session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
                 expireDate = userLogin.UserLoginModel.EndDateTime,
                 userInfo = LoginResultConvertFunction(user)
-            }, JsonSerializerOptions), HttpStatusCode.OK);
+            }, JsonSerializerOptions));
         }
         else
         {

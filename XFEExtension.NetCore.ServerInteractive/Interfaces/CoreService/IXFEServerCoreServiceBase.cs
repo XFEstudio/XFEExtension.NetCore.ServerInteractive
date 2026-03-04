@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
-using XFEExtension.NetCore.XFETransform.JsonConverter;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
+using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
@@ -46,5 +46,13 @@ public interface IXFEServerCoreServiceBase
     /// </summary>
     /// <param name="message">要返回的错误信息</param>
     /// <param name="code">HTTP 状态码</param>
-    void Error(string message, HttpStatusCode code = HttpStatusCode.InternalServerError);
+    Task CloseWithError(string message, HttpStatusCode code = HttpStatusCode.BadRequest);
+
+    /// <summary>
+    /// 以异常结束与客户端的通讯
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="code"></param>
+    /// <param name="handled"></param>
+    ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false);
 }

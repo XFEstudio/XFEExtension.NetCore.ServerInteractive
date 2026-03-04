@@ -47,7 +47,7 @@ public static class UserHelper
         if (!userInfo.Enable)
             return UserOperateResult.UserDisabled;
         user = userInfo;
-        Console.WriteLine($"({user.UserName})");
+        Console.Write($"({user.UserName})");
         return UserOperateResult.Success;
     }
 
@@ -120,7 +120,7 @@ public static class UserHelper
     {
         var result = GetUser(userName, password, userInfoList, out var user);
         if (result != UserOperateResult.Success)
-            r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
+            throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
         return user!;
     }
 
@@ -215,7 +215,7 @@ public static class UserHelper
     {
         var result = ValidateUserPermission(sessionId, computerInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
-            r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
+            throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
     }
 
     /// <summary>

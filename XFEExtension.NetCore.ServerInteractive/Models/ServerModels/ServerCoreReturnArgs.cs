@@ -41,7 +41,7 @@ public class ServerCoreReturnArgs : Exception
     /// </summary>
     /// <param name="message"></param>
     /// <param name="code"></param>
-    public async Task Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
+    public async Task CloseWithError(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
     {
         ReturnMessage = message;
         Handled = true;
