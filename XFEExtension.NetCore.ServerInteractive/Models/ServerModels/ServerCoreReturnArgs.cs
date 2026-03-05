@@ -26,6 +26,33 @@ public class ServerCoreReturnArgs : Exception
     public required CyberCommRequestEventArgs Args { get; set; }
 
     /// <summary>
+    /// Sends a reply message asynchronously using the current context.
+    /// </summary>
+    /// <param name="message">The message text to send as a reply. Cannot be null or empty.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public async Task Send(string message) => await Args.ReplyMessage(message);
+
+    /// <summary>
+    /// Sends a binary message using the specified buffer asynchronously.
+    /// </summary>
+    /// <param name="buffer">The byte array containing the data to be sent as the binary message. Cannot be null.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public async Task Send(byte[] buffer) => await Args.ReplyBinaryMessage(buffer);
+
+    /// <summary>
+    /// Sends the contents of the specified stream as a binary message asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream containing the data to send. The stream must be readable and positioned at the beginning of the data
+    /// to be sent.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public async Task Send(Stream stream)
+    {
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        await Args.ReplyBinaryMessage(memoryStream.ToArray());
+    }
+
+    /// <summary>
     /// 正常结束与客户端的通讯
     /// </summary>
     public void OK() => Args.Close();
@@ -35,6 +62,26 @@ public class ServerCoreReturnArgs : Exception
     /// </summary>
     /// <param name="message"></param>
     public async Task Close(string message) => await Args.ReplyAndClose(message);
+
+    /// <summary>
+    /// 结束与客户端的通讯
+    /// </summary>
+    /// <param name="buffer"></param>
+    public async Task Close(byte[] buffer)
+    {
+        await Send(buffer);
+        OK();
+    }
+
+    /// <summary>
+    /// 结束与客户端的通讯
+    /// </summary>
+    /// <param name="stream"></param>
+    public async Task Close(Stream stream)
+    {
+        await Send(stream);
+        OK();
+    }
 
     /// <summary>
     /// 以异常结束与客户端的通讯

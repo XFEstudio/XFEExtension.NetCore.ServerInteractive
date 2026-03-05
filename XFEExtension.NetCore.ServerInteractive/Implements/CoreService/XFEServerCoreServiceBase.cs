@@ -21,7 +21,16 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     public ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <inheritdoc/>
-    public async Task Close(string message) => await ReturnArgs!.Close(message);
+    public async Task Send(string message) => await ReturnArgs.Send(message);
+
+    /// <inheritdoc/>
+    public async Task Send(byte[] buffer) => await ReturnArgs.Send(buffer);
+
+    /// <inheritdoc/>
+    public async Task Send(Stream stream) => await ReturnArgs.Send(stream);
+
+    /// <inheritdoc/>
+    public async Task Close(string message) => await ReturnArgs.Close(message);
 
     /// <inheritdoc/>
     public void OK() => ReturnArgs?.OK();

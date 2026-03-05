@@ -31,6 +31,28 @@ public interface IXFEServerCoreServiceBase
     ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <summary>
+    /// Sends a reply message asynchronously using the current context.
+    /// </summary>
+    /// <param name="message">The message text to send as a reply. Cannot be null or empty.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    Task Send(string message);
+
+    /// <summary>
+    /// Sends a binary message using the specified buffer asynchronously.
+    /// </summary>
+    /// <param name="buffer">The byte array containing the data to be sent as the binary message. Cannot be null.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    Task Send(byte[] buffer);
+
+    /// <summary>
+    /// Sends the contents of the specified stream as a binary message asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream containing the data to send. The stream must be readable and positioned at the beginning of the data
+    /// to be sent.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    Task Send(Stream stream);
+
+    /// <summary>
     /// 关闭并返回 OK
     /// </summary>
     void OK();
@@ -40,6 +62,26 @@ public interface IXFEServerCoreServiceBase
     /// </summary>
     /// <param name="message">要返回的信息</param>
     Task Close(string message);
+
+    /// <summary>
+    /// 结束与客户端的通讯
+    /// </summary>
+    /// <param name="buffer"></param>
+    public async Task Close(byte[] buffer)
+    {
+        await Send(buffer);
+        OK();
+    }
+
+    /// <summary>
+    /// 结束与客户端的通讯
+    /// </summary>
+    /// <param name="stream"></param>
+    public async Task Close(Stream stream)
+    {
+        await Send(stream);
+        OK();
+    }
 
     /// <summary>
     /// 返回错误信息并关闭
