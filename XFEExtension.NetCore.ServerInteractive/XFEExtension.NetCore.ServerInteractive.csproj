@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.4</Version>
+		<Version>1.1.5</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,12 +21,17 @@
 		<PackageReleaseNotes>
 			## 调整
 			
-			无
+			扩展关闭方法并调整接口实现为异步
+			
+			新增 Close(byte[] buffer) 和 Close(Stream stream) 异步方法，支持多种关闭通讯方式。
+			将 CloseWithError 方法改为异步。
+			IXFEServerCoreServiceBase 接口移除默认实现，仅保留方法签名。
+			项目版本升级至 1.1.5。
 
 
 			## 新增
 
-			添加Send方法以及二进制数据发送方法
+			无
 
 			## 严重
 

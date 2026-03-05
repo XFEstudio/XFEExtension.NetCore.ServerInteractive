@@ -33,10 +33,16 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     public async Task Close(string message) => await ReturnArgs.Close(message);
 
     /// <inheritdoc/>
+    public async Task Close(byte[] buffer) => await ReturnArgs.Close(buffer);
+
+    /// <inheritdoc/>
+    public async Task Close(Stream stream) => await ReturnArgs.Close(stream);
+
+    /// <inheritdoc/>
     public void OK() => ReturnArgs?.OK();
 
     /// <inheritdoc/>
-    public Task CloseWithError(string message, HttpStatusCode code) => ReturnArgs!.CloseWithError(message, code);
+    public async Task CloseWithError(string message, HttpStatusCode code) => await ReturnArgs!.CloseWithError(message, code);
 
     /// <inheritdoc/>
     public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false) => ReturnArgs!.Error(message, code, handled);

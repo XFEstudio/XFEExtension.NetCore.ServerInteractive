@@ -67,21 +67,13 @@ public interface IXFEServerCoreServiceBase
     /// 结束与客户端的通讯
     /// </summary>
     /// <param name="buffer"></param>
-    public async Task Close(byte[] buffer)
-    {
-        await Send(buffer);
-        OK();
-    }
+    Task Close(byte[] buffer);
 
     /// <summary>
     /// 结束与客户端的通讯
     /// </summary>
     /// <param name="stream"></param>
-    public async Task Close(Stream stream)
-    {
-        await Send(stream);
-        OK();
-    }
+    Task Close(Stream stream);
 
     /// <summary>
     /// 返回错误信息并关闭
