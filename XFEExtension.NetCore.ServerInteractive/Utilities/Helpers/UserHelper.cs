@@ -163,6 +163,21 @@ public static class UserHelper
     }
 
     /// <summary>
+    /// 校验用户权限（直接传入用户对象）
+    /// </summary>
+    /// <param name="userInfo">用户信息对象</param>
+    /// <param name="requiredPermissionLevel">所需权限等级</param>
+    /// <returns></returns>
+    public static UserOperateResult ValidateUserPermission(IUserInfo userInfo, int requiredPermissionLevel)
+    {
+        if (!userInfo.Enable)
+            return UserOperateResult.UserDisabled;
+        if (userInfo.PermissionLevel < requiredPermissionLevel)
+            return UserOperateResult.PermissionDenied;
+        return UserOperateResult.Success;
+    }
+
+    /// <summary>
     /// 校验权限
     /// </summary>
     /// <param name="userName"></param>
@@ -214,6 +229,36 @@ public static class UserHelper
     public static void ValidatePermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = ValidateUserPermission(sessionId, computerInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
+        if (result != UserOperateResult.Success)
+            throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
+    }
+
+    /// <summary>
+    /// 校验权限（直接传入用户对象）
+    /// </summary>
+    /// <param name="userInfo">用户信息对象</param>
+    /// <param name="requiredPermissionLevel">所需权限等级</param>
+    /// <param name="statusCode"></param>
+    /// <exception cref="StopAction"></exception>
+    public static void ValidatePermission(IUserInfo userInfo, int requiredPermissionLevel, ref HttpStatusCode statusCode)
+    {
+        var result = ValidateUserPermission(userInfo, requiredPermissionLevel);
+        if (result != UserOperateResult.Success)
+        {
+            statusCode = HttpStatusCode.Forbidden;
+            throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
+        }
+    }
+
+    /// <summary>
+    /// 校验权限（直接传入用户对象）
+    /// </summary>
+    /// <param name="userInfo">用户信息对象</param>
+    /// <param name="requiredPermissionLevel">所需权限等级</param>
+    /// <param name="r"></param>
+    public static void ValidatePermission(IUserInfo userInfo, int requiredPermissionLevel, ServerCoreReturnArgs r)
+    {
+        var result = ValidateUserPermission(userInfo, requiredPermissionLevel);
         if (result != UserOperateResult.Success)
             throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
     }

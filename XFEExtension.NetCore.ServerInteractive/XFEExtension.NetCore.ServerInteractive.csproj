@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.5</Version>
+		<Version>1.1.6</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -19,24 +19,20 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
-			## 调整
-			
-			扩展关闭方法并调整接口实现为异步
-			
-			新增 Close(byte[] buffer) 和 Close(Stream stream) 异步方法，支持多种关闭通讯方式。
-			将 CloseWithError 方法改为异步。
-			IXFEServerCoreServiceBase 接口移除默认实现，仅保留方法签名。
-			项目版本升级至 1.1.5。
+      ## 调整
+      
+      新增用户对象权限校验方法，提升灵活性
 
+      增加 ValidateUserPermission 和 ValidatePermission 重载，支持直接传入 IUserInfo 对象进行权限校验，优化权限校验流程。项目版本号升级至 1.1.6。
 
-			## 新增
+      ## 新增
 
-			无
+      无
 
-			## 严重
+      ## 严重
 
-			无
-		</PackageReleaseNotes>
+      无
+    </PackageReleaseNotes>
 		<NeutralLanguage>zh-CN</NeutralLanguage>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<Version>$(Version)</Version>
