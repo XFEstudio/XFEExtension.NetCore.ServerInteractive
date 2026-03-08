@@ -25,6 +25,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     public XFEEventHandler<XFEServerCore, ServerCoreErrorEventArgs>? ServerCoreError { get; set; }
     /// <summary>
+    /// 获取IP地址的函数，默认为从请求事件参数中获取客户端IP地址
+    /// </summary>
+    public Func<CyberCommRequestEventArgs, string> GetIpFunction { get; set; } = args => args.ClientIP;
+    /// <summary>
     /// 核心服务列表
     /// </summary>
     internal List<IServerCoreOriginalService> serverCoreServiceList = [];
@@ -60,6 +64,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             Args = e
         };
+        var clientIP = e.ClientIP;
+        try { clientIP = GetIpFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
         try
         {
             foreach (var serverCoreVerifyService in serverCoreVerifyServiceList)
@@ -112,11 +118,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     // inject server core reference and set context
                     try
                     {
-                        serviceInstance.Initialize();
                         serviceInstance.XFEServerCore = this;
+                        serviceInstance.ClientIP = e.ClientIP;
                         serviceInstance.Execute = execute;
                         serviceInstance.Json = queryableJsonNode;
                         serviceInstance.ReturnArgs = r;
+                        serviceInstance.Initialize();
                         serviceInstance.RequestReceive();
                         await serviceInstance.RequestReceiveAsync();
                     }
@@ -143,11 +150,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         var instance = factory();
                         try
                         {
-                            instance.Initialize();
                             instance.XFEServerCore = this;
+                            instance.ClientIP = e.ClientIP;
                             instance.Execute = execute;
                             instance.Json = queryableJsonNode;
                             instance.ReturnArgs = r;
+                            instance.Initialize();
                             instance.RequestReceive();
                             await instance.RequestReceiveAsync();
                         }

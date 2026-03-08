@@ -12,9 +12,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
 {
     /// <inheritdoc/>
-    public XFEServerCore XFEServerCore { get; set; }
+    public bool Handled { get => ReturnArgs.Handled; set => ReturnArgs.Handled = value; }
+    /// <inheritdoc/>
+    public string ClientIP { get; set; } = string.Empty;
     /// <inheritdoc/>
     public string Execute { get; set; } = string.Empty;
+    /// <inheritdoc/>
+    public XFEServerCore XFEServerCore { get; set; }
     /// <inheritdoc/>
     public QueryableJsonNode Json { get; set; }
     /// <inheritdoc/>

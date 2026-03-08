@@ -11,14 +11,24 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 public interface IXFEServerCoreServiceBase
 {
     /// <summary>
-    /// 服务器核心
-    /// </summary>
-    XFEServerCore XFEServerCore { get; set; }
-
-    /// <summary>
     /// 当前请求的执行语句
     /// </summary>
     string Execute { get; set; }
+
+    /// <summary>
+    /// 客户端IP地址
+    /// </summary>
+    string ClientIP { get; set; }
+
+    /// <summary>
+    /// 是否已经处理完成
+    /// </summary>
+    bool Handled { get; set; }
+
+    /// <summary>
+    /// 服务器核心
+    /// </summary>
+    XFEServerCore XFEServerCore { get; set; }
 
     /// <summary>
     /// 当前请求的 json 节点

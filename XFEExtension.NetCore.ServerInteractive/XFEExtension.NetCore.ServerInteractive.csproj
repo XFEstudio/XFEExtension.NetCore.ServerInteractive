@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.6</Version>
+		<Version>1.1.7</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,10 +20,13 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
-      
-      新增用户对象权限校验方法，提升灵活性
 
-      增加 ValidateUserPermission 和 ValidatePermission 重载，支持直接传入 IUserInfo 对象进行权限校验，优化权限校验流程。项目版本号升级至 1.1.6。
+      增强核心服务IP处理与接口扩展，升级至1.1.7
+
+      本次更新新增了核心服务基类和接口的 ClientIP 与 Handled 属性，支持服务处理过程中获取客户端IP和标记处理状态。
+      XFEServerCore 增加 GetIpFunction 委托，允许自定义IP获取逻辑。
+      XFEServerCoreBuilder 新增 UseCustomIPGetFunction 方法，提升扩展性。
+      服务实例初始化时补充 ClientIP 赋值。版本号升级至 1.1.7，并优化注释与初始化顺序。
 
       ## 新增
 

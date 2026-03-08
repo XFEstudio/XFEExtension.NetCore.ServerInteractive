@@ -1,4 +1,5 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
+using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.StringExtension;
@@ -47,6 +48,17 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddService<T>() where T : IServerCoreOriginalService, new() => AddService(new T());
+
+    /// <summary>
+    /// 使用自定义IP获取函数
+    /// </summary>
+    /// <param name="getIpFunction">自定义IP获取函数</param>
+    /// <returns>XFE服务器核心构建器</returns>
+    public XFEServerCoreBuilder UseCustomIPGetFunction(Func<CyberCommRequestEventArgs, string> getIpFunction)
+    {
+        xFEServerCore.GetIpFunction = getIpFunction;
+        return this;
+    }
 
     /// <summary>
     /// 添加校验服务
