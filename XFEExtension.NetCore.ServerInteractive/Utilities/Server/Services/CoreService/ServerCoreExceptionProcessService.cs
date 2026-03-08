@@ -42,7 +42,7 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                 Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
             try
             {
-                await e.ReturnArgs.ReplyAndClose(errorMessage, e.StatusCode);
+                await e.ReturnArgs.CloseWithError(errorMessage, e.StatusCode);
             }
             catch { }
         }
