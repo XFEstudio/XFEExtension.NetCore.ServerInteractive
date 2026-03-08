@@ -21,9 +21,9 @@ public class ServerCoreErrorEventArgs
     /// </summary>
     public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.InternalServerError;
     /// <summary>
-    /// 本次异常服务器参数
+    /// 本次异常服务器返回参数
     /// </summary>
-    public CyberCommRequestEventArgs? CyberCommRequestEventArgs { get; set; }
+    public ServerCoreReturnArgs? ReturnArgs { get; set; }
 
     /// <summary>
     /// 服务器核心错误事件参数

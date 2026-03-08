@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.7</Version>
+		<Version>1.1.8</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,12 +21,11 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      增强核心服务IP处理与接口扩展，升级至1.1.7
+      优化异常处理与客户端IP传递方式
 
-      本次更新新增了核心服务基类和接口的 ClientIP 与 Handled 属性，支持服务处理过程中获取客户端IP和标记处理状态。
-      XFEServerCore 增加 GetIpFunction 委托，允许自定义IP获取逻辑。
-      XFEServerCoreBuilder 新增 UseCustomIPGetFunction 方法，提升扩展性。
-      服务实例初始化时补充 ClientIP 赋值。版本号升级至 1.1.7，并优化注释与初始化顺序。
+      本次更新统一了异常处理参数结构，将 CyberCommRequestEventArgs 替换为 ServerCoreReturnArgs，并在 ReturnArgs 中新增 ClientIP 属性。
+      XFEServerCoreServiceBase 的 ClientIP 属性改为通过 ReturnArgs 读写，确保客户端IP在异常场景下正确传递。异常处理服务和核心服务均调整为使用 ReturnArgs，提升了代码一致性和维护性。
+      版本号升级至 1.1.8。
 
       ## 新增
 

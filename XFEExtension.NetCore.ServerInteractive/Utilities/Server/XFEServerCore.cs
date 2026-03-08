@@ -66,6 +66,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         };
         var clientIP = e.ClientIP;
         try { clientIP = GetIpFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
+        r.ClientIP = clientIP;
         try
         {
             foreach (var serverCoreVerifyService in serverCoreVerifyServiceList)
@@ -81,7 +82,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             {
                 StatusCode = r.StatusCode,
                 Handled = r.Handled,
-                CyberCommRequestEventArgs = e,
+                ReturnArgs = r,
                 ServerException = new ProcessStandardRequestException("请求校验失败", ex)
             });
             return;
@@ -98,7 +99,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             ServerCoreError?.Invoke(this, new()
             {
                 StatusCode = HttpStatusCode.BadRequest,
-                CyberCommRequestEventArgs = e,
+                ReturnArgs = r,
                 ServerException = new ProcessStandardRequestException("无法转换为QueryableJsonNode", ex)
             });
             return;
@@ -109,8 +110,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (!execute.IsNullOrEmpty())
             {
-                //Console.WriteLine($"【{e.ClientIP}】请求方法：{execute}");
-                Console.Write($"【{e.ClientIP}】请求方法-{execute}：");
+                //Console.WriteLine($"【{clientIP}】请求方法：{execute}");
+                Console.Write($"【{clientIP}】请求方法-{execute}：");
                 var stopWatch = Stopwatch.StartNew();
                 if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
@@ -119,7 +120,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     try
                     {
                         serviceInstance.XFEServerCore = this;
-                        serviceInstance.ClientIP = e.ClientIP;
                         serviceInstance.Execute = execute;
                         serviceInstance.Json = queryableJsonNode;
                         serviceInstance.ReturnArgs = r;
@@ -133,11 +133,11 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         {
                             StatusCode = r.StatusCode,
                             Handled = r.Handled,
-                            CyberCommRequestEventArgs = e,
+                            ReturnArgs = r,
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                         });
                     }
-                    //Console.WriteLine($"【{e.ClientIP}】请求处理完成：{execute}");
+                    //Console.WriteLine($"【{clientIP}】请求处理完成：{execute}");
                     stopWatch.Stop();
                     Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
@@ -151,7 +151,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         try
                         {
                             instance.XFEServerCore = this;
-                            instance.ClientIP = e.ClientIP;
                             instance.Execute = execute;
                             instance.Json = queryableJsonNode;
                             instance.ReturnArgs = r;
@@ -165,7 +164,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             {
                                 StatusCode = r.StatusCode,
                                 Handled = r.Handled,
-                                CyberCommRequestEventArgs = e,
+                                ReturnArgs = r,
                                 ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                             });
                         }
@@ -177,7 +176,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 ServerCoreError?.Invoke(this, new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    CyberCommRequestEventArgs = e,
+                    ReturnArgs = r,
                     ServerException = new ExecutionUnregisteredException($"请求的方法未注册-{execute}")
                 });
             }
@@ -187,7 +186,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             ServerCoreError?.Invoke(this, new()
             {
                 StatusCode = HttpStatusCode.InternalServerError,
-                CyberCommRequestEventArgs = e,
+                ReturnArgs = r,
                 ServerException = new ProcessStandardRequestException("处理标准请求时发生异常", ex)
             });
         }

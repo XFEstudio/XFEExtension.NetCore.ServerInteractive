@@ -21,7 +21,7 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
 
     private async void XFEServerCore_ServerCoreError(XFEServerCore sender, ServerCoreErrorEventArgs e)
     {
-        if (!e.Handled && e.CyberCommRequestEventArgs is not null)
+        if (!e.Handled && e.ReturnArgs is not null)
         {
             var currentException = e.ServerException?.InnerException;
             var errorMessage = e.ServerException?.Message ?? "服务器内部异常";
@@ -37,12 +37,12 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                     currentException = currentException.InnerException;
                 }
             }
-            Console.Write($"[WARN]【{e.CyberCommRequestEventArgs.ClientIP}】{errorMessage}");
+            Console.Write($"[WARN]【{e.ServerException}】{errorMessage}");
             if (e.ServerException?.StackTrace is not null)
                 Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
             try
             {
-                await e.CyberCommRequestEventArgs.ReplyAndClose(errorMessage, e.StatusCode);
+                await e.ReturnArgs.ReplyAndClose(errorMessage, e.StatusCode);
             }
             catch { }
         }
