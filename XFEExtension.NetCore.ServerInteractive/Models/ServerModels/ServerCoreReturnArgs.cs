@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json;
 using XFEExtension.NetCore.CyberComm;
 
 namespace XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
@@ -57,6 +58,13 @@ public class ServerCoreReturnArgs : Exception
     }
 
     /// <summary>
+    /// Sends an object serialized as JSON asynchronously using the current context.
+    /// </summary>
+    /// <param name="data">The object to serialize and send.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public async Task Send(object data) => await Send(JsonSerializer.Serialize(data));
+
+    /// <summary>
     /// 正常结束与客户端的通讯
     /// </summary>
     public void OK() => Args.Close();
@@ -86,6 +94,12 @@ public class ServerCoreReturnArgs : Exception
         await Send(stream);
         OK();
     }
+
+    /// <summary>
+    /// 结束与客户端的通讯（对象将自动序列化为 JSON）
+    /// </summary>
+    /// <param name="data"></param>
+    public async Task Close(object data) => await Close(JsonSerializer.Serialize(data));
 
     /// <summary>
     /// 以异常结束与客户端的通讯

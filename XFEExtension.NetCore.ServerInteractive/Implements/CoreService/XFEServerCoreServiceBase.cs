@@ -50,4 +50,10 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
 
     /// <inheritdoc/>
     public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false) => ReturnArgs!.Error(message, code, handled);
+
+    /// <inheritdoc/>
+    public async Task Send(object data) => await ReturnArgs.Send(data);
+
+    /// <inheritdoc/>
+    public async Task Close(object data) => await ReturnArgs.Close(data);
 }

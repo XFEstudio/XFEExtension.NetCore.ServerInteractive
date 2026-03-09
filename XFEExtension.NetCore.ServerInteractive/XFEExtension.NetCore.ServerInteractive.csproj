@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.8</Version>
+		<Version>1.1.9</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,11 +21,10 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      优化异常处理与客户端IP传递方式
+      新增对象自动序列化为 JSON 的发送与关闭功能
 
-      本次更新统一了异常处理参数结构，将 CyberCommRequestEventArgs 替换为 ServerCoreReturnArgs，并在 ReturnArgs 中新增 ClientIP 属性。
-      XFEServerCoreServiceBase 的 ClientIP 属性改为通过 ReturnArgs 读写，确保客户端IP在异常场景下正确传递。异常处理服务和核心服务均调整为使用 ReturnArgs，提升了代码一致性和维护性。
-      版本号升级至 1.1.8。
+      IXFEServerCoreServiceBase 接口及基类新增 Send(object) 和 Close(object) 异步方法，底层通过 ServerCoreReturnArgs 实现对象序列化与发送。
+      项目版本号升级至 1.1.9，部分文件调整 using 语句。
 
       ## 新增
 

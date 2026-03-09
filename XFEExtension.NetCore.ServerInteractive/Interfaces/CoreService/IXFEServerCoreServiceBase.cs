@@ -63,6 +63,12 @@ public interface IXFEServerCoreServiceBase
     Task Send(Stream stream);
 
     /// <summary>
+    /// Sends an object as JSON asynchronously.
+    /// </summary>
+    /// <param name="data">The object to serialize to JSON and send.</param>
+    Task Send(object data);
+
+    /// <summary>
     /// 关闭并返回 OK
     /// </summary>
     void OK();
@@ -99,4 +105,10 @@ public interface IXFEServerCoreServiceBase
     /// <param name="code"></param>
     /// <param name="handled"></param>
     ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false);
+
+    /// <summary>
+    /// Sends the specified object serialized as JSON and closes the connection.
+    /// </summary>
+    /// <param name="data">The object to serialize to JSON and send.</param>
+    Task Close(object data);
 }

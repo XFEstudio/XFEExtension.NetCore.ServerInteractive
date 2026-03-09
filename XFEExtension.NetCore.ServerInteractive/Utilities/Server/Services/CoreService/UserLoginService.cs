@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
