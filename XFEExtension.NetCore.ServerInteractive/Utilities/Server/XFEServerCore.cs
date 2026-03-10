@@ -111,7 +111,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             if (!execute.IsNullOrEmpty())
             {
                 //Console.WriteLine($"【{clientIP}】请求方法：{execute}");
-                Console.Write($"【{clientIP}】请求方法-{execute}：");
+                Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
                 var stopWatch = Stopwatch.StartNew();
                 if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {

@@ -7,7 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program
 {
-    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:27177/api")
+    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/management")
         .UseXFEStandardRequest<UserFaceInfo>()
         .AddRequest("test", (_, _, _) => new
         {
@@ -49,16 +49,19 @@ internal class Program
     [SMTest]
     public static async Task Test()
     {
-        var result = await xFEClientRequester.Request<string>("test");
-        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (i, _) =>
         {
-            Console.WriteLine(result.Result);
-        }
-        else
-        {
-            Console.WriteLine(result.StatusCode);
-            Console.WriteLine(result.Message);
-        }
+            var result = await xFEClientRequester.Request<string>("test");
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                Console.WriteLine(result.Result);
+            }
+            else
+            {
+                Console.WriteLine(result.StatusCode);
+                Console.WriteLine(result.Message);
+            }
+        });
     }
 
     //[SMTest]

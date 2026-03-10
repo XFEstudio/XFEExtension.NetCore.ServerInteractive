@@ -16,7 +16,7 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
             try
             {
                 XFEConsole.XFEConsole.Log.Clear();
-                Console.WriteLine("[DEBUG]加载日志文件...");
+                Console.WriteLine($"[DEBUG]加载日志文件...");
                 if (File.Exists("server.log"))
                 {
                     XFEConsole.XFEConsole.Log.Import("server.log".ReadOut()!);

@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.9</Version>
+		<Version>1.1.10</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,10 +21,13 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      新增对象自动序列化为 JSON 的发送与关闭功能
+      并发测试优化，日志增强及配置保存改进
 
-      IXFEServerCoreServiceBase 接口及基类新增 Send(object) 和 Close(object) 异步方法，底层通过 ServerCoreReturnArgs 实现对象序列化与发送。
-      项目版本号升级至 1.1.9，部分文件调整 using 语句。
+      本次提交包括以下更新：
+      - 日志输出增加服务核心名称，提升调试可读性；
+      - 日志加载输出格式优化；
+      - 服务初始化时自动保存配置文件，增强可靠性。
+
 
       ## 新增
 

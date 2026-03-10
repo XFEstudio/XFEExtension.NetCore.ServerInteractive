@@ -13,6 +13,7 @@ public class ServerIpInitializer : ServerInitializerServiceBase
     /// <inheritdoc/>
     public override void Initialize()
     {
+        ServerBaseProfile.SaveProfile();
         foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
             ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, "http://localhost:8080/");

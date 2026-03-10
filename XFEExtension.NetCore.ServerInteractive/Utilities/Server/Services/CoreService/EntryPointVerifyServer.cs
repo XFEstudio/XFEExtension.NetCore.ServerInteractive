@@ -14,7 +14,7 @@ public class EntryPointVerifyServer : ServerCoreVerifyServiceBase
     /// <inheritdoc/>
     public override bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r)
     {
-        Console.Write($"[DEBUG]【{e.ClientIP}】接收到请求");
+        Console.Write($"[DEBUG]({XFEServerCore.ServerCoreName})【{e.ClientIP}】接收到请求");
         if (ServerBaseProfile.BannedIPAddressList.Contains(e.ClientIP))
         {
             Console.WriteLine("-校验失败");
