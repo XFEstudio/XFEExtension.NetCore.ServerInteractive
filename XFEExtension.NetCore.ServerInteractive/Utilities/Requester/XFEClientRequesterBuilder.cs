@@ -107,7 +107,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// 添加实例请求
     /// </summary>
     /// <param name="serviceName">请求服务名称</param>
-    /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> session, <seealso cref="object"/>[] parameters)</param>
+    /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> computerInfo, <seealso cref="object"/>[] parameters)</param>
     /// <param name="processResponse">处理响应方法<seealso cref="object"/> (<seealso cref="string"/> response)</param>
     /// <returns></returns>
     public XFEClientRequesterBuilder AddRequest(string serviceName, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(serviceName, new XFEClientInstanceRequest()
