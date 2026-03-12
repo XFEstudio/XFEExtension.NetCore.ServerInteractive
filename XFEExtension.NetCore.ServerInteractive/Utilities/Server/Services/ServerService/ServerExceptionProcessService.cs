@@ -18,9 +18,6 @@ public class ServerExceptionProcessService : ServerServiceBase
     void CurrentDomain_ProcessExit(object? sender, EventArgs e)
     {
         Console.WriteLine("[DEBUG]正在关闭服务器...");
-        Console.WriteLine("[DEBUG]正在保存日志...");
-        XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-        Console.WriteLine("[DEBUG]日志已保存！");
         Console.WriteLine("[DEBUG]服务器已关闭！");
     }
 
@@ -29,6 +26,5 @@ public class ServerExceptionProcessService : ServerServiceBase
         Console.WriteLine($"[FATAL]{e.ExceptionObject}");
         if (e.ExceptionObject is Exception exception)
             Console.WriteLine($"[TRACE]{exception.StackTrace}");
-        XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
     }
 }

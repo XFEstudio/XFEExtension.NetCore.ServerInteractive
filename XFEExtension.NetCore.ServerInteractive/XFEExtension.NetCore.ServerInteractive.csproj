@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.10</Version>
+		<Version>1.1.11</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,14 +20,11 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
+      
+      优化日志管理逻辑，调整保存与加载流程
 
-      并发测试优化，日志增强及配置保存改进
-
-      本次提交包括以下更新：
-      - 日志输出增加服务核心名称，提升调试可读性；
-      - 日志加载输出格式优化；
-      - 服务初始化时自动保存配置文件，增强可靠性。
-
+      本次提交移除了服务器关闭、重启和异常处理时自动保存日志的代码，将日志保存路径的设置提前至初始化阶段，并简化了日志文件加载流程。
+      同步清理了无用命名空间引用，项目版本号升级为1.1.11。
 
       ## 新增
 

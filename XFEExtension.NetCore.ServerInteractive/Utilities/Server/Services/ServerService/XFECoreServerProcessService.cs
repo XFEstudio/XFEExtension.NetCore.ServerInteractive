@@ -15,12 +15,9 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
         {
             try
             {
-                XFEConsole.XFEConsole.Log.Clear();
-                Console.WriteLine($"[DEBUG]加载日志文件...");
                 if (File.Exists("server.log"))
                 {
-                    XFEConsole.XFEConsole.Log.Import("server.log".ReadOut()!);
-                    Console.WriteLine($"[DEBUG]成功加载{XFEConsole.XFEConsole.Log.Logs.Count}条日志！");
+                    Console.WriteLine("[DEBUG]找到日志文件！");
                 }
                 else
                 {
@@ -45,9 +42,6 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
                                 Console.WriteLine("[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 2...");
                                 await Task.Delay(1000);
                                 Console.WriteLine("[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 1...");
-                                Console.WriteLine("[DEBUG]正在保存日志...");
-                                XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-                                Console.WriteLine("[DEBUG]日志已保存！");
                             }
                             catch (Exception ex)
                             {
@@ -60,9 +54,6 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
                                 Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 2...");
                                 await Task.Delay(1000);
                                 Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 1...");
-                                Console.WriteLine("[DEBUG]正在保存日志...");
-                                XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-                                Console.WriteLine("[DEBUG]日志已保存！");
                             }
                         }
                     }));
@@ -81,9 +72,6 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
                 Console.WriteLine("[DEBUG]正在重启服务器 2...");
                 await Task.Delay(1000);
                 Console.WriteLine("[DEBUG]正在重启服务器 1...");
-                Console.WriteLine("[DEBUG]正在保存日志...");
-                XFEConsole.XFEConsole.Log.Export().WriteIn("server.log");
-                Console.WriteLine("[DEBUG]日志已保存！");
             }
         }
     }

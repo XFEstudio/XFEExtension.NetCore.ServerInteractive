@@ -11,5 +11,6 @@ public class ServerLogInitializer : ServerInitializerServiceBase
     public override void Initialize()
     {
         XFEConsole.XFEConsole.UseXFEConsoleLog();
+        XFEConsole.XFEConsole.Log.LogPath = "server.log";
     }
 }

@@ -1,7 +1,6 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Profiles;
 using XFEExtension.NetCore.StringExtension;
-using XFEExtension.NetCore.XFEConsole;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
