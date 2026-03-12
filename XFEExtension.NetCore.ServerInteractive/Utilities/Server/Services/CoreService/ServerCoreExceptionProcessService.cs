@@ -25,6 +25,9 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
         {
             var currentException = e.ServerException?.InnerException;
             var errorMessage = e.ServerException?.Message ?? "服务器内部异常";
+            var errorInfo = "服务器内部异常";
+            if (e.ServerException?.InnerException is ServerCoreReturnArgs returnArgs)
+                errorInfo = returnArgs.ReturnMessage;
             for (int i = 0; i < 5; i++)
             {
                 if (currentException is null)
@@ -37,9 +40,10 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                     currentException = currentException.InnerException;
                 }
             }
-            Console.Write($"[WARN]【{e.ServerException}】{errorMessage}");
-            if (e.ServerException?.StackTrace is not null)
-                Console.WriteLine($"[TRACE]{e.ServerException?.StackTrace}");
+            Console.WriteLine();
+            Console.WriteLine($"[WARN]【{errorInfo}】{errorMessage}");
+            if (e.ServerException?.InnerException?.StackTrace is not null)
+                Console.WriteLine($"[TRACE]{e.ServerException?.InnerException?.StackTrace}");
             try
             {
                 await e.ReturnArgs.CloseWithError(errorMessage, e.StatusCode);

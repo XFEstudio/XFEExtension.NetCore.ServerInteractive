@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.11</Version>
+		<Version>1.1.12</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,10 +21,12 @@
 		<PackageReleaseNotes>
       ## 调整
       
-      优化日志管理逻辑，调整保存与加载流程
+      优化异常处理逻辑并更新项目版本号
 
-      本次提交移除了服务器关闭、重启和异常处理时自动保存日志的代码，将日志保存路径的设置提前至初始化阶段，并简化了日志文件加载流程。
-      同步清理了无用命名空间引用，项目版本号升级为1.1.11。
+      - 调整 Program.cs 中 SMTest 注解参数及注释
+      - 优化 ServerCoreExceptionProcessService.cs 异常信息输出，增加 errorInfo 字段，优先输出 InnerException 堆栈
+      - 移除未使用的 using 引用
+      - 项目版本号升级至 1.1.12
 
       ## 新增
 

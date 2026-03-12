@@ -24,7 +24,7 @@ internal class Program
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    //[SMTest("Admin", "123456")]
+    [SMTest("Admin", "1234564")]
     public static async Task Login(string account, string password)
     {
         var result = await xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
@@ -46,7 +46,7 @@ internal class Program
         }
     }
 
-    [SMTest]
+    //[SMTest]
     public static async Task Test()
     {
         await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (i, _) =>
