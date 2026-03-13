@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.14</Version>
+		<Version>1.1.15</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,10 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      修正异常处理返回信息并升级版本号至1.1.14
+      修复异常时状态码未设置并升级版本号
 
-      修复了 ServerCoreExceptionProcessService 异常处理时返回的错误信息，改为使用 errorInfo。
-      项目版本号提升至 1.1.14。
+      在 XFEClientRequester.cs 中补充异常处理时的状态码赋值，确保返回结果准确；同时将项目版本号从 1.1.14 升级到 1.1.15。
 
       ## 新增
 

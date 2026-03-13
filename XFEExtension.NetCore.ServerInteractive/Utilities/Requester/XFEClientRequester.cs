@@ -104,6 +104,7 @@ public abstract class XFEClientRequester : IRequesterBase
         {
             MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(ex.Message, HttpStatusCode.InternalServerError));
             result.Message = ex.Message;
+            result.StatusCode = HttpStatusCode.InternalServerError;
             return result;
         }
         throw new XFERequesterException("请求的方法未注册");
