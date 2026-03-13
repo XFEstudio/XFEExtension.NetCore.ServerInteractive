@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.13</Version>
+		<Version>1.1.14</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,11 +20,11 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
-      
-      优化日志 IP 获取方式并升级版本至 1.1.13
 
-      将 EntryPointVerifyServer.cs 中日志输出的 IP 地址获取方式由 e.ClientIP 改为 XFEServerCore.GetIpFunction(e)，提升 IP 获取的灵活性。
-      项目版本号同步提升至 1.1.13。
+      修正异常处理返回信息并升级版本号至1.1.14
+
+      修复了 ServerCoreExceptionProcessService 异常处理时返回的错误信息，改为使用 errorInfo。
+      项目版本号提升至 1.1.14。
 
       ## 新增
 
