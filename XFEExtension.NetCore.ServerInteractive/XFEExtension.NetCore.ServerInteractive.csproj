@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.15</Version>
+		<Version>1.1.16</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,10 +20,12 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
+      
+      优化异常处理逻辑并更新版本号至1.1.16
 
-      修复异常时状态码未设置并升级版本号
-
-      在 XFEClientRequester.cs 中补充异常处理时的状态码赋值，确保返回结果准确；同时将项目版本号从 1.1.14 升级到 1.1.15。
+      - 引入字符串扩展以增强空白判断
+      - 优化异常输出，仅在必要时打印详细信息
+      - 项目版本号升级为 1.1.16
 
       ## 新增
 

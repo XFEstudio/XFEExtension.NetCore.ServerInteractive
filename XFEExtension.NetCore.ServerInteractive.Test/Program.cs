@@ -24,7 +24,7 @@ internal class Program
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    [SMTest("Admin", "1234564")]
+    [SMTest("Admin", "12345641")]
     public static async Task Login(string account, string password)
     {
         var result = await xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
