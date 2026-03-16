@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.16</Version>
+		<Version>1.1.17</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -20,12 +20,11 @@
 		<PackageTags>XFE;Server;服务器;XFEExtension</PackageTags>
 		<PackageReleaseNotes>
       ## 调整
-      
-      优化异常处理逻辑并更新版本号至1.1.16
 
-      - 引入字符串扩展以增强空白判断
-      - 优化异常输出，仅在必要时打印详细信息
-      - 项目版本号升级为 1.1.16
+      新增IsStandardError属性及依赖包版本优化
+
+      本次提交新增IsStandardError属性，完善异常处理逻辑，相关接口和类同步更新。
+      项目依赖包版本改为通配符，提升兼容性，版本号升级至1.1.17。
 
       ## 新增
 
@@ -58,11 +57,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Management" Version="10.0.3" />
-		<PackageReference Include="XFEExtension.NetCore" Version="3.3.10" />
+		<PackageReference Include="System.Management" Version="10.0.*" />
+		<PackageReference Include="XFEExtension.NetCore" Version="3.3.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
-		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="1.2.3" />
+		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="1.2.*" />
 	</ItemGroup>
 
 </Project>

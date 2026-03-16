@@ -16,6 +16,8 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     /// <inheritdoc/>
     public string ClientIP { get => ReturnArgs.ClientIP; set => ReturnArgs.ClientIP = value; }
     /// <inheritdoc/>
+    public bool IsStandardError { get => ReturnArgs.IsStandardError; set => ReturnArgs.IsStandardError = value; }
+    /// <inheritdoc/>
     public string Execute { get; set; } = string.Empty;
     /// <inheritdoc/>
     public XFEServerCore XFEServerCore { get; set; }

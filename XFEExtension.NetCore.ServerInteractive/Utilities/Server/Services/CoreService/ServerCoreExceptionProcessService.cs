@@ -1,7 +1,6 @@
 ﻿using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
-using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -29,7 +28,11 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
             var errorInfo = string.Empty;
             if (e.ServerException?.InnerException is ServerCoreReturnArgs returnArgs)
                 errorInfo = returnArgs.ReturnMessage;
-            if (errorInfo.IsNullOrWhiteSpace())
+            if (e.ReturnArgs.IsStandardError)
+            {
+                Console.Write($"\t【{errorInfo}】");
+            }
+            else
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -48,10 +51,6 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                 Console.WriteLine($"[WARN]【{errorInfo}】{errorMessage}");
                 if (e.ServerException?.InnerException?.StackTrace is not null)
                     Console.WriteLine($"[TRACE]{e.ServerException?.InnerException?.StackTrace}");
-            }
-            else
-            {
-                Console.Write($"\t【{errorInfo}】");
             }
             try
             {
