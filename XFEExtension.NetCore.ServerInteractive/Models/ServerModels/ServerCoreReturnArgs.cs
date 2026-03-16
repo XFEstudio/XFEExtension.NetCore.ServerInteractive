@@ -128,6 +128,7 @@ public class ServerCoreReturnArgs : Exception
     {
         ReturnMessage = message;
         Handled = handled;
+        IsStandardError = true;
         StatusCode = code;
         return this;
     }
