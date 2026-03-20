@@ -1,7 +1,7 @@
 ﻿using XFEExtension.NetCore.AutoImplement;
-using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
+using XFEExtension.NetCore.ServerInteractive.Options;
 using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -12,6 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder>
 {
+    static int serverCount = 1;
     readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
     readonly List<IServerCoreOriginalService> serverCoreServiceList = [];
     readonly List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
@@ -134,7 +135,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// 构建XFE服务器核心
     /// </summary>
     /// <returns>XFE服务器核心</returns>
-    public XFEServerCore Build(string? name = "")
+    public XFEServerCore Build(XFEServerCoreOptions? xFEServerCoreOptions = null)
     {
         foreach (var serverCoreService in serverCoreServiceList)
         {
@@ -145,8 +146,30 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         xFEServerCore.serverCoreVerifyAsyncServiceList = serverCoreVerifyAsyncServiceList;
         xFEServerCore.standardCoreServiceDictionary = serverStandardCoreServiceDictionary;
         xFEServerCore.standardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
-        if (!name.IsNullOrEmpty())
-            xFEServerCore.ServerCoreName = name;
+
+        if (xFEServerCoreOptions is not null)
+        {
+            xFEServerCore.ServerCoreName = xFEServerCoreOptions.ServerCoreName;
+            xFEServerCore.AutoUnescapeJson = xFEServerCoreOptions.AutoUnescapeJson;
+            xFEServerCore.AcceptNonStandardJson = xFEServerCoreOptions.AcceptNonStandardJson;
+            xFEServerCore.GetIpFunction = xFEServerCoreOptions.GetIpFunction;
+            if(!xFEServerCoreOptions.BindingIPAddress.IsNullOrEmpty())
+                xFEServerCore.BindingIPAddress = xFEServerCoreOptions.BindingIPAddress;
+        }
+
+        if (xFEServerCore.ServerCoreName.IsNullOrEmpty())
+            xFEServerCore.ServerCoreName = $"XFE服务器-{serverCount++}";
         return xFEServerCore;
+    }
+
+    /// <summary>
+    /// 构建XFE服务器核心
+    /// </summary>
+    /// <returns>XFE服务器核心</returns>
+    public XFEServerCore Build(Action<XFEServerCoreOptions> optionsBuilder)
+    {
+        var xFEServerCoreOptions = new XFEServerCoreOptions();
+        optionsBuilder(xFEServerCoreOptions);
+        return Build(xFEServerCoreOptions);
     }
 }

@@ -19,7 +19,6 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public abstract class XFEServerCore : ServerCoreServiceBase
 {
-    static int serverCount = 1;
     /// <summary>
     /// 是否自动对Json字符串进行反转义处理，默认为true
     /// </summary>
@@ -60,11 +59,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// 网络通讯服务器
     /// </summary>
     public CyberCommServer CyberCommServer { get; internal set; } = new();
-
-    /// <summary>
-    /// XFE核心服务器
-    /// </summary>
-    public XFEServerCore() => ServerCoreName = $"XFE服务器-{serverCount++}";
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
