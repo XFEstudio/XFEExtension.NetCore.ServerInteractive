@@ -1,7 +1,7 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 
 /// <summary>
 /// XFE服务器构建器扩展

@@ -4,8 +4,8 @@ using XFEExtension.NetCore.ServerInteractive.TServer;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
 using XFEExtension.NetCore.ServerInteractive.TServer.Services;
-using XFEExtension.NetCore.ServerInteractive.Utilities;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
 var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器

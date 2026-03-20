@@ -2,7 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
-using XFEExtension.NetCore.ServerInteractive.Utilities;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 internal class Program

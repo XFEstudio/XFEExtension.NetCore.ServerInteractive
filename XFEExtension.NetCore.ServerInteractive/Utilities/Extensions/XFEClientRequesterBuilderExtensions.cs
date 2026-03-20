@@ -5,7 +5,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 
 /// <summary>
 /// XFE客户端请求器构建器扩展

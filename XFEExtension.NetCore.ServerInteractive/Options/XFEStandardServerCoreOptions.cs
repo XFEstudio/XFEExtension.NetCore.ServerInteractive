@@ -1,7 +1,7 @@
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Options;
 
 /// <summary>
 /// XFE服务器核心服务选项

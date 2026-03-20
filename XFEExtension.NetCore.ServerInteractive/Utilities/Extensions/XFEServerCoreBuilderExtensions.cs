@@ -1,9 +1,10 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.ServerInteractive.Options;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 
 /// <summary>
 /// XFE服务器核心构建器扩展

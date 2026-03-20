@@ -50,17 +50,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder AddService<T>() where T : IServerCoreOriginalService, new() => AddService(new T());
 
     /// <summary>
-    /// 使用自定义IP获取函数
-    /// </summary>
-    /// <param name="getIpFunction">自定义IP获取函数</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder UseCustomIPGetFunction(Func<CyberCommRequestEventArgs, string> getIpFunction)
-    {
-        xFEServerCore.GetIpFunction = getIpFunction;
-        return this;
-    }
-
-    /// <summary>
     /// 添加校验服务
     /// </summary>
     /// <param name="serverCoreVerifyService">校验服务对象</param>
