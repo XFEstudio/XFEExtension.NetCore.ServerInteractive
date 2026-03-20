@@ -22,7 +22,7 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     /// <inheritdoc/>
     public XFEServerCore XFEServerCore { get; set; }
     /// <inheritdoc/>
-    public QueryableJsonNode Json { get; set; }
+    public QueryableJsonNode? Json { get; set; }
     /// <inheritdoc/>
     public ServerCoreReturnArgs ReturnArgs { get; set; }
     /// <inheritdoc/>

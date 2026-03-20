@@ -16,9 +16,9 @@ public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T :
     public override async Task RequestReceiveAsync()
     {
         Console.Write($"校验登录请求：");
-        var session = Regex.Unescape(Json["session"].ToString());
+        var session = Regex.Unescape(Json?["session"]?.ToString() ?? string.Empty);
         Console.Write(session[..10]);
-        var computerInfo = Json["computerInfo"].ToString();
+        var computerInfo = Json?["computerInfo"]?.ToString();
         if (session.IsNullOrWhiteSpace()) throw Error("Session值不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
         var split = session.Split('|');

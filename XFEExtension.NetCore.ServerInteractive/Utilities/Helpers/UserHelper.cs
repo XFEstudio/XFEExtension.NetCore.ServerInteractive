@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
@@ -132,8 +133,12 @@ public static class UserHelper
     /// <param name="requiredPermissionLevel"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string? userName, string? password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList)
     {
+        if (userName.IsNullOrWhiteSpace())
+            return UserOperateResult.UserNotFound;
+        if (password.IsNullOrWhiteSpace())
+            return UserOperateResult.InvalidPassword;
         var result = GetUser(userName, password, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
@@ -152,8 +157,10 @@ public static class UserHelper
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string? sessionId, string? computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
     {
+        if (sessionId.IsNullOrWhiteSpace() || computerInfo.IsNullOrWhiteSpace())
+            return UserOperateResult.UserNotFound;
         var result = GetUser(sessionId, computerInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
@@ -186,7 +193,7 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="statusCode"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
+    public static void ValidatePermission(string? userName, string? password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
     {
         var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
         if (result != UserOperateResult.Success)
@@ -205,7 +212,7 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="r"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string userName, string password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    public static void ValidatePermission(string? userName, string? password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
         if (result != UserOperateResult.Success)
@@ -226,7 +233,7 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="r"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string sessionId, string computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    public static void ValidatePermission(string? sessionId, string? computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = ValidateUserPermission(sessionId, computerInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)

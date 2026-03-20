@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.18</Version>
+		<Version>1.2.0</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,10 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      增强错误处理并升级版本号至1.1.18
+      提升空值兼容性，增强API健壮性与容错能力
 
-      在 ServerCoreReturnArgs 的 Error 方法中增加 IsStandardError 标记，提升错误标准化处理能力。
-      项目版本号从 1.1.17 升级到 1.1.18。
+      本次提交将 QueryableJsonNode 及相关参数改为可空类型，全面增加了 null 安全访问和参数校验，优化了用户验证、数据表格、日志、IP 管理等服务的异常处理，防止因空引用导致崩溃。同步升级版本号至 1.2.0。
 
       ## 新增
 

@@ -38,7 +38,7 @@ public interface IXFEServerCoreServiceBase
     /// <summary>
     /// 当前请求的 json 节点
     /// </summary>
-    QueryableJsonNode Json { get; set; }
+    QueryableJsonNode? Json { get; set; }
 
     /// <summary>
     /// 当前请求的返回参数

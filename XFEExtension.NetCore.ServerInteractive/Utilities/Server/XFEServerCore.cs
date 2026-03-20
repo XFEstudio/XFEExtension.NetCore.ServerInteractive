@@ -94,7 +94,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         try
         {
             queryableJsonNode = e.RequestBody ?? throw new ProcessStandardRequestException("请求的API接口不正确");
-            execute = queryableJsonNode["execute"] ?? string.Empty;
+            execute = queryableJsonNode?["execute"]?.ToString() ?? string.Empty;
         }
         catch (Exception ex)
         {
@@ -113,7 +113,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
-            queryableJsonNode ??= new QueryableJsonNode(new JsonNode());
             if (!execute.IsNullOrEmpty())
             {
                 Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");

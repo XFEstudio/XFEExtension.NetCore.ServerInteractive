@@ -14,9 +14,9 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
     public override async Task RequestReceiveAsync()
     {
         Console.Write("登录请求");
-        var account = Json["account"]?.ToString();
-        var password = Json["password"]?.ToString();
-        var computerInfo = Json["computerInfo"]?.ToString();
+        var account = Json?["account"]?.ToString();
+        var password = Json?["password"]?.ToString();
+        var computerInfo = Json?["computerInfo"]?.ToString();
         if (account.IsNullOrWhiteSpace()) throw Error("账户名不能为空");
         if (password.IsNullOrWhiteSpace()) throw Error("登录密码不能为空");
         if (computerInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");

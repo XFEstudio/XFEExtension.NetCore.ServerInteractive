@@ -138,7 +138,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<T> tableList = [.. GetTableFunction()];
-                    int pageCount = requestJsonNode["pageCount"].GetValue<int>();
+                    int pageCount = requestJsonNode["pageCount"]?.GetValue<int>() ?? -1;
                     if (pageCount == -1)
                     {
                         await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
@@ -150,7 +150,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     }
                     else
                     {
-                        int page = requestJsonNode["page"].GetValue<int>();
+                        int page = requestJsonNode["page"]?.GetValue<int>() ?? -1;
                         await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
                         {
                             totalCount = tableList.Count,
@@ -161,7 +161,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     break;
                 case "add":
                     Console.Write($"【{r.Args.ClientIP}】添加{TableShowName}请求");
-                    var item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]), JsonSerializerOptions);
+                    var item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]?.ToString() ?? string.Empty), JsonSerializerOptions);
                     if (item is null)
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -181,7 +181,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     break;
                 case "remove":
                     Console.Write($"【{r.Args.ClientIP}】删除{TableShowName}请求");
-                    var id = requestJsonNode["id"].ToString();
+                    var id = requestJsonNode["id"]?.ToString();
                     Console.Write($"：{id}");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, RemovePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (id.IsNullOrWhiteSpace())
@@ -194,7 +194,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     break;
                 case "change":
                     Console.Write($"【{r.Args.ClientIP}】更改{TableShowName}请求");
-                    item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]), JsonSerializerOptions);
+                    item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]?.ToString() ?? string.Empty), JsonSerializerOptions);
                     if (item is null)
                     {
                         statusCode = HttpStatusCode.BadRequest;
