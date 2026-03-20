@@ -21,6 +21,14 @@ public abstract class XFEServerCore : ServerCoreServiceBase
 {
     static int serverCount = 1;
     /// <summary>
+    /// 是否自动对Json字符串进行反转义处理，默认为true
+    /// </summary>
+    public bool AutoUnescapeJson { get; set; } = true;
+    /// <summary>
+    /// 是否接收非标准的Json字符串
+    /// </summary>
+    public bool AcceptNonStandardJson { get; set; } = true;
+    /// <summary>
     /// 服务器核心错误委托
     /// </summary>
     public XFEEventHandler<XFEServerCore, ServerCoreErrorEventArgs>? ServerCoreError { get; set; }
@@ -92,36 +100,39 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         try
         {
             queryableJsonNode = e.RequestBody ?? throw new ProcessStandardRequestException("请求的API接口不正确");
-            execute = queryableJsonNode["execute"];
+            execute = queryableJsonNode["execute"] ?? string.Empty;
         }
         catch (Exception ex)
         {
-            ServerCoreError?.Invoke(this, new()
+            if (!AcceptNonStandardJson)
             {
-                StatusCode = HttpStatusCode.BadRequest,
-                ReturnArgs = r,
-                ServerException = new ProcessStandardRequestException("无法转换为QueryableJsonNode", ex)
-            });
-            return;
+                ServerCoreError?.Invoke(this, new()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ReturnArgs = r,
+                    ServerException = new ProcessStandardRequestException("无法转换为QueryableJsonNode", ex)
+                });
+                return;
+            }
         }
         try
         {
-            if (queryableJsonNode is null)
+            if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
+            queryableJsonNode ??= new QueryableJsonNode(new JsonNode());
             if (!execute.IsNullOrEmpty())
             {
-                //Console.WriteLine($"【{clientIP}】请求方法：{execute}");
                 Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
                 var stopWatch = Stopwatch.StartNew();
                 if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
                     var serviceInstance = serviceFactory();
-                    // inject server core reference and set context
                     try
                     {
                         serviceInstance.XFEServerCore = this;
                         serviceInstance.Execute = execute;
                         serviceInstance.Json = queryableJsonNode;
+                        serviceInstance.Request = e.Request;
                         serviceInstance.ReturnArgs = r;
                         serviceInstance.Initialize();
                         serviceInstance.RequestReceive();
@@ -137,7 +148,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
                         });
                     }
-                    //Console.WriteLine($"【{clientIP}】请求处理完成：{execute}");
                     stopWatch.Stop();
                     Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
@@ -153,6 +163,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                             instance.XFEServerCore = this;
                             instance.Execute = execute;
                             instance.Json = queryableJsonNode;
+                            instance.Request = e.Request;
                             instance.ReturnArgs = r;
                             instance.Initialize();
                             instance.RequestReceive();

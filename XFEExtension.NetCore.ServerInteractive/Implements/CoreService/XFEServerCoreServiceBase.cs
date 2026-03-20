@@ -25,7 +25,8 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     public QueryableJsonNode Json { get; set; }
     /// <inheritdoc/>
     public ServerCoreReturnArgs ReturnArgs { get; set; }
-
+    /// <inheritdoc/>
+    public HttpListenerRequest Request { get; set; }
     /// <inheritdoc/>
     public async Task Send(string message) => await ReturnArgs.Send(message);
 

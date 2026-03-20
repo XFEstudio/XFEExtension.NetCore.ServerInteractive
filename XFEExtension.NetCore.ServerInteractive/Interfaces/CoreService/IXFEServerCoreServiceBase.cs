@@ -26,7 +26,7 @@ public interface IXFEServerCoreServiceBase
     bool IsStandardError { get; set; }
 
     /// <summary>
-    /// 是否已经处理完成
+    /// 错误抛出是否已经处理完成（如果为true，表示错误已经被处理，不需要ErrorProcessor再次处理）
     /// </summary>
     bool Handled { get; set; }
 
@@ -44,6 +44,11 @@ public interface IXFEServerCoreServiceBase
     /// 当前请求的返回参数
     /// </summary>
     ServerCoreReturnArgs ReturnArgs { get; set; }
+
+    /// <summary>
+    /// 当前请求的 HttpListenerRequest 对象
+    /// </summary>
+    HttpListenerRequest Request { get; set; }
 
     /// <summary>
     /// Sends a reply message asynchronously using the current context.
