@@ -9,17 +9,18 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 /// </summary>
 public class ServerIpInitializer : ServerInitializerServiceBase
 {
+    static int nextDefaultPort = 3300;
     /// <inheritdoc/>
     public override void Initialize()
     {
         ServerBaseProfile.SaveProfile();
         foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
-            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, "http://localhost:8080/");
+            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{nextDefaultPort++}/");
             if (ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress))
             {
                 Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");
-                Console.WriteLine($"是否绑定上一次IP：{ipAddress}？(Y/N)");
+                Console.WriteLine($"是否绑定IP：{ipAddress}？(Y/N)");
                 var key = Console.ReadKey();
                 Console.WriteLine(key.Key.ToString());
                 if (key.Key == ConsoleKey.N)

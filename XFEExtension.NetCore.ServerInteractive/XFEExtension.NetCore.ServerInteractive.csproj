@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.2.0</Version>
+		<Version>1.2.1</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      提升空值兼容性，增强API健壮性与容错能力
+      服务器IP初始化支持递增端口，升级版本号
 
-      本次提交将 QueryableJsonNode 及相关参数改为可空类型，全面增加了 null 安全访问和参数校验，优化了用户验证、数据表格、日志、IP 管理等服务的异常处理，防止因空引用导致崩溃。同步升级版本号至 1.2.0。
+      为每个服务器分配递增端口（从3300起），优化控制台提示内容，并将项目版本号提升至1.2.1。
 
       ## 新增
 
