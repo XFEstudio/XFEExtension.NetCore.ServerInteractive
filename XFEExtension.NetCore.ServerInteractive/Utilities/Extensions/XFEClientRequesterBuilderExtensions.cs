@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 /// </summary>
 public static class XFEClientRequesterBuilderExtensions
 {
-    private readonly static JsonSerializerOptions JsonSerializerOptions = new();
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new();
 
     static XFEClientRequesterBuilderExtensions() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
@@ -38,7 +38,7 @@ public static class XFEClientRequesterBuilderExtensions
         computerInfo,
         startDateTime = parameters[0],
         endDateTime = parameters[1]
-    }, static response => response).AddRequest("clear_log", static (session, computerInfo, parameters) => new
+    }, static response => response).AddRequest("clear_log", static (session, computerInfo, _) => new
     {
         execute = "clear_log",
         session,
@@ -50,7 +50,7 @@ public static class XFEClientRequesterBuilderExtensions
     /// </summary>
     /// <param name="xFEClientRequesterBuilder"></param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder AddBannedIpRequest(this XFEClientRequesterBuilder xFEClientRequesterBuilder) => xFEClientRequesterBuilder.AddRequest("get_bannedIpList", static (session, computerInfo, parameters) => new
+    public static XFEClientRequesterBuilder AddBannedIpRequest(this XFEClientRequesterBuilder xFEClientRequesterBuilder) => xFEClientRequesterBuilder.AddRequest("get_bannedIpList", static (session, computerInfo, _) => new
     {
         execute = "get_bannedIpList",
         session,

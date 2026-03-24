@@ -2,6 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
+using XFEExtension.NetCore.ServerInteractive.Options;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
@@ -19,11 +20,8 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <summary>
     /// 创建构建器
     /// </summary>
-    /// <param name="requestAddress">请求地址</param>
-    /// <param name="session">Session</param>
-    /// <param name="computerInfo">电脑信息</param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder CreateBuilder(string requestAddress = "http://localhost:8080/", string session = "", string computerInfo = "")
+    public static XFEClientRequesterBuilder CreateBuilder()
     {
         var builder = new XFEClientRequesterBuilderImpl
         {
@@ -41,9 +39,8 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <summary>
     /// 创建构建器
     /// </summary>
-    /// <param name="requestAddress">请求地址</param>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder CreateBuilder(string requestAddress = "http://localhost:8080/")
+    public static XFEClientRequesterBuilder CreateBuilder()
     {
         var builder = new XFEClientRequesterBuilderImpl
         {
@@ -129,8 +126,30 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// 构建XFE客户端请求器
     /// </summary>
     /// <returns>XFE客户端请求器</returns>
-    public XFEClientRequester Build()
+    public XFEClientRequester Build(XFEClientRequesterOptions options)
     {
+        _xFEClientRequester.RequestAddress = options.RequestAddress;
+        _xFEClientRequester.Session = options.Session;
+        _xFEClientRequester.ComputerInfo = options.ComputerInfo;
+        _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
+        _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
+        _xFEClientRequester.XFERequestServiceDictionary = _xFERequestServiceDictionary;
+        _xFEClientRequester.XFEClientInstanceRequestDictionary = _xFEClientInstanceRequestDictionary;
+        return _xFEClientRequester;
+    }
+
+    /// <summary>
+    /// 构建XFE客户端请求器
+    /// </summary>
+    /// <returns>XFE客户端请求器</returns>
+    public XFEClientRequester Build(Action<XFEClientRequesterOptions> optionsBuilder)
+    {
+        var options = new XFEClientRequesterOptions();
+        optionsBuilder(options);
+        _xFEClientRequester.RequestAddress = options.RequestAddress;
+        _xFEClientRequester.Session = options.Session;
+        _xFEClientRequester.ComputerInfo = options.ComputerInfo;
+        _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.XFERequestServiceDictionary = _xFERequestServiceDictionary;
         _xFEClientRequester.XFEClientInstanceRequestDictionary = _xFEClientInstanceRequestDictionary;

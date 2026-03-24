@@ -20,6 +20,10 @@ public abstract class XFEClientRequester : IRequesterBase
     internal Dictionary<string, IRequestService> RequestServiceDictionary = [];
     internal Dictionary<string, IXFERequestService> XFERequestServiceDictionary = [];
     internal Dictionary<string, XFEClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
+    /// <summary>
+    /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
+    /// </summary>
+    public bool AutoUnescapeResponse { get; set; } = true;
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
     /// <inheritdoc/>

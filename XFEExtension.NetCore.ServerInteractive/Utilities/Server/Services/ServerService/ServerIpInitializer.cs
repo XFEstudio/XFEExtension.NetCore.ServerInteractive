@@ -17,25 +17,23 @@ public class ServerIpInitializer : ServerInitializerServiceBase
         foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
             ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{_nextDefaultPort++}/");
-            if (ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress))
+            if (!ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress)) continue;
+            Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");
+            Console.WriteLine($"是否绑定IP：{ipAddress}？(Y/N)");
+            var key = Console.ReadKey();
+            Console.WriteLine(key.Key.ToString());
+            if (key.Key == ConsoleKey.N)
             {
-                Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");
-                Console.WriteLine($"是否绑定IP：{ipAddress}？(Y/N)");
-                var key = Console.ReadKey();
-                Console.WriteLine(key.Key.ToString());
-                if (key.Key == ConsoleKey.N)
+                ipAddress = string.Empty;
+                while (ipAddress.IsNullOrWhiteSpace())
                 {
-                    ipAddress = string.Empty;
-                    while (ipAddress.IsNullOrWhiteSpace())
-                    {
-                        XFEConsole.XFEConsole.CurrentConsoleTextWriter?.OriginalTextWriter.Write("请输入绑定的IP：");
-                        ipAddress = Console.ReadLine();
-                    }
-                    ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;
+                    XFEConsole.XFEConsole.CurrentConsoleTextWriter?.OriginalTextWriter.Write("请输入绑定的IP：");
+                    ipAddress = Console.ReadLine();
                 }
-                serverCoreService.BindingIPAddress = ipAddress;
-                Console.WriteLine($"服务器{serverCoreService.ServerCoreName}设置完成！IP为：{ipAddress}");
+                ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;
             }
+            serverCoreService.BindingIPAddress = ipAddress;
+            Console.WriteLine($"服务器{serverCoreService.ServerCoreName}设置完成！IP为：{ipAddress}");
         }
         ServerBaseProfile.SaveProfile();
     }

@@ -8,7 +8,7 @@ public class XFEClientInstanceRequest
     /// <summary>
     /// 构建请求体
     /// </summary>
-    public Func<string, string, object[], object> ConstructBody { get; set; } = (_, _, _) => default!;
+    public Func<string, string, object[], object> ConstructBody { get; set; } = (_, _, _) => null!;
     /// <summary>
     /// 处理请求
     /// </summary>
