@@ -19,10 +19,11 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
         XFEServerCore.ServerCoreError += XFEServerCore_ServerCoreError;
     }
 
-    private async void XFEServerCore_ServerCoreError(XFEServerCore sender, ServerCoreErrorEventArgs e)
+    private static async void XFEServerCore_ServerCoreError(XFEServerCore sender, ServerCoreErrorEventArgs e)
     {
-        if (!e.Handled && e.ReturnArgs is not null)
+        try
         {
+            if (e.Handled || e.ReturnArgs is null) return;
             var currentException = e.ServerException?.InnerException;
             var errorMessage = e.ServerException?.Message ?? "服务器内部异常";
             var errorInfo = string.Empty;
@@ -34,17 +35,14 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
             }
             else
             {
-                for (int i = 0; i < 5; i++)
+                for (var i = 0; i < 5; i++)
                 {
                     if (currentException is null)
                     {
                         break;
                     }
-                    else
-                    {
-                        errorMessage += $"：{currentException.Message}";
-                        currentException = currentException.InnerException;
-                    }
+                    errorMessage += $"：{currentException.Message}";
+                    currentException = currentException.InnerException;
                 }
                 errorInfo = "服务器内部异常";
                 Console.WriteLine();
@@ -52,11 +50,23 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                 if (e.ServerException?.InnerException?.StackTrace is not null)
                     Console.WriteLine($"[TRACE]{e.ServerException?.InnerException?.StackTrace}");
             }
+
             try
             {
                 await e.ReturnArgs.CloseWithError(errorInfo, e.StatusCode);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR]发送错误响应时发生异常：{ex.Message}");
+                if (ex.StackTrace is not null)
+                    Console.WriteLine($"[TRACE]{ex.StackTrace}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR]处理服务器异常时发生异常：{ex.Message}");
+            if (ex.StackTrace is not null)
+                Console.WriteLine($"[TRACE]{ex.StackTrace}");
         }
     }
 }
