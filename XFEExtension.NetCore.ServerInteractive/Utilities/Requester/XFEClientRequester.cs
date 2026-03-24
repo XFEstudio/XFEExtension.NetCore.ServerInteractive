@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
@@ -88,6 +89,8 @@ public abstract class XFEClientRequester : IRequesterBase
             {
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
+                if (AutoUnescapeResponse)
+                    response = Regex.Unescape(response);
                 if (code == HttpStatusCode.OK)
                 {
                     var requestResult = instance.ProcessResponse?.Invoke(response);
