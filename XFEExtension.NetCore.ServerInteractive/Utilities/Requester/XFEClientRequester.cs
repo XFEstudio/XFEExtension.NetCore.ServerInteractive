@@ -7,7 +7,6 @@ using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
-using XFEExtension.NetCore.StringExtension.Json;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
@@ -17,10 +16,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 [CreateImpl]
 public abstract class XFEClientRequester : IRequesterBase
 {
-    readonly JsonSerializerOptions jsonSerializerOptions = new();
-    internal Dictionary<string, IRequestService> requestServiceDictionary = [];
-    internal Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
-    internal Dictionary<string, XFEClientInstanceRequest> xFEClientInstanceRequestDictionary = [];
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new();
+    internal Dictionary<string, IRequestService> RequestServiceDictionary = [];
+    internal Dictionary<string, IXFERequestService> XFERequestServiceDictionary = [];
+    internal Dictionary<string, XFEClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
     /// <inheritdoc/>
@@ -33,9 +32,9 @@ public abstract class XFEClientRequester : IRequesterBase
     /// <summary>
     /// XFE客户端请求器
     /// </summary>
-    public XFEClientRequester()
+    protected XFEClientRequester()
     {
-        jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+        _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
     }
 
     /// <summary>
@@ -60,13 +59,13 @@ public abstract class XFEClientRequester : IRequesterBase
         var result = new ClientRequestResult<object>();
         try
         {
-            if (requestServiceDictionary.TryGetValue(serviceName, out var service))
+            if (RequestServiceDictionary.TryGetValue(serviceName, out var service))
             {
                 result = await service.Request<object>(parameters);
             }
-            else if (xFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
+            else if (XFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters), jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -81,9 +80,9 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
-            else if (xFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
+            else if (XFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters), jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {

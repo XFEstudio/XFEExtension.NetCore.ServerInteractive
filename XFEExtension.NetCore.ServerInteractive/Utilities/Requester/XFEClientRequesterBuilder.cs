@@ -122,9 +122,9 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns>XFE客户端请求器</returns>
     public XFEClientRequester Build()
     {
-        xFEClientRequester.requestServiceDictionary = requestServiceDictionary;
-        xFEClientRequester.xFERequestServiceDictionary = xFERequestServiceDictionary;
-        xFEClientRequester.xFEClientInstanceRequestDictionary = xFEClientInstanceRequestDictionary;
+        xFEClientRequester.RequestServiceDictionary = requestServiceDictionary;
+        xFEClientRequester.XFERequestServiceDictionary = xFERequestServiceDictionary;
+        xFEClientRequester.XFEClientInstanceRequestDictionary = xFEClientInstanceRequestDictionary;
         return xFEClientRequester;
     }
 }
