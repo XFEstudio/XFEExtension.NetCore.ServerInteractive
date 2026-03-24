@@ -11,16 +11,16 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
 /// </summary>
 public class LoginRequestService<T> : XFERequestServiceBase where T : IUserFaceInfo
 {
-    readonly JsonSerializerOptions jsonSerializerOptions = new();
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     /// <summary>
     /// 登录请求服务
     /// </summary>
-    public LoginRequestService() => jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    public LoginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
     /// <inheritdoc/>
     public override object AnalyzeResponse(string response)
     {
-        var result = JsonSerializer.Deserialize<UserLoginResult<T>>(response, jsonSerializerOptions);
+        var result = JsonSerializer.Deserialize<UserLoginResult<T>>(response, _jsonSerializerOptions);
         XFEClientRequester.Session = result!.Session;
         return result;
     }

@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 /// <summary>
 /// AES加密帮助
 /// </summary>
-public static class AESHelper
+public static class AesHelper
 {
     /// <summary>
     /// 生成随机密钥
@@ -22,7 +22,7 @@ public static class AESHelper
     /// 生成随机向量
     /// </summary>
     /// <returns></returns>
-    public static string GenerateRandomIV()
+    public static string GenerateRandomIv()
     {
         byte[] iv = new byte[16];
         RandomNumberGenerator.Fill(iv);

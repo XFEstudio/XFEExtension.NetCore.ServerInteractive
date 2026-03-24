@@ -12,13 +12,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder>
 {
-    static int serverCount = 1;
-    readonly XFEServerCore xFEServerCore = new XFEServerCoreImpl();
-    readonly List<IServerCoreOriginalService> serverCoreServiceList = [];
-    readonly List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
-    readonly List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
-    readonly Dictionary<string, Func<IServerCoreStandardService>> serverStandardCoreServiceDictionary = [];
-    readonly Dictionary<List<string>, Func<IServerCoreStandardService>> serverMultiStandardCoreServiceDictionary = [];
+    private static int _serverCount = 1;
+    private readonly XFEServerCore _xFEServerCore = new XFEServerCoreImpl();
+    private readonly List<IServerCoreOriginalService> _serverCoreServiceList = [];
+    private readonly List<IServerCoreVerifyService> _serverCoreVerifyServiceList = [];
+    private readonly List<IServerCoreVerifyAsyncService> _serverCoreVerifyAsyncServiceList = [];
+    private readonly Dictionary<string, Func<IServerCoreStandardService>> _serverStandardCoreServiceDictionary = [];
+    private readonly Dictionary<List<string>, Func<IServerCoreStandardService>> _serverMultiStandardCoreServiceDictionary = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -27,7 +27,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public static XFEServerCoreBuilder CreateBuilder()
     {
         var builder = new XFEServerCoreBuilderImpl();
-        builder.AddParameter("XFEServerCore", builder.xFEServerCore);
+        builder.AddParameter("XFEServerCore", builder._xFEServerCore);
         return builder;
     }
 
@@ -39,7 +39,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder AddService(IServerCoreOriginalService serverCoreRegisterService)
     {
         ApplyParameter(serverCoreRegisterService);
-        serverCoreServiceList.Add(serverCoreRegisterService);
+        _serverCoreServiceList.Add(serverCoreRegisterService);
         return this;
     }
 
@@ -58,7 +58,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder AddVerifyService(IServerCoreVerifyService serverCoreVerifyService)
     {
         ApplyParameter(serverCoreVerifyService);
-        serverCoreVerifyServiceList.Add(serverCoreVerifyService);
+        _serverCoreVerifyServiceList.Add(serverCoreVerifyService);
         return this;
     }
 
@@ -77,7 +77,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder AddVerifyAsyncService(IServerCoreVerifyAsyncService serverCoreVerifyAsyncService)
     {
         ApplyParameter(serverCoreVerifyAsyncService);
-        serverCoreVerifyAsyncServiceList.Add(serverCoreVerifyAsyncService);
+        _serverCoreVerifyAsyncServiceList.Add(serverCoreVerifyAsyncService);
         return this;
     }
 
@@ -96,7 +96,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddStandardService<T>(string execute) where T : IServerCoreStandardService, new()
     {
-        serverStandardCoreServiceDictionary.Add(execute, () =>
+        _serverStandardCoreServiceDictionary.Add(execute, () =>
         {
             var inst = new T();
             ApplyParameter(inst);
@@ -114,7 +114,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     public XFEServerCoreBuilder AddStandardService(List<string> executeList, IServerCoreStandardService serverCoreStandardRegisterService)
     {
         var type = serverCoreStandardRegisterService.GetType();
-        serverMultiStandardCoreServiceDictionary.Add(executeList, () =>
+        _serverMultiStandardCoreServiceDictionary.Add(executeList, () =>
         {
             var inst = (IServerCoreStandardService)Activator.CreateInstance(type)!;
             ApplyParameter(inst);
@@ -137,29 +137,29 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <returns>XFE服务器核心</returns>
     public XFEServerCore Build(XFEServerCoreOptions? xFEServerCoreOptions = null)
     {
-        foreach (var serverCoreService in serverCoreServiceList)
+        foreach (var serverCoreService in _serverCoreServiceList)
         {
-            xFEServerCore.serverCoreServiceList.Add(serverCoreService);
-            xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
+            _xFEServerCore.ServerCoreServiceList.Add(serverCoreService);
+            _xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
         }
-        xFEServerCore.serverCoreVerifyServiceList = serverCoreVerifyServiceList;
-        xFEServerCore.serverCoreVerifyAsyncServiceList = serverCoreVerifyAsyncServiceList;
-        xFEServerCore.standardCoreServiceDictionary = serverStandardCoreServiceDictionary;
-        xFEServerCore.standardMultiCoreServiceDictionary = serverMultiStandardCoreServiceDictionary;
+        _xFEServerCore.ServerCoreVerifyServiceList = _serverCoreVerifyServiceList;
+        _xFEServerCore.ServerCoreVerifyAsyncServiceList = _serverCoreVerifyAsyncServiceList;
+        _xFEServerCore.StandardCoreServiceDictionary = _serverStandardCoreServiceDictionary;
+        _xFEServerCore.StandardMultiCoreServiceDictionary = _serverMultiStandardCoreServiceDictionary;
 
         if (xFEServerCoreOptions is not null)
         {
-            xFEServerCore.ServerCoreName = xFEServerCoreOptions.ServerCoreName;
-            xFEServerCore.AutoUnescapeJson = xFEServerCoreOptions.AutoUnescapeJson;
-            xFEServerCore.AcceptNonStandardJson = xFEServerCoreOptions.AcceptNonStandardJson;
-            xFEServerCore.GetIpFunction = xFEServerCoreOptions.GetIpFunction;
+            _xFEServerCore.ServerCoreName = xFEServerCoreOptions.ServerCoreName;
+            _xFEServerCore.AutoUnescapeJson = xFEServerCoreOptions.AutoUnescapeJson;
+            _xFEServerCore.AcceptNonStandardJson = xFEServerCoreOptions.AcceptNonStandardJson;
+            _xFEServerCore.GetIpFunction = xFEServerCoreOptions.GetIpFunction;
             if(!xFEServerCoreOptions.BindingIPAddress.IsNullOrEmpty())
-                xFEServerCore.BindingIPAddress = xFEServerCoreOptions.BindingIPAddress;
+                _xFEServerCore.BindingIPAddress = xFEServerCoreOptions.BindingIPAddress;
         }
 
-        if (xFEServerCore.ServerCoreName.IsNullOrEmpty())
-            xFEServerCore.ServerCoreName = $"XFE服务器-{serverCount++}";
-        return xFEServerCore;
+        if (_xFEServerCore.ServerCoreName.IsNullOrEmpty())
+            _xFEServerCore.ServerCoreName = $"XFE服务器-{_serverCount++}";
+        return _xFEServerCore;
     }
 
     /// <summary>

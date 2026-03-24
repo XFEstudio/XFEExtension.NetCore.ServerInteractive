@@ -8,7 +8,7 @@ public class UserLoginModel
     /// <summary>
     /// 用户ID
     /// </summary>
-    public string UID { get; set; } = string.Empty;
+    public string Uid { get; set; } = string.Empty;
     /// <summary>
     /// 上一次登录IP
     /// </summary>

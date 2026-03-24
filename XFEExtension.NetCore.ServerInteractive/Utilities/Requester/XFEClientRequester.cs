@@ -106,6 +106,5 @@ public abstract class XFEClientRequester : IRequesterBase
             result.StatusCode = HttpStatusCode.InternalServerError;
             return result;
         }
-        throw new XFERequesterException("请求的方法未注册");
     }
 }

@@ -24,7 +24,7 @@ public class ServerCoreReturnArgs : Exception
     /// <summary>
     /// 是否已经处理完成
     /// </summary>
-    public bool Handled { get; set; } = false;
+    public bool Handled { get; set; }
     /// <summary>
     /// 状态码
     /// </summary>

@@ -10,9 +10,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public class XFEServer
 {
-    internal List<IServerInitializerService> serverInitializerServiceList = [];
-    internal List<IServerService> serverServiceList = [];
-    internal List<IAsyncServerService> asyncServerServiceList = [];
+    internal List<IServerInitializerService> ServerInitializerServiceList = [];
+    internal List<IServerService> ServerServiceList = [];
+    internal List<IAsyncServerService> AsyncServerServiceList = [];
     /// <summary>
     /// 核心服务器处理服务
     /// </summary>
@@ -24,11 +24,11 @@ public class XFEServer
     /// <returns></returns>
     public async Task Start()
     {
-        foreach (var serverInitializerService in serverInitializerServiceList)
+        foreach (var serverInitializerService in ServerInitializerServiceList)
             serverInitializerService.Initialize();
-        foreach (var serverService in serverServiceList)
+        foreach (var serverService in ServerServiceList)
             serverService.StartService();
-        foreach (var asyncServerService in asyncServerServiceList)
+        foreach (var asyncServerService in AsyncServerServiceList)
             await asyncServerService.StartServiceAsync();
         await ServerCoreProcessService.ProcessServerCore();
     }

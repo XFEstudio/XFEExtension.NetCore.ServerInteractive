@@ -21,12 +21,12 @@ public class ClientRequestResult<T> : IRequestResult<T>
     /// <summary>
     /// 转换为指定泛型
     /// </summary>
-    /// <typeparam name="F">指定泛型</typeparam>
+    /// <typeparam name="TF">指定泛型</typeparam>
     /// <returns></returns>
-    public ClientRequestResult<F> TryConvertTo<F>() => new()
+    public ClientRequestResult<TF> TryConvertTo<TF>() => new()
     {
         Message = Message,
         StatusCode = StatusCode,
-        Result = Result is not null ? (F)(object)Result : default!
+        Result = Result is not null ? (TF)(object)Result : default!
     };
 }

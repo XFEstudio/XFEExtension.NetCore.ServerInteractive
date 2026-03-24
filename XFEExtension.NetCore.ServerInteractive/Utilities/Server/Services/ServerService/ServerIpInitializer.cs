@@ -9,14 +9,14 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 /// </summary>
 public class ServerIpInitializer : ServerInitializerServiceBase
 {
-    static int nextDefaultPort = 3300;
+    private static int _nextDefaultPort = 3300;
     /// <inheritdoc/>
     public override void Initialize()
     {
         ServerBaseProfile.SaveProfile();
         foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
-            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{nextDefaultPort++}/");
+            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{_nextDefaultPort++}/");
             if (ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress))
             {
                 Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");

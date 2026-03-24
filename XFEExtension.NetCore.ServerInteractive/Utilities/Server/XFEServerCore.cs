@@ -38,23 +38,23 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 核心服务列表
     /// </summary>
-    internal List<IServerCoreOriginalService> serverCoreServiceList = [];
+    internal List<IServerCoreOriginalService> ServerCoreServiceList = [];
     /// <summary>
     /// 核心校验服务列表
     /// </summary>
-    internal List<IServerCoreVerifyService> serverCoreVerifyServiceList = [];
+    internal List<IServerCoreVerifyService> ServerCoreVerifyServiceList = [];
     /// <summary>
     /// 核心异步校验服务列表
     /// </summary>
-    internal List<IServerCoreVerifyAsyncService> serverCoreVerifyAsyncServiceList = [];
+    internal List<IServerCoreVerifyAsyncService> ServerCoreVerifyAsyncServiceList = [];
     /// <summary>
     /// 核心标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<string, Func<IServerCoreStandardService>> standardCoreServiceDictionary = [];
+    internal Dictionary<string, Func<IServerCoreStandardService>> StandardCoreServiceDictionary = [];
     /// <summary>
     /// 核心多重标准服务工厂字典（按请求创建实例）
     /// </summary>
-    internal Dictionary<List<string>, Func<IServerCoreStandardService>> standardMultiCoreServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IServerCoreStandardService>> StandardMultiCoreServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>
@@ -71,10 +71,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         r.ClientIP = clientIP;
         try
         {
-            foreach (var serverCoreVerifyService in serverCoreVerifyServiceList)
+            foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList)
                 if (!serverCoreVerifyService.VerifyRequest(sender, e, r))
                     return;
-            foreach (var serverCoreVerifyAsyncService in serverCoreVerifyAsyncServiceList)
+            foreach (var serverCoreVerifyAsyncService in ServerCoreVerifyAsyncServiceList)
                 if (!await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
                     return;
         }
@@ -117,7 +117,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             {
                 Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
                 var stopWatch = Stopwatch.StartNew();
-                if (standardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
+                if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
                 {
                     var serviceInstance = serviceFactory();
                     try
@@ -145,11 +145,11 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
-                foreach (var key in standardMultiCoreServiceDictionary.Keys)
+                foreach (var key in StandardMultiCoreServiceDictionary.Keys)
                 {
                     if (key.Contains(execute))
                     {
-                        var factory = standardMultiCoreServiceDictionary[key];
+                        var factory = StandardMultiCoreServiceDictionary[key];
                         var instance = factory();
                         try
                         {

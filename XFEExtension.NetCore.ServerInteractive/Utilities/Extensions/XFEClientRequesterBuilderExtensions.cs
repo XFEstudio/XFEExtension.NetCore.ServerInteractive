@@ -12,9 +12,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 /// </summary>
 public static class XFEClientRequesterBuilderExtensions
 {
-    readonly static JsonSerializerOptions jsonSerializerOptions = new();
+    private readonly static JsonSerializerOptions JsonSerializerOptions = new();
 
-    static XFEClientRequesterBuilderExtensions() => jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    static XFEClientRequesterBuilderExtensions() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
     /// <summary>
     /// 添加连接检查请求
@@ -55,7 +55,7 @@ public static class XFEClientRequesterBuilderExtensions
         execute = "get_bannedIpList",
         session,
         computerInfo
-    }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, jsonSerializerOptions)!).AddRequest("add_bannedIp", static (session, computerInfo, parameters) => new
+    }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIp", static (session, computerInfo, parameters) => new
     {
         execute = "add_bannedIp",
         session,

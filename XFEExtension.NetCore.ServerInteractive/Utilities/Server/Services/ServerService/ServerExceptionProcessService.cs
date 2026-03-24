@@ -14,13 +14,13 @@ public class ServerExceptionProcessService : ServerServiceBase
         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
     }
 
-    void CurrentDomain_ProcessExit(object? sender, EventArgs e)
+    private void CurrentDomain_ProcessExit(object? sender, EventArgs e)
     {
         Console.WriteLine("[DEBUG]正在关闭服务器...");
         Console.WriteLine("[DEBUG]服务器已关闭！");
     }
 
-    void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         Console.WriteLine($"[FATAL]{e.ExceptionObject}");
         if (e.ExceptionObject is Exception exception)

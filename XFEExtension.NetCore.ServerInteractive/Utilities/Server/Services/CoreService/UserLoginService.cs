@@ -23,7 +23,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         var user = UserHelper.GetUser(account, password, GetUserFunction(), ReturnArgs!);
         Console.Write($"{account}（{computerInfo[..10]}...）");
         var userLoginList = GetEncryptedUserLoginModelFunction().Where(userLogin => userLogin.UserLoginModel.ComputerInfo == computerInfo);
-        var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.UID == user.ID);
+        var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.Uid == user.ID);
         //for (int i = 0; i < userLoginList.Count(); i++)
         //{
         //    var otherLogin = userLoginList.ElementAt(i);
@@ -38,10 +38,10 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         {
             userLogin = new EncryptedUserLoginModel
             {
-                Key = AESHelper.GenerateRandomKey(),
+                Key = AesHelper.GenerateRandomKey(),
                 UserLoginModel = new UserLoginModel
                 {
-                    UID = user.ID,
+                    Uid = user.ID,
                     ComputerInfo = computerInfo,
                     LastIPAddress = ReturnArgs!.Args.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())

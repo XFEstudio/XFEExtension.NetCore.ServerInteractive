@@ -12,11 +12,10 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 [CreateImpl]
 public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientRequesterBuilder>
 {
-    readonly XFEClientRequester xFEClientRequester = new XFEClientRequesterImpl();
-    readonly Dictionary<string, object> parameterDictionary = [];
-    readonly Dictionary<string, IRequestService> requestServiceDictionary = [];
-    readonly Dictionary<string, IXFERequestService> xFERequestServiceDictionary = [];
-    readonly Dictionary<string, XFEClientInstanceRequest> xFEClientInstanceRequestDictionary = [];
+    private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
+    private readonly Dictionary<string, IRequestService> _requestServiceDictionary = [];
+    private readonly Dictionary<string, IXFERequestService> _xFERequestServiceDictionary = [];
+    private readonly Dictionary<string, XFEClientInstanceRequest> _xFEClientInstanceRequestDictionary = [];
     /// <summary>
     /// 创建构建器
     /// </summary>
@@ -26,11 +25,16 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns></returns>
     public static XFEClientRequesterBuilder CreateBuilder(string requestAddress = "http://localhost:8080/", string session = "", string computerInfo = "")
     {
-        var builder = new XFEClientRequesterBuilderImpl();
-        builder.xFEClientRequester.RequestAddress = requestAddress;
-        builder.xFEClientRequester.Session = session;
-        builder.xFEClientRequester.ComputerInfo = computerInfo;
-        builder.AddParameter("XFEClientRequester", builder.xFEClientRequester);
+        var builder = new XFEClientRequesterBuilderImpl
+        {
+            _xFEClientRequester =
+            {
+                RequestAddress = requestAddress,
+                Session = session,
+                ComputerInfo = computerInfo
+            }
+        };
+        builder.AddParameter("XFEClientRequester", builder._xFEClientRequester);
         return builder;
     }
 
@@ -41,11 +45,16 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns></returns>
     public static XFEClientRequesterBuilder CreateBuilder(string requestAddress = "http://localhost:8080/")
     {
-        var builder = new XFEClientRequesterBuilderImpl();
-        builder.xFEClientRequester.RequestAddress = requestAddress;
-        builder.xFEClientRequester.Session = string.Empty;
-        builder.xFEClientRequester.ComputerInfo = DeviceHelper.GetUniqueHardwareId();
-        builder.AddParameter("XFEClientRequester", builder.xFEClientRequester);
+        var builder = new XFEClientRequesterBuilderImpl
+        {
+            _xFEClientRequester =
+            {
+                RequestAddress = requestAddress,
+                Session = string.Empty,
+                ComputerInfo = DeviceHelper.GetUniqueHardwareId()
+            }
+        };
+        builder.AddParameter("XFEClientRequester", builder._xFEClientRequester);
         return builder;
     }
 
@@ -58,7 +67,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     public XFEClientRequesterBuilder AddRequest(string serviceName, IRequestService requestService)
     {
         ApplyParameter(requestService);
-        requestServiceDictionary.Add(serviceName, requestService);
+        _requestServiceDictionary.Add(serviceName, requestService);
         return this;
     }
 
@@ -79,7 +88,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     public XFEClientRequesterBuilder AddXFERequest(string serviceName, IXFERequestService xFERequestService)
     {
         ApplyParameter(xFERequestService);
-        xFERequestServiceDictionary.Add(serviceName, xFERequestService);
+        _xFERequestServiceDictionary.Add(serviceName, xFERequestService);
         return this;
     }
 
@@ -99,7 +108,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns></returns>
     public XFEClientRequesterBuilder AddRequest(string serviceName, XFEClientInstanceRequest xFEClientInstanceRequest)
     {
-        xFEClientInstanceRequestDictionary.Add(serviceName, xFEClientInstanceRequest);
+        _xFEClientInstanceRequestDictionary.Add(serviceName, xFEClientInstanceRequest);
         return this;
     }
 
@@ -122,9 +131,9 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns>XFE客户端请求器</returns>
     public XFEClientRequester Build()
     {
-        xFEClientRequester.RequestServiceDictionary = requestServiceDictionary;
-        xFEClientRequester.XFERequestServiceDictionary = xFERequestServiceDictionary;
-        xFEClientRequester.XFEClientInstanceRequestDictionary = xFEClientInstanceRequestDictionary;
-        return xFEClientRequester;
+        _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
+        _xFEClientRequester.XFERequestServiceDictionary = _xFERequestServiceDictionary;
+        _xFEClientRequester.XFEClientInstanceRequestDictionary = _xFEClientInstanceRequestDictionary;
+        return _xFEClientRequester;
     }
 }

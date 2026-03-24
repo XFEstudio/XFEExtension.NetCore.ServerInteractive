@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 [SupportedOSPlatform("windows")]
 public static class DeviceHelper
 {
-    static string GetMacAddress()
+    private static string GetMacAddress()
     {
         try
         {
@@ -31,27 +31,27 @@ public static class DeviceHelper
         }
     }
 
-    static string GetCpuId()
+    private static string GetCpuId()
     {
         return GetWmiProperty("Win32_Processor", "ProcessorId");
     }
 
-    static string GetBoardSerial()
+    private static string GetBoardSerial()
     {
         return GetWmiProperty("Win32_BaseBoard", "SerialNumber");
     }
 
-    static string GetBiosSerial()
+    private static string GetBiosSerial()
     {
         return GetWmiProperty("Win32_BIOS", "SerialNumber");
     }
 
-    static string GetDiskSerial()
+    private static string GetDiskSerial()
     {
         return GetWmiProperty("Win32_PhysicalMedia", "SerialNumber");
     }
 
-    static string GetWmiProperty(string wmiClass, string wmiProperty)
+    private static string GetWmiProperty(string wmiClass, string wmiProperty)
     {
         try
         {
@@ -65,7 +65,7 @@ public static class DeviceHelper
         return "N/A";
     }
 
-    static string GetSha256Hash(string input)
+    private static string GetSha256Hash(string input)
     {
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
         var sb = new StringBuilder();

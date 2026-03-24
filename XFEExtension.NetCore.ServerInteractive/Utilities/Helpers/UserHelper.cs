@@ -36,14 +36,14 @@ public static class UserHelper
         user = null;
         session = Regex.Unescape(session);
         var split = session.Split('|');
-        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.UID == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel)
+        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel)
             return UserOperateResult.LoginExpired;
         if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) return UserOperateResult.LoginExpired;
-        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not UserLoginModel targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.UID != targetUserLoginModel.UID)
+        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not UserLoginModel targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
             return UserOperateResult.UserNotFound;
         if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !((encryptedUserLoginModel.UserLoginModel.LastIPAddress == "127.0.0.1" || encryptedUserLoginModel.UserLoginModel.LastIPAddress == "::1") && (ipAddress == "127.0.0.1" || ipAddress == "::1"))))
             return UserOperateResult.LoginExpired;
-        if (GetUser(targetUserLoginModel.UID, userInfoList) is not IUserInfo userInfo)
+        if (GetUser(targetUserLoginModel.Uid, userInfoList) is not IUserInfo userInfo)
             return UserOperateResult.UserNotFound;
         if (!userInfo.Enable)
             return UserOperateResult.UserDisabled;
@@ -291,7 +291,7 @@ public static class UserHelper
     /// <param name="key"></param>
     /// <param name="model"></param>
     /// <returns></returns>
-    public static string Encrypt<T>(string key, T model) where T : class => AESHelper.Encrypt(JsonSerializer.Serialize(model), key);
+    public static string Encrypt<T>(string key, T model) where T : class => AesHelper.Encrypt(JsonSerializer.Serialize(model), key);
 
     /// <summary>
     /// 解密用户登录模型
@@ -299,5 +299,5 @@ public static class UserHelper
     /// <param name="key"></param>
     /// <param name="encryptedModel"></param>
     /// <returns></returns>
-    public static T Decrypt<T>(string key, string encryptedModel) where T : class, new() => JsonSerializer.Deserialize<T>(AESHelper.Decrypt(encryptedModel, key)) ?? new();
+    public static T Decrypt<T>(string key, string encryptedModel) where T : class, new() => JsonSerializer.Deserialize<T>(AesHelper.Decrypt(encryptedModel, key)) ?? new();
 }

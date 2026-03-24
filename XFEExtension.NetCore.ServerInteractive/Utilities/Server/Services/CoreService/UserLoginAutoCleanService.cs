@@ -57,7 +57,7 @@ public class UserLoginAutoCleanService : ServerCoreOriginalServiceBase, IUserSer
                 for (int i = expiredSessions.Count - 1; i >= 0; i--)
                 {
                     var expiredSession = expiredSessions[i];
-                    Console.WriteLine($"[DEBUG]用户 {expiredSession.UserLoginModel.UID} 的登录已过期，正在清理...");
+                    Console.WriteLine($"[DEBUG]用户 {expiredSession.UserLoginModel.Uid} 的登录已过期，正在清理...");
                     RemoveEncryptedUserLoginModelFunction(expiredSession);
                 }
                 Console.WriteLine($"[DEBUG]服务器({XFEServerCore.ServerCoreName})过期的Session已清理完毕！");

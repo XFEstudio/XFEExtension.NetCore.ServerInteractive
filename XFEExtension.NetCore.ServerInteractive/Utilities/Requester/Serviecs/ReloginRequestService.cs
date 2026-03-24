@@ -10,13 +10,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
 /// </summary>
 public class ReloginRequestService<T> : XFERequestServiceBase where T : IUserFaceInfo
 {
-    readonly JsonSerializerOptions jsonSerializerOptions = new();
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     /// <summary>
     /// 登录校验请求服务
     /// </summary>
-    public ReloginRequestService() => jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    public ReloginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response) => JsonSerializer.Deserialize<T>(response, jsonSerializerOptions)!;
+    public override object AnalyzeResponse(string response) => JsonSerializer.Deserialize<T>(response, _jsonSerializerOptions)!;
 
     /// <inheritdoc/>
     public override object PostRequest(string execute, params object[] parameters) => new
