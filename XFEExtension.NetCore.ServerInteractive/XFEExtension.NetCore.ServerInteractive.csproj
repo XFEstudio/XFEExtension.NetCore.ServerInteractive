@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.2.1</Version>
+		<Version>1.3.0</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      服务器IP初始化支持递增端口，升级版本号
-
-      为每个服务器分配递增端口（从3300起），优化控制台提示内容，并将项目版本号提升至1.2.1。
+      优化整体代码架构，规范名称
+      移除DeviceHelper依赖，简化CreateBuilder初始化
+      优化XFE客户端请求器构建与配置方式
 
       ## 新增
 
