@@ -69,7 +69,7 @@ public static class DeviceHelper
     {
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
         var sb = new StringBuilder();
-        foreach (byte b in hashBytes)
+        foreach (var b in hashBytes)
             sb.Append(b.ToString("x2"));
         return sb.ToString();
     }
@@ -80,12 +80,12 @@ public static class DeviceHelper
     /// <returns></returns>
     public static string GetUniqueHardwareId()
     {
-        string cpuId = GetCpuId();
-        string boardSerial = GetBoardSerial();
-        string biosSerial = GetBiosSerial();
-        string diskSerial = GetDiskSerial();
-        string macAddress = GetMacAddress();
-        string combined = $"{cpuId}-{boardSerial}-{biosSerial}-{diskSerial}-{macAddress}";
+        var cpuId = GetCpuId();
+        var boardSerial = GetBoardSerial();
+        var biosSerial = GetBiosSerial();
+        var diskSerial = GetDiskSerial();
+        var macAddress = GetMacAddress();
+        var combined = $"{cpuId}-{boardSerial}-{biosSerial}-{diskSerial}-{macAddress}";
         return GetSha256Hash(combined);
     }
 }

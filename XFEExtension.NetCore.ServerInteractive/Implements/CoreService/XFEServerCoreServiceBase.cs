@@ -49,10 +49,10 @@ public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
     public void OK() => ReturnArgs?.OK();
 
     /// <inheritdoc/>
-    public async Task CloseWithError(string message, HttpStatusCode code) => await ReturnArgs!.CloseWithError(message, code);
+    public async Task CloseWithError(string message, HttpStatusCode code) => await ReturnArgs.CloseWithError(message, code);
 
     /// <inheritdoc/>
-    public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false) => ReturnArgs!.Error(message, code, handled);
+    public ServerCoreReturnArgs Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest, bool handled = false) => ReturnArgs.Error(message, code, handled);
 
     /// <inheritdoc/>
     public async Task Send(object data) => await ReturnArgs.Send(data);

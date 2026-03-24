@@ -3,7 +3,7 @@ using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
-using XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 

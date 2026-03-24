@@ -63,11 +63,9 @@ public class TableRequester
                 var result = JsonSerializer.Deserialize<TableRequestResult<T>>(response, JsonSerializerOptions);
                 return result ?? new();
             }
-            else
-            {
-                MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                return new();
-            }
+
+            MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+            return new();
         }
         catch (Exception ex)
         {
@@ -113,11 +111,9 @@ public class TableRequester
                 MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                 return true;
             }
-            else
-            {
-                MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                return false;
-            }
+
+            MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+            return false;
         }
         catch (Exception ex)
         {
@@ -157,11 +153,9 @@ public class TableRequester
                 MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                 return true;
             }
-            else
-            {
-                MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                return false;
-            }
+
+            MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+            return false;
         }
         catch (Exception ex)
         {
@@ -201,11 +195,9 @@ public class TableRequester
                 MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                 return true;
             }
-            else
-            {
-                MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                return false;
-            }
+
+            MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+            return false;
         }
         catch (Exception ex)
         {
@@ -220,5 +212,5 @@ public class TableRequester
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="data">数据</param>
     /// <returns>是否修改成功</returns>
-    public async Task<bool> Change<T>(T data) where T : IIDModel => await Change<T>(GetRequestName<T>(), data);
+    public async Task<bool> Change<T>(T data) where T : IIDModel => await Change(GetRequestName<T>(), data);
 }

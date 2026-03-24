@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using XFEExtension.NetCore.CyberComm;
 
 namespace XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 
@@ -15,7 +14,7 @@ public class ServerCoreErrorEventArgs
     /// <summary>
     /// 是否已经处理完成
     /// </summary>
-    public bool Handled { get; set; } = false;
+    public bool Handled { get; set; }
     /// <summary>
     /// 状态码
     /// </summary>

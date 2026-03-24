@@ -10,9 +10,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public class XFEServer
 {
-    internal List<IServerInitializerService> ServerInitializerServiceList = [];
-    internal List<IServerService> ServerServiceList = [];
-    internal List<IAsyncServerService> AsyncServerServiceList = [];
+    internal readonly List<IServerInitializerService> ServerInitializerServiceList = [];
+    internal readonly List<IServerService> ServerServiceList = [];
+    internal readonly List<IAsyncServerService> AsyncServerServiceList = [];
     /// <summary>
     /// 核心服务器处理服务
     /// </summary>

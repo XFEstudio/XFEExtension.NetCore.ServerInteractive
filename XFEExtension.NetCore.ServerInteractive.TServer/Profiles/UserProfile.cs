@@ -1,6 +1,5 @@
 ﻿using XFEExtension.NetCore.AutoConfig;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
-using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 
 namespace XFEExtension.NetCore.ServerInteractive.TServer;
 

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using XFEExtension.NetCore.ServerInteractive.Models;
 
 namespace XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 

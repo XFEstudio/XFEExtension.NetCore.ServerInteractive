@@ -29,29 +29,29 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
     /// <summary>
     /// 添加元素至列表的方法
     /// </summary>
-    public Action<T> AddToTableFunction { get; set; } = item => { };
+    public Action<T> AddToTableFunction { get; set; } = _ => { };
     /// <summary>
     /// 从列表中移除元素的方法
     /// </summary>
-    public Action<string> RemoveFromTableFunction { get; set; } = id => { };
+    public Action<string> RemoveFromTableFunction { get; set; } = _ => { };
     /// <summary>
     /// 更改列表中元素的方法
     /// </summary>
-    public Action<T> ChangeItemTableFunction { get; set; } = item => { };
+    public Action<T> ChangeItemTableFunction { get; set; } = _ => { };
     /// <inheritdoc/>
     public string TableShowName { get; set; } = typeof(T).Name;
     /// <inheritdoc/>
     public string TableName { get; set; } = typeof(T).Name;
     /// <inheritdoc/>
-    public string TableNameInRequest { get; set; } = typeof(T).Name;
+    public string TableNameInRequest { get; set; }
     /// <inheritdoc/>
-    public int GetPermissionLevel { get; set; } = 0;
+    public int GetPermissionLevel { get; set; }
     /// <inheritdoc/>
-    public int RemovePermissionLevel { get; set; } = 0;
+    public int RemovePermissionLevel { get; set; }
     /// <inheritdoc/>
-    public int ChangePermissionLevel { get; set; } = 0;
+    public int ChangePermissionLevel { get; set; }
     /// <inheritdoc/>
-    public int AddPermissionLevel { get; set; } = 0;
+    public int AddPermissionLevel { get; set; }
     /// <inheritdoc/>
     public JsonSerializerOptions? JsonSerializerOptions { get; set; }
     /// <inheritdoc/>
@@ -77,29 +77,25 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
         var addMethod = profileListType.GetMethod("Add", [typeof(T)]);
         var removeMethod = profileListType.GetMethod("Remove", [typeof(T)]);
         var saveMethod = type.GetMethod("SaveProfile", BindingFlags.Public | BindingFlags.Static);
-        if (property is not null && addMethod is not null && removeMethod is not null && saveMethod is not null)
+        if (property is null || addMethod is null || removeMethod is null || saveMethod is null) return;
+        GetTableFunction = () => property.GetValue(null) as ProfileList<T> ?? [];
+        AddToTableFunction = item => addMethod.Invoke(GetTableFunction(), [item]);
+        RemoveFromTableFunction = id =>
         {
-            GetTableFunction = () => property.GetValue(null) as ProfileList<T> ?? [];
-            AddToTableFunction = item => addMethod.Invoke(GetTableFunction(), [item]);
-            RemoveFromTableFunction = id =>
+            var table = GetTableFunction();
+            removeMethod.Invoke(table, [table.FirstOrDefault(item => item.ID == id)]);
+        };
+        ChangeItemTableFunction = item =>
+        {
+            var table = GetTableFunction();
+            var targetItem = table.FirstOrDefault(originItem => originItem.ID == item.ID);
+            if (targetItem is null) return;
+            foreach (var itemProperty in targetItem.GetType().GetProperties())
             {
-                var table = GetTableFunction();
-                removeMethod.Invoke(table, [table.FirstOrDefault(item => item.ID == id)]);
-            };
-            ChangeItemTableFunction = item =>
-            {
-                var table = GetTableFunction();
-                var targetItem = table.FirstOrDefault(originItem => originItem.ID == item.ID);
-                if (targetItem is not null)
-                {
-                    foreach (var itemProperty in targetItem.GetType().GetProperties())
-                    {
-                        itemProperty.SetValue(targetItem, itemProperty.GetValue(item));
-                    }
-                    saveMethod.Invoke(null, []);
-                }
-            };
-        }
+                itemProperty.SetValue(targetItem, itemProperty.GetValue(item));
+            }
+            saveMethod.Invoke(null, []);
+        };
     }
 
     /// <summary>
@@ -138,7 +134,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                     Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<T> tableList = [.. GetTableFunction()];
-                    int pageCount = requestJsonNode["pageCount"]?.GetValue<int>() ?? -1;
+                    var pageCount = requestJsonNode["pageCount"]?.GetValue<int>() ?? -1;
                     if (pageCount == -1)
                     {
                         await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
@@ -146,11 +142,11 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                             totalCount = tableList.Count,
                             lastPage = -1,
                             dataList = tableList
-                        }, JsonSerializerOptions), HttpStatusCode.OK);
+                        }, JsonSerializerOptions));
                     }
                     else
                     {
-                        int page = requestJsonNode["page"]?.GetValue<int>() ?? -1;
+                        var page = requestJsonNode["page"]?.GetValue<int>() ?? -1;
                         await r.Args.ReplyAndClose(JsonSerializer.Serialize(new
                         {
                             totalCount = tableList.Count,
@@ -201,12 +197,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
                     Console.Write($"：{item.ID}");
-                    if (item.ID.IsNullOrWhiteSpace())
-                    {
-                        statusCode = HttpStatusCode.BadRequest;
-                        throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");
-                    }
-                    if (item.ID.IsNullOrWhiteSpace())
+                    if (item.ID.IsNullOrWhiteSpace() || item.ID.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");

@@ -13,7 +13,7 @@ public static class AesHelper
     /// <returns></returns>
     public static string GenerateRandomKey()
     {
-        byte[] key = new byte[32];
+        var key = new byte[32];
         RandomNumberGenerator.Fill(key);
         return Convert.ToBase64String(key);
     }
@@ -24,7 +24,7 @@ public static class AesHelper
     /// <returns></returns>
     public static string GenerateRandomIv()
     {
-        byte[] iv = new byte[16];
+        var iv = new byte[16];
         RandomNumberGenerator.Fill(iv);
         return Convert.ToBase64String(iv);
     }
@@ -37,7 +37,7 @@ public static class AesHelper
     /// <returns></returns>
     public static string Encrypt(string plainText, string key)
     {
-        using Aes aes = Aes.Create();
+        using var aes = Aes.Create();
         aes.Key = Convert.FromBase64String(key);
         aes.Mode = CipherMode.CBC;
         aes.Padding = PaddingMode.PKCS7;

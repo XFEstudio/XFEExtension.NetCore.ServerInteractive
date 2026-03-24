@@ -50,16 +50,16 @@ public abstract class XFEDataTableManagerBuilder
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     /// <typeparam name="TP">配置文件类型</typeparam>
-    /// <param name="tabelShowName">表格数据的显示名称（如：订单、用户等）</param>
+    /// <param name="tableShowName">表格数据的显示名称（如：订单、用户等）</param>
     /// <param name="addPermissionLevel">增加数据所需的最小权限</param>
     /// <param name="removePermissionLevel">删除数据所需的最小权限</param>
     /// <param name="changePermissionLevel">更改数据所需的最小权限</param>
     /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
     /// <param name="jsonSerializerOptions">JSON转换器</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T, TP>(string tabelShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where TP : XFEProfile => AddTable<T>(new XFEDataTable<T>(typeof(TP))
+    public XFEDataTableManagerBuilder AddTable<T, TP>(string tableShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where TP : XFEProfile => AddTable(new XFEDataTable<T>(typeof(TP))
     {
-        TableShowName = tabelShowName,
+        TableShowName = tableShowName,
         AddPermissionLevel = addPermissionLevel,
         RemovePermissionLevel = removePermissionLevel,
         ChangePermissionLevel = changePermissionLevel,

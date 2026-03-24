@@ -12,5 +12,5 @@ public abstract class ServerCoreStandardServiceBase : XFEServerCoreServiceBase, 
     /// <inheritdoc/>
     public virtual void RequestReceive() { }
     /// <inheritdoc/>
-    public virtual async Task RequestReceiveAsync() { }
+    public virtual Task RequestReceiveAsync() => Task.CompletedTask;
 }

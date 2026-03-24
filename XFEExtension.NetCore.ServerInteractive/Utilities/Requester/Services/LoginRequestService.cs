@@ -4,7 +4,7 @@ using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 
 /// <summary>
 /// 登录请求服务

@@ -38,7 +38,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 核心服务列表
     /// </summary>
-    internal List<IServerCoreOriginalService> ServerCoreServiceList = [];
+    internal readonly List<IServerCoreOriginalService> ServerCoreServiceList = [];
     /// <summary>
     /// 核心校验服务列表
     /// </summary>
@@ -71,9 +71,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         r.ClientIP = clientIP;
         try
         {
-            foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList)
-                if (!serverCoreVerifyService.VerifyRequest(sender, e, r))
-                    return;
+            if (ServerCoreVerifyServiceList.Any(serverCoreVerifyService => !serverCoreVerifyService.VerifyRequest(sender, e, r)))
+                return;
             foreach (var serverCoreVerifyAsyncService in ServerCoreVerifyAsyncServiceList)
                 if (!await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
                     return;
@@ -89,12 +88,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             });
             return;
         }
-        string execute = string.Empty;
+        var execute = string.Empty;
         QueryableJsonNode? queryableJsonNode = null;
         try
         {
             queryableJsonNode = e.RequestBody ?? throw new ProcessStandardRequestException("请求的API接口不正确");
-            execute = queryableJsonNode?["execute"]?.ToString() ?? string.Empty;
+            execute = queryableJsonNode["execute"]?.ToString() ?? string.Empty;
         }
         catch (Exception ex)
         {
@@ -113,77 +112,70 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
-            if (!execute.IsNullOrEmpty())
+            if (execute.IsNullOrEmpty()) return;
+            Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
+            var stopWatch = Stopwatch.StartNew();
+            if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
             {
-                Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
-                var stopWatch = Stopwatch.StartNew();
-                if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
+                var serviceInstance = serviceFactory();
+                try
                 {
-                    var serviceInstance = serviceFactory();
-                    try
-                    {
-                        serviceInstance.XFEServerCore = this;
-                        serviceInstance.Execute = execute;
-                        serviceInstance.Json = queryableJsonNode;
-                        serviceInstance.Request = e.Request;
-                        serviceInstance.ReturnArgs = r;
-                        serviceInstance.Initialize();
-                        serviceInstance.RequestReceive();
-                        await serviceInstance.RequestReceiveAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        ServerCoreError?.Invoke(this, new()
-                        {
-                            StatusCode = r.StatusCode,
-                            Handled = r.Handled,
-                            ReturnArgs = r,
-                            ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
-                        });
-                    }
-                    stopWatch.Stop();
-                    Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                    return;
+                    serviceInstance.XFEServerCore = this;
+                    serviceInstance.Execute = execute;
+                    serviceInstance.Json = queryableJsonNode;
+                    serviceInstance.Request = e.Request;
+                    serviceInstance.ReturnArgs = r;
+                    serviceInstance.Initialize();
+                    serviceInstance.RequestReceive();
+                    await serviceInstance.RequestReceiveAsync();
                 }
-                foreach (var key in StandardMultiCoreServiceDictionary.Keys)
+                catch (Exception ex)
                 {
-                    if (key.Contains(execute))
+                    ServerCoreError?.Invoke(this, new()
                     {
-                        var factory = StandardMultiCoreServiceDictionary[key];
-                        var instance = factory();
-                        try
-                        {
-                            instance.XFEServerCore = this;
-                            instance.Execute = execute;
-                            instance.Json = queryableJsonNode;
-                            instance.Request = e.Request;
-                            instance.ReturnArgs = r;
-                            instance.Initialize();
-                            instance.RequestReceive();
-                            await instance.RequestReceiveAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            ServerCoreError?.Invoke(this, new()
-                            {
-                                StatusCode = r.StatusCode,
-                                Handled = r.Handled,
-                                ReturnArgs = r,
-                                ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
-                            });
-                        }
-                        stopWatch.Stop();
-                        Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                        return;
-                    }
+                        StatusCode = r.StatusCode,
+                        Handled = r.Handled,
+                        ReturnArgs = r,
+                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
+                    });
                 }
-                ServerCoreError?.Invoke(this, new()
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    ReturnArgs = r,
-                    ServerException = new ExecutionUnregisteredException($"请求的方法未注册-{execute}")
-                });
+                stopWatch.Stop();
+                Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                return;
             }
+            foreach (var instance in from key in StandardMultiCoreServiceDictionary.Keys where key.Contains(execute) select StandardMultiCoreServiceDictionary[key] into factory select factory())
+            {
+                try
+                {
+                    instance.XFEServerCore = this;
+                    instance.Execute = execute;
+                    instance.Json = queryableJsonNode;
+                    instance.Request = e.Request;
+                    instance.ReturnArgs = r;
+                    instance.Initialize();
+                    instance.RequestReceive();
+                    await instance.RequestReceiveAsync();
+                }
+                catch (Exception ex)
+                {
+                    ServerCoreError?.Invoke(this, new()
+                    {
+                        StatusCode = r.StatusCode,
+                        Handled = r.Handled,
+                        ReturnArgs = r,
+                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
+                    });
+                }
+                stopWatch.Stop();
+                Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                return;
+            }
+            ServerCoreError?.Invoke(this, new()
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                ReturnArgs = r,
+                ServerException = new ExecutionUnregisteredException($"请求的方法未注册-{execute}")
+            });
         }
         catch (Exception ex)
         {

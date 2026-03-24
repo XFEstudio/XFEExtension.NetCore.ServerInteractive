@@ -36,8 +36,6 @@ public class CoreLogService : ServerCoreUserServiceBase
                 XFEConsole.XFEConsole.Log.Clear();
                 OK();
                 break;
-            default:
-                break;
         }
     }
 }

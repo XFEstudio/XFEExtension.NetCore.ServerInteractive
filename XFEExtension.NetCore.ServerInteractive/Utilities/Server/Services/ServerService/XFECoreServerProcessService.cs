@@ -1,5 +1,4 @@
-﻿using XFEExtension.NetCore.FileExtension;
-using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
+﻿using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.ServerService;
 
@@ -15,18 +14,8 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
         {
             try
             {
-                if (File.Exists("server.log"))
-                {
-                    Console.WriteLine("[DEBUG]找到日志文件！");
-                }
-                else
-                {
-                    Console.WriteLine("[DEBUG]未找到日志文件！");
-                }
-                var taskList = new List<Task>();
-                foreach (var serverCoreService in ServerCoreServiceList)
-                {
-                    taskList.Add(Task.Run(async () =>
+                Console.WriteLine(File.Exists("server.log") ? "[DEBUG]找到日志文件！" : "[DEBUG]未找到日志文件！");
+                var taskList = ServerCoreServiceList.Select(serverCoreService => Task.Run(async () =>
                     {
                         while (true)
                         {
@@ -56,8 +45,8 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
                                 Console.WriteLine($"[DEBUG]正在重启服务器({serverCoreService.ServerCoreName}) 1...");
                             }
                         }
-                    }));
-                }
+                    }))
+                    .ToList();
                 await Task.WhenAll(taskList);
             }
             catch (Exception ex)

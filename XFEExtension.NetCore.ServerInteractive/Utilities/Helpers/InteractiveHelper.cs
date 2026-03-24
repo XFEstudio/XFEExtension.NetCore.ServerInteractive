@@ -49,17 +49,12 @@ public static class InteractiveHelper
         {
             return $"{stopwatch.Elapsed.TotalSeconds:F1} s";
         }
-        else if (stopwatch.Elapsed.TotalMilliseconds > 1)
+
+        if (stopwatch.Elapsed.TotalMilliseconds > 1)
         {
             return $"{stopwatch.Elapsed.TotalMilliseconds:F1} ms";
         }
-        else if (stopwatch.Elapsed.TotalMicroseconds > 1)
-        {
-            return $"{stopwatch.Elapsed.TotalMicroseconds:F1} μs";
-        }
-        else
-        {
-            return $"{stopwatch.Elapsed.TotalNanoseconds:F1} ns";
-        }
+
+        return stopwatch.Elapsed.TotalMicroseconds > 1 ? $"{stopwatch.Elapsed.TotalMicroseconds:F1} μs" : $"{stopwatch.Elapsed.TotalNanoseconds:F1} ns";
     }
 }

@@ -1,6 +1,6 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 
-namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Serviecs;
+namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 
 /// <summary>
 /// 获取日志请求服务

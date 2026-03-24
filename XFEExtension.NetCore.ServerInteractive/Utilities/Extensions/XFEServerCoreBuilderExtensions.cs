@@ -83,7 +83,7 @@ public static class XFEServerCoreBuilderExtensions
     /// </summary>
     /// <param name="xFEServerCoreBuilder"></param>
     /// <returns></returns>
-    public static XFEServerCoreBuilder AddEntryPotinVerify(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyServer>();
+    public static XFEServerCoreBuilder AddEntryPointVerify(this XFEServerCoreBuilder xFEServerCoreBuilder) => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyServer>();
 
     /// <summary>
     /// 添加服务器日志请求
@@ -107,7 +107,7 @@ public static class XFEServerCoreBuilderExtensions
     /// <returns></returns>
     public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> addEncryptedUserLoginModelFunction, Action<EncryptedUserLoginModel> removeEncryptedUserLoginModelFunction, Func<int> getLoginKeepDays, Func<object, T> loginResultConvertFunction, XFEDataTableManagerBuilder xFEDataTableManagerBuilder) where T : class => xFEServerCoreBuilder.AddUserParameterBase(getUserFunction, getEncryptedUserLoginModelFunction, addEncryptedUserLoginModelFunction, removeEncryptedUserLoginModelFunction, getLoginKeepDays, loginResultConvertFunction)
             .AddDataTableManager(xFEDataTableManagerBuilder, getUserFunction, getEncryptedUserLoginModelFunction)
-            .AddEntryPotinVerify()
+            .AddEntryPointVerify()
             .AddDailyCounterService()
             .AddXFEErrorProcessService()
             .AddConnectService()
@@ -118,7 +118,7 @@ public static class XFEServerCoreBuilderExtensions
     /// <summary>
     /// 使用XFE标准服务器核心（Options）
     /// </summary>
-    public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEStandardServerCoreOptions<T> options) where T : class
+    public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, XFEStandardServerCoreOptions<T>? options) where T : class
     {
         if (options is null) return xFEServerCoreBuilder;
 
@@ -126,13 +126,11 @@ public static class XFEServerCoreBuilderExtensions
         var builder = xFEServerCoreBuilder;
 
         // If user-related functions are provided, add user parameters and login services
-        var hasUserFunctions = options.GetUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null
-            && options.AddEncryptedUserLoginModelFunction is not null && options.RemoveEncryptedUserLoginModelFunction is not null
-            && options.GetLoginKeepDays is not null && options.LoginResultConvertFunction is not null;
+        var hasUserFunctions = options.GetUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null && options.AddEncryptedUserLoginModelFunction is not null && options.RemoveEncryptedUserLoginModelFunction is not null && options.LoginResultConvertFunction is not null;
 
         if (hasUserFunctions)
         {
-            builder = builder.AddUserParameterBase(options.GetUserFunction!, options.GetEncryptedUserLoginModelFunction!, options.AddEncryptedUserLoginModelFunction!, options.RemoveEncryptedUserLoginModelFunction!, options.GetLoginKeepDays!, options.LoginResultConvertFunction!);
+            builder = builder.AddUserParameterBase(options.GetUserFunction!, options.GetEncryptedUserLoginModelFunction!, options.AddEncryptedUserLoginModelFunction!, options.RemoveEncryptedUserLoginModelFunction!, options.GetLoginKeepDays, options.LoginResultConvertFunction!);
         }
 
         // DataTableManager requires both user functions and a builder
@@ -142,7 +140,7 @@ public static class XFEServerCoreBuilderExtensions
         }
 
         // Common services that don't strictly require user functions
-        builder = builder.AddEntryPotinVerify()
+        builder = builder.AddEntryPointVerify()
                          .AddDailyCounterService()
                          .AddXFEErrorProcessService()
                          .AddConnectService();
@@ -162,7 +160,7 @@ public static class XFEServerCoreBuilderExtensions
     public static XFEServerCoreBuilder UseXFEStandardServerCore<T>(this XFEServerCoreBuilder xFEServerCoreBuilder, Action<XFEStandardServerCoreOptions<T>> optionsBuilder) where T : class
     {
         var options = new XFEStandardServerCoreOptions<T>();
-        optionsBuilder?.Invoke(options);
+        optionsBuilder.Invoke(options);
         return xFEServerCoreBuilder.UseXFEStandardServerCore(options);
     }
 }

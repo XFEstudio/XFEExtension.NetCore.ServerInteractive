@@ -9,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// </summary>
 public class DailyCounterService : ServerCoreOriginalServiceBase
 {
-    private int _runningDays = 0;
+    private int _runningDays;
     private DateTime _startTime;
     /// <inheritdoc/>
     public override void RequestReceived(object? sender, CyberCommRequestEventArgs e) { }

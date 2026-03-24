@@ -1,4 +1,5 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
+﻿using System.Globalization;
+using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -11,6 +12,6 @@ public class ConnectService : ServerCoreStandardServiceBase
     public override async Task RequestReceiveAsync()
     {
         Console.Write("检查连接");
-        await Close(DateTime.Now.ToString());
+        await Close(DateTime.Now.ToString(CultureInfo.CurrentCulture));
     }
 }

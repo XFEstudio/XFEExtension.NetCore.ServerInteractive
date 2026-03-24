@@ -36,12 +36,11 @@ public static class UserHelper
         user = null;
         session = Regex.Unescape(session);
         var split = session.Split('|');
-        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not EncryptedUserLoginModel encryptedUserLoginModel)
+        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel || encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo)
             return UserOperateResult.LoginExpired;
-        if (encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo) return UserOperateResult.LoginExpired;
-        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not UserLoginModel targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
+        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not { } targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
             return UserOperateResult.UserNotFound;
-        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !((encryptedUserLoginModel.UserLoginModel.LastIPAddress == "127.0.0.1" || encryptedUserLoginModel.UserLoginModel.LastIPAddress == "::1") && (ipAddress == "127.0.0.1" || ipAddress == "::1"))))
+        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !(encryptedUserLoginModel.UserLoginModel.LastIPAddress is "127.0.0.1" or "::1" && ipAddress is "127.0.0.1" or "::1")))
             return UserOperateResult.LoginExpired;
         if (GetUser(targetUserLoginModel.Uid, userInfoList) is not IUserInfo userInfo)
             return UserOperateResult.UserNotFound;
@@ -63,28 +62,18 @@ public static class UserHelper
     public static UserOperateResult GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
-        if (userInfoList.FirstOrDefault(user => user.UserName == userName) is IUserInfo userInfo)
+        switch (userInfoList.FirstOrDefault(user => user.UserName == userName))
         {
-            if (userInfo.Password == password)
+            case { } userInfo when userInfo.Password == password:
             {
-                if (userInfo.Enable)
-                {
-                    user = userInfo;
-                    return UserOperateResult.Success;
-                }
-                else
-                {
-                    return UserOperateResult.UserDisabled;
-                }
+                if (!userInfo.Enable) return UserOperateResult.UserDisabled;
+                user = userInfo;
+                return UserOperateResult.Success;
             }
-            else
-            {
+            case not null:
                 return UserOperateResult.InvalidPassword;
-            }
-        }
-        else
-        {
-            return UserOperateResult.UserNotFound;
+            default:
+                return UserOperateResult.UserNotFound;
         }
     }
 
@@ -100,12 +89,9 @@ public static class UserHelper
     public static IUserInfo GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
     {
         var result = GetUser(userName, password, userInfoList, out var user);
-        if (result != UserOperateResult.Success)
-        {
-            statusCode = HttpStatusCode.Forbidden;
-            throw new StopAction(() => { }, OutPutResult(result));
-        }
-        return user!;
+        if (result == UserOperateResult.Success) return user!;
+        statusCode = HttpStatusCode.Forbidden;
+        throw new StopAction(() => { }, OutPutResult(result));
     }
 
     /// <summary>
@@ -120,9 +106,7 @@ public static class UserHelper
     public static IUserInfo GetUser(string userName, string password, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = GetUser(userName, password, userInfoList, out var user);
-        if (result != UserOperateResult.Success)
-            throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
-        return user!;
+        return result != UserOperateResult.Success ? throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden) : user!;
     }
 
     /// <summary>
@@ -142,9 +126,7 @@ public static class UserHelper
         var result = GetUser(userName, password, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
-        if (user!.PermissionLevel < requiredPermissionLevel)
-            return UserOperateResult.PermissionDenied;
-        return UserOperateResult.Success;
+        return user!.PermissionLevel < requiredPermissionLevel ? UserOperateResult.PermissionDenied : UserOperateResult.Success;
     }
 
     /// <summary>
@@ -164,9 +146,7 @@ public static class UserHelper
         var result = GetUser(sessionId, computerInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
-        if (user!.PermissionLevel < requiredPermissionLevel)
-            return UserOperateResult.PermissionDenied;
-        return UserOperateResult.Success;
+        return user!.PermissionLevel < requiredPermissionLevel ? UserOperateResult.PermissionDenied : UserOperateResult.Success;
     }
 
     /// <summary>
@@ -179,9 +159,7 @@ public static class UserHelper
     {
         if (!userInfo.Enable)
             return UserOperateResult.UserDisabled;
-        if (userInfo.PermissionLevel < requiredPermissionLevel)
-            return UserOperateResult.PermissionDenied;
-        return UserOperateResult.Success;
+        return userInfo.PermissionLevel < requiredPermissionLevel ? UserOperateResult.PermissionDenied : UserOperateResult.Success;
     }
 
     /// <summary>
@@ -196,11 +174,9 @@ public static class UserHelper
     public static void ValidatePermission(string? userName, string? password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ref HttpStatusCode statusCode)
     {
         var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
-        if (result != UserOperateResult.Success)
-        {
-            statusCode = HttpStatusCode.Forbidden;
-            throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
-        }
+        if (result == UserOperateResult.Success) return;
+        statusCode = HttpStatusCode.Forbidden;
+        throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
     }
 
     /// <summary>
@@ -215,11 +191,9 @@ public static class UserHelper
     public static void ValidatePermission(string? userName, string? password, int requiredPermissionLevel, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
         var result = ValidateUserPermission(userName, password, requiredPermissionLevel, userInfoList);
-        if (result != UserOperateResult.Success)
-        {
-            r.StatusCode = HttpStatusCode.Forbidden;
-            throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
-        }
+        if (result == UserOperateResult.Success) return;
+        r.StatusCode = HttpStatusCode.Forbidden;
+        throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
     }
 
     /// <summary>
@@ -250,11 +224,9 @@ public static class UserHelper
     public static void ValidatePermission(IUserInfo userInfo, int requiredPermissionLevel, ref HttpStatusCode statusCode)
     {
         var result = ValidateUserPermission(userInfo, requiredPermissionLevel);
-        if (result != UserOperateResult.Success)
-        {
-            statusCode = HttpStatusCode.Forbidden;
-            throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
-        }
+        if (result == UserOperateResult.Success) return;
+        statusCode = HttpStatusCode.Forbidden;
+        throw new StopAction(() => { }, $"\n{OutPutResult(result)}");
     }
 
     /// <summary>
