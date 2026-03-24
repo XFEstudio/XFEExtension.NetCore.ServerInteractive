@@ -5,19 +5,24 @@ using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
+namespace XFEExtension.NetCore.ServerInteractive.Test;
+
 internal class Program
 {
-    static readonly XFEClientRequester xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder("http://localhost:8080/management")
+    private static readonly XFEClientRequester XFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
         .UseXFEStandardRequest<UserFaceInfo>()
         .AddRequest("test", (_, _, _) => new
         {
             execute = "test"
         }, response => response)
-        .Build();
+        .Build(options =>
+        {
+            options.RequestAddress = "http://localhost:8080/management";
+        });
 
-    static readonly TableRequester tableRequester = new();
+    private static readonly TableRequester TableRequester = new();
 
-    static Program() => xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
+    static Program() => XFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
 
     private static void XFEClientRequester_MessageReceived(object? sender, ServerInteractiveEventArgs e)
     {
@@ -27,7 +32,7 @@ internal class Program
     [SMTest("Admin", "12345641")]
     public static async Task Login(string account, string password)
     {
-        var result = await xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
+        var result = await XFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result.Session);
@@ -35,9 +40,9 @@ internal class Program
             Console.WriteLine(result.Result.UserInfo.ID);
             Console.WriteLine(result.Result.UserInfo.NickName);
             Console.WriteLine(result.Result.UserInfo.PermissionLevel);
-            tableRequester.RequestAddress = xFEClientRequester.RequestAddress;
-            tableRequester.Session = result.Result.Session;
-            tableRequester.ComputerInfo = xFEClientRequester.ComputerInfo;
+            TableRequester.RequestAddress = XFEClientRequester.RequestAddress;
+            TableRequester.Session = result.Result.Session;
+            TableRequester.ComputerInfo = XFEClientRequester.ComputerInfo;
         }
         else
         {
@@ -49,9 +54,9 @@ internal class Program
     //[SMTest]
     public static async Task Test()
     {
-        await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (i, _) =>
+        await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (_, _) =>
         {
-            var result = await xFEClientRequester.Request<string>("test");
+            var result = await XFEClientRequester.Request<string>("test");
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Console.WriteLine(result.Result);
@@ -67,7 +72,7 @@ internal class Program
     //[SMTest]
     public static async Task ReLogin()
     {
-        var result = await xFEClientRequester.Request<UserFaceInfo>("relogin");
+        var result = await XFEClientRequester.Request<UserFaceInfo>("relogin");
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result.ID);
@@ -86,7 +91,7 @@ internal class Program
     {
         try
         {
-            var result = await xFEClientRequester.Request<DateTime>("check_connect");
+            var result = await XFEClientRequester.Request<DateTime>("check_connect");
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Console.WriteLine(result.Result);
@@ -106,7 +111,7 @@ internal class Program
     //[SMTest]
     public static async Task GetLog()
     {
-        var result = await xFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
+        var result = await XFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result);
@@ -130,7 +135,7 @@ internal class Program
     }
 
     //[SMTest]
-    public static async Task<bool> AddOrder() => await tableRequester.Add<Order>(new()
+    public static async Task<bool> AddOrder() => await TableRequester.Add<Order>(new()
     {
         Description = "测试订单的描述",
         Name = "测试订单"
@@ -139,7 +144,7 @@ internal class Program
     //[SMTest]
     public static async Task GetOrder()
     {
-        var result = await tableRequester.Get<Order>();
+        var result = await TableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
             Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
@@ -149,18 +154,18 @@ internal class Program
     //[SMTest]
     public static async Task ChangeOrder()
     {
-        var result = await tableRequester.Get<Order>();
+        var result = await TableRequester.Get<Order>();
         var order = result.DataList[0];
         Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
         order.Description = "这是一条修改后的测试订单";
         order.Name = "Test001";
-        await tableRequester.Change(order);
+        await TableRequester.Change(order);
     }
 
     //[SMTest]
     public static async Task GetOrder2()
     {
-        var result = await tableRequester.Get<Order>();
+        var result = await TableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
             Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
