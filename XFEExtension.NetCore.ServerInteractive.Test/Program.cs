@@ -4,6 +4,7 @@ using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
+using XFEExtension.NetCore.XUnit.Attributes;
 
 namespace XFEExtension.NetCore.ServerInteractive.Test;
 
