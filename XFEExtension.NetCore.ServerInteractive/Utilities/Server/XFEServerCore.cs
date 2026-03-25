@@ -34,7 +34,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 获取IP地址的函数，默认为从请求事件参数中获取客户端IP地址
     /// </summary>
-    public Func<CyberCommRequestEventArgs, string> GetIpFunction { get; set; } = args => args.ClientIP;
+    public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
     /// <summary>
     /// 核心服务列表
     /// </summary>
@@ -66,9 +66,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             Args = e
         };
-        var clientIp = e.ClientIP;
-        try { clientIp = GetIpFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
-        r.ClientIp = clientIp;
+        var clientIP = e.ClientIP;
+        try { clientIP = GetIPFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
+        r.ClientIP = clientIP;
         try
         {
             if (ServerCoreVerifyServiceList.Any(serverCoreVerifyService => !serverCoreVerifyService.VerifyRequest(sender, e, r)))
@@ -113,7 +113,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (execute.IsNullOrEmpty()) return;
-            Console.Write($"({ServerCoreName})【{clientIp}】请求方法-{execute}：");
+            Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
             var stopWatch = Stopwatch.StartNew();
             if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
             {
@@ -194,7 +194,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <returns></returns>
     public override async Task StartServerCore()
     {
-        CyberCommServer.ServerUrlArray = [BindingIpAddress];
+        CyberCommServer.ServerUrlArray = [BindingIPAddress];
         CyberCommServer.RequestReceived += CyberCommServer_RequestReceived;
         await CyberCommServer.StartCyberCommServer();
     }

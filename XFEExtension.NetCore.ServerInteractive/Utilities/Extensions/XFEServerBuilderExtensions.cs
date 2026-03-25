@@ -17,7 +17,7 @@ public static class XFEServerBuilderExtensions
         /// <returns></returns>
         public XFEServerBuilder UseXFEServer() => xFEServerBuilder.UseXFELog()
             .AddXFEExceptionProcess()
-            .AddXFEIpInitializer()
+            .AddXFEIPInitializer()
             .AddXFECoreProcessor();
 
         /// <summary>
@@ -42,6 +42,6 @@ public static class XFEServerBuilderExtensions
         /// 使用XFEIP初始化器
         /// </summary>
         /// <returns></returns>
-        public XFEServerBuilder AddXFEIpInitializer() => xFEServerBuilder.AddInitializer<ServerIpInitializer>();
+        public XFEServerBuilder AddXFEIPInitializer() => xFEServerBuilder.AddInitializer<ServerIPInitializer>();
     }
 }

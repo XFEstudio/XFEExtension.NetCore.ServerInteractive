@@ -3,12 +3,12 @@
 /// <summary>
 /// IP地址信息
 /// </summary>
-public class IpAddressInfo
+public class IPAddressInfo
 {
     /// <summary>
     /// IP地址
     /// </summary>
-    public required string IpAddress { get; set; }
+    public required string IPAddress { get; set; }
     /// <summary>
     /// IP地址备注
     /// </summary>

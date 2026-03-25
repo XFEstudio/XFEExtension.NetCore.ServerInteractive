@@ -13,7 +13,7 @@ public abstract class ServerCoreServiceBase : IServerCoreService
     /// <inheritdoc/>
     public string ServerCoreName { get; set; } = string.Empty;
     /// <inheritdoc/>
-    public string BindingIpAddress { get; set; } = string.Empty;
+    public string BindingIPAddress { get; set; } = string.Empty;
 
     /// <inheritdoc/>
     public abstract Task StartServerCore();

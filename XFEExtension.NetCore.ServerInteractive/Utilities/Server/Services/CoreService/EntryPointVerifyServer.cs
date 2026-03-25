@@ -14,8 +14,8 @@ public class EntryPointVerifyServer : ServerCoreVerifyServiceBase
     /// <inheritdoc/>
     public override bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r)
     {
-        Console.Write($"[DEBUG]({XFEServerCore.ServerCoreName})【{XFEServerCore.GetIpFunction(e)}】接收到请求");
-        if (ServerBaseProfile.BannedIpAddressList.Contains(e.ClientIP))
+        Console.Write($"[DEBUG]({XFEServerCore.ServerCoreName})【{XFEServerCore.GetIPFunction(e)}】接收到请求");
+        if (ServerBaseProfile.BannedIPAddressList.Contains(e.ClientIP))
         {
             Console.WriteLine("-校验失败");
             throw r.Error("您的IP已被封禁", HttpStatusCode.Forbidden);

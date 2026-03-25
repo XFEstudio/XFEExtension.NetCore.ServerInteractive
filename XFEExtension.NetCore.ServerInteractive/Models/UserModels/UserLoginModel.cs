@@ -12,7 +12,7 @@ public class UserLoginModel
     /// <summary>
     /// 上一次登录IP
     /// </summary>
-    public string LastIpAddress { get; set; } = string.Empty;
+    public string LastIPAddress { get; set; } = string.Empty;
     /// <summary>
     /// 电脑配置信息
     /// </summary>

@@ -10,7 +10,7 @@ public class XFEServerCoreOptions
     /// <summary>
     /// 绑定的IP地址（服务初始化执行完成后才会刷新）
     /// </summary>
-    public string BindingIpAddress { get; set; } = string.Empty;
+    public string BindingIPAddress { get; set; } = string.Empty;
     /// <summary>
     /// 核心服务器名称
     /// </summary>
@@ -26,5 +26,5 @@ public class XFEServerCoreOptions
     /// <summary>
     /// 获取IP地址的函数，默认为从请求事件参数中获取客户端IP地址
     /// </summary>
-    public Func<CyberCommRequestEventArgs, string> GetIpFunction { get; set; } = args => args.ClientIP;
+    public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
 }

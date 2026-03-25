@@ -50,24 +50,24 @@ public static class XFEClientRequesterBuilderExtensions
         /// 添加IP封禁请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddBannedIpRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIpList", static (session, computerInfo, _) => new
+        public XFEClientRequesterBuilder AddBannedIPRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIPList", static (session, computerInfo, _) => new
         {
-            execute = "get_bannedIpList",
+            execute = "get_bannedIPList",
             session,
             computerInfo
-        }, static response => JsonSerializer.Deserialize<List<IpAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIp", static (session, computerInfo, parameters) => new
+        }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIP", static (session, computerInfo, parameters) => new
         {
-            execute = "add_bannedIp",
+            execute = "add_bannedIP",
             session,
             computerInfo,
-            bannedIp = parameters[0],
+            bannedIP = parameters[0],
             notes = parameters[1]
-        }, static response => response).AddRequest("remove_bannedIp", static (session, computerInfo, parameters) => new
+        }, static response => response).AddRequest("remove_bannedIP", static (session, computerInfo, parameters) => new
         {
-            execute = "remove_bannedIp",
+            execute = "remove_bannedIP",
             session,
             computerInfo,
-            bannedIp = parameters[0]
+            bannedIP = parameters[0]
         }, static response => bool.Parse(response));
 
         /// <summary>
@@ -83,7 +83,7 @@ public static class XFEClientRequesterBuilderExtensions
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
         public XFEClientRequesterBuilder UseXFEStandardRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddLoginRequest<T>()
-            .AddBannedIpRequest()
+            .AddBannedIPRequest()
             .AddLogRequest()
             .AddCheckConnectRequest();
     }

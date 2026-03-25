@@ -54,7 +54,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加IP封禁服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddIpBannerService() => xFEServerCoreBuilder.AddStandardService<IpBannerService>(["get_bannedIpList", "add_bannedIp", "remove_bannedIp"]);
+        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>(["get_bannedIPList", "add_bannedIP", "remove_bannedIP"]);
 
         /// <summary>
         /// 添加日期统计服务
@@ -106,7 +106,7 @@ public static class XFEServerCoreBuilderExtensions
             .AddConnectService()
             .AddStandardLoginService<T>()
             .AddServerLogService()
-            .AddIpBannerService();
+            .AddIPBannerService();
 
         /// <summary>
         /// 使用XFE标准服务器核心（Options）
@@ -141,7 +141,7 @@ public static class XFEServerCoreBuilderExtensions
             // Add services that depend on user functions if available
             if (hasUserFunctions)
             {
-                builder = builder.AddStandardLoginService<T>().AddServerLogService().AddIpBannerService();
+                builder = builder.AddStandardLoginService<T>().AddServerLogService().AddIPBannerService();
             }
 
             return builder;

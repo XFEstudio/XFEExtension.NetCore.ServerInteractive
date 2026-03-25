@@ -42,7 +42,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 {
                     Uid = user.Id,
                     ComputerInfo = computerInfo,
-                    LastIpAddress = ReturnArgs.Args.ClientIP,
+                    LastIPAddress = ReturnArgs.Args.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
             };
@@ -52,7 +52,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         else
         {
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
-            userLogin.UserLoginModel.LastIpAddress = ReturnArgs.Args.ClientIP;
+            userLogin.UserLoginModel.LastIPAddress = ReturnArgs.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.Write($"到期时间：{userLogin.UserLoginModel.EndDateTime}");
         }

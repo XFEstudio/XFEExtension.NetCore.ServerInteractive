@@ -12,7 +12,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 [CreateImpl]
 public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder>
 {
-    private static int _serverCount = 1;
+    private static int s_serverCount = 1;
     private readonly XFEServerCore _xFEServerCore = new XFEServerCoreImpl();
     private readonly List<IServerCoreOriginalService> _serverCoreServiceList = [];
     private readonly List<IServerCoreVerifyService> _serverCoreVerifyServiceList = [];
@@ -152,13 +152,13 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
             _xFEServerCore.ServerCoreName = xFEServerCoreOptions.ServerCoreName;
             _xFEServerCore.AutoUnescapeJson = xFEServerCoreOptions.AutoUnescapeJson;
             _xFEServerCore.AcceptNonStandardJson = xFEServerCoreOptions.AcceptNonStandardJson;
-            _xFEServerCore.GetIpFunction = xFEServerCoreOptions.GetIpFunction;
-            if(!xFEServerCoreOptions.BindingIpAddress.IsNullOrEmpty())
-                _xFEServerCore.BindingIpAddress = xFEServerCoreOptions.BindingIpAddress;
+            _xFEServerCore.GetIPFunction = xFEServerCoreOptions.GetIPFunction;
+            if(!xFEServerCoreOptions.BindingIPAddress.IsNullOrEmpty())
+                _xFEServerCore.BindingIPAddress = xFEServerCoreOptions.BindingIPAddress;
         }
 
         if (_xFEServerCore.ServerCoreName.IsNullOrEmpty())
-            _xFEServerCore.ServerCoreName = $"XFE服务器-{_serverCount++}";
+            _xFEServerCore.ServerCoreName = $"XFE服务器-{s_serverCount++}";
         return _xFEServerCore;
     }
 

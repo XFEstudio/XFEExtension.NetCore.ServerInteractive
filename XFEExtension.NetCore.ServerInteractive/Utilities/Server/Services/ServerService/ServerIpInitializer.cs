@@ -7,16 +7,16 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 /// <summary>
 /// 服务器IP初始化服务
 /// </summary>
-public class ServerIpInitializer : ServerInitializerServiceBase
+public class ServerIPInitializer : ServerInitializerServiceBase
 {
-    private static int _nextDefaultPort = 3300;
+    private static int s_nextDefaultPort = 3300;
     /// <inheritdoc/>
     public override void Initialize()
     {
         ServerBaseProfile.SaveProfile();
         foreach (var serverCoreService in XFEServer.ServerCoreProcessService.ServerCoreServiceList)
         {
-            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{_nextDefaultPort++}/");
+            ServerBaseProfile.ServerLastBindingAddressDictionary.TryAdd(serverCoreService.ServerCoreName, $"http://localhost:{s_nextDefaultPort++}/");
             if (!ServerBaseProfile.ServerLastBindingAddressDictionary.TryGetValue(serverCoreService.ServerCoreName, out var ipAddress)) continue;
             Console.WriteLine($"正在设置服务器：{serverCoreService.ServerCoreName}");
             Console.WriteLine($"是否绑定IP：{ipAddress}？(Y/N)");
@@ -32,7 +32,7 @@ public class ServerIpInitializer : ServerInitializerServiceBase
                 }
                 ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;
             }
-            serverCoreService.BindingIpAddress = ipAddress;
+            serverCoreService.BindingIPAddress = ipAddress;
             Console.WriteLine($"服务器{serverCoreService.ServerCoreName}设置完成！IP为：{ipAddress}");
         }
         ServerBaseProfile.SaveProfile();
