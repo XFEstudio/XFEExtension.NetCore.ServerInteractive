@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.0.1</Version>
+		<Version>2.0.2</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,16 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      统一IP相关命名，升级依赖并优化接口实现
+      XFEClientRequesterOptions 默认电脑信息自动获取
 
-      本次提交主要内容如下：
-
-      - 全面统一与“IP地址”相关的类、属性、方法、服务等命名（如 IpAddress → IPAddress，IpBanner → IPBanner 等），包括 JSON 字段、请求名、参数名等，提升代码一致性。
-      - 同步调整所有接口、抽象类、实现类及配置项的相关属性和委托名，保持命名规范统一。
-      - 适配业务逻辑，确保 IP 判断、存储、序列化、权限校验等环节与新命名一致，用户登录相关 LastIpAddress 也统一为 LastIPAddress。
-      - 客户端与服务端的请求注册、服务注册等同步为新命名，保证前后端一致。
-      - 升级部分依赖包版本，项目自身版本号提升至 2.0.1。
-      - 优化控制台输出及调试信息，保持接口和方法兼容性，便于后续维护和扩展。
+      将 ComputerInfo 默认值改为自动获取唯一硬件ID，增强设备识别能力；新增 DeviceHelper 命名空间引用；项目版本号升级至 2.0.2。
 
       ## 新增
 
