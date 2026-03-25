@@ -8,40 +8,40 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 /// </summary>
 public static class XFEServerBuilderExtensions
 {
-    /// <summary>
-    /// 使用XFE标准服务器
-    /// </summary>
     /// <param name="xFEServerBuilder"></param>
-    /// <returns></returns>
-    public static XFEServerBuilder UseXFEServer(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.UseXFELog()
+    extension(XFEServerBuilder xFEServerBuilder)
+    {
+        /// <summary>
+        /// 使用XFE标准服务器
+        /// </summary>
+        /// <returns></returns>
+        public XFEServerBuilder UseXFEServer() => xFEServerBuilder.UseXFELog()
             .AddXFEExceptionProcess()
             .AddXFEIpInitializer()
             .AddXFECoreProcessor();
-    /// <summary>
-    /// 使用XFE日志记录
-    /// </summary>
-    /// <param name="xFEServerBuilder"></param>
-    /// <returns></returns>
-    public static XFEServerBuilder UseXFELog(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddInitializer<ServerLogInitializer>();
 
-    /// <summary>
-    /// 使用XFE异常处理程序
-    /// </summary>
-    /// <param name="xFEServerBuilder"></param>
-    /// <returns></returns>
-    public static XFEServerBuilder AddXFEExceptionProcess(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddService<ServerExceptionProcessService>();
+        /// <summary>
+        /// 使用XFE日志记录
+        /// </summary>
+        /// <returns></returns>
+        public XFEServerBuilder UseXFELog() => xFEServerBuilder.AddInitializer<ServerLogInitializer>();
 
-    /// <summary>
-    /// 使用XFE核心处理程序
-    /// </summary>
-    /// <param name="xFEServerBuilder"></param>
-    /// <returns></returns>
-    public static XFEServerBuilder AddXFECoreProcessor(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddCoreProcessor<XFEServerCoreProcessService>();
+        /// <summary>
+        /// 使用XFE异常处理程序
+        /// </summary>
+        /// <returns></returns>
+        public XFEServerBuilder AddXFEExceptionProcess() => xFEServerBuilder.AddService<ServerExceptionProcessService>();
 
-    /// <summary>
-    /// 使用XFEIP初始化器
-    /// </summary>
-    /// <param name="xFEServerBuilder"></param>
-    /// <returns></returns>
-    public static XFEServerBuilder AddXFEIpInitializer(this XFEServerBuilder xFEServerBuilder) => xFEServerBuilder.AddInitializer<ServerIpInitializer>();
+        /// <summary>
+        /// 使用XFE核心处理程序
+        /// </summary>
+        /// <returns></returns>
+        public XFEServerBuilder AddXFECoreProcessor() => xFEServerBuilder.AddCoreProcessor<XFEServerCoreProcessService>();
+
+        /// <summary>
+        /// 使用XFEIP初始化器
+        /// </summary>
+        /// <returns></returns>
+        public XFEServerBuilder AddXFEIpInitializer() => xFEServerBuilder.AddInitializer<ServerIpInitializer>();
+    }
 }
