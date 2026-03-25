@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.Json;
 using XFEExtension.NetCore.AutoConfig;
+using XFEExtension.NetCore.Exceptions;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;

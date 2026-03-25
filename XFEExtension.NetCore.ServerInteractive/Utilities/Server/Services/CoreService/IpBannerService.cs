@@ -29,13 +29,13 @@ public class IpBannerService : ServerCoreUserServiceBase
             case "get_bannedIpList":
                 Console.Write("获取禁止的IP地址列表请求");
                 UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["computerInfo"]?.ToString(), ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                await Close(ServerBaseProfile.BannedIPAddressList.ToJson());
+                await Close(ServerBaseProfile.BannedIpAddressList.ToJson());
                 break;
             case "add_bannedIp":
                 Console.Write($"添加禁止的IP地址请求 添加：{Json?["bannedIp"]}");
                 UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["computerInfo"]?.ToString(), ReturnArgs.Args.ClientIP, AddPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
                 if (Json?["bannedIp"] is null) throw Error("无IP地址传入");
-                ServerBaseProfile.BannedIPAddressList.Add(new()
+                ServerBaseProfile.BannedIpAddressList.Add(new()
                 {
                     IpAddress = Json?["bannedIp"]?.ToString() ?? string.Empty,
                     Notes = Json?["notes"]?.ToString()
@@ -45,8 +45,8 @@ public class IpBannerService : ServerCoreUserServiceBase
             case "remove_bannedIp":
                 Console.Write($"删除禁止的IP地址请求 移除：{Json?["bannedIp"]}");
                 UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["computerInfo"]?.ToString(), ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IpAddress == Json?["bannedIp"]?.ToString()) ?? throw Error("无IP地址传入");
-                await Close(ServerBaseProfile.BannedIPAddressList.Remove(targetIp).ToString());
+                var targetIp = ServerBaseProfile.BannedIpAddressList.FirstOrDefault(ip => ip.IpAddress == Json?["bannedIp"]?.ToString()) ?? throw Error("无IP地址传入");
+                await Close(ServerBaseProfile.BannedIpAddressList.Remove(targetIp).ToString());
                 break;
         }
     }

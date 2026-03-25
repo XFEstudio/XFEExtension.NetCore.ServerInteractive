@@ -14,8 +14,8 @@ public partial class ServerBaseProfile : XFEProfile
     /// 封禁的IP地址列表
     /// </summary>
     [ProfileProperty]
-    [ProfilePropertyAddGet("Current._bannedIPAddressList.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current._bannedIPAddressList")]
+    [ProfilePropertyAddGet("Current._bannedIpAddressList.CurrentProfile = Current")]
+    [ProfilePropertyAddGet("return Current._bannedIpAddressList")]
     private ProfileList<IpAddressInfo> _bannedIpAddressList = [];
     /// <summary>
     /// 服务器上次绑定的IP地址字典

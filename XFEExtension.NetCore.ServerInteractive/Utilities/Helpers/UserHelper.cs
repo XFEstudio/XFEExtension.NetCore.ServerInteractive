@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using XFEExtension.NetCore.Exceptions;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;

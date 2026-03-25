@@ -15,12 +15,12 @@ public class EntryPointVerifyServer : ServerCoreVerifyServiceBase
     public override bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r)
     {
         Console.Write($"[DEBUG]({XFEServerCore.ServerCoreName})【{XFEServerCore.GetIpFunction(e)}】接收到请求");
-        if (ServerBaseProfile.BannedIPAddressList.Contains(e.ClientIP))
+        if (ServerBaseProfile.BannedIpAddressList.Contains(e.ClientIP))
         {
             Console.WriteLine("-校验失败");
             throw r.Error("您的IP已被封禁", HttpStatusCode.Forbidden);
         }
-        if (e.RequestURL?.Segments.Length < 2 || $"{e.RequestURL?.Segments[0]}{e.RequestURL?.Segments[1]}" != $"/{ServerBaseProfile.EntryPoint}" || e.RequestMethod != "POST")
+        if (e.RequestUrl?.Segments.Length < 2 || $"{e.RequestUrl?.Segments[0]}{e.RequestUrl?.Segments[1]}" != $"/{ServerBaseProfile.EntryPoint}" || e.RequestMethod != "POST")
         {
             Console.WriteLine("-校验失败");
             throw r.Error("请求的API接口不正确", HttpStatusCode.BadGateway);
