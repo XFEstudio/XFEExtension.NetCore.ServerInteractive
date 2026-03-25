@@ -3,10 +3,10 @@
 /// <summary>
 /// ID模型
 /// </summary>
-public interface IIDModel
+public interface IIdModel
 {
     /// <summary>
     /// ID
     /// </summary>
-    string ID { get; set; }
+    string Id { get; set; }
 }

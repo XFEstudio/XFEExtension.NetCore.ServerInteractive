@@ -21,7 +21,7 @@ public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
                         {
                             try
                             {
-                                Console.WriteLine($"[DEBUG]正在启动服务器：{serverCoreService.ServerCoreName}({serverCoreService.BindingIPAddress})...");
+                                Console.WriteLine($"[DEBUG]正在启动服务器：{serverCoreService.ServerCoreName}({serverCoreService.BindingIpAddress})...");
                                 await serverCoreService.StartServerCore();
                                 Console.WriteLine($"[ERROR]服务器({serverCoreService.ServerCoreName})因未知原因自行结束！");
                                 Console.WriteLine("[DEBUG]准备重启服务器({serverCoreService.ServerCoreName})");

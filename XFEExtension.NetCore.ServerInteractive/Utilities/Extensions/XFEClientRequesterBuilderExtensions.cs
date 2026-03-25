@@ -55,7 +55,7 @@ public static class XFEClientRequesterBuilderExtensions
         execute = "get_bannedIpList",
         session,
         computerInfo
-    }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIp", static (session, computerInfo, parameters) => new
+    }, static response => JsonSerializer.Deserialize<List<IpAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIp", static (session, computerInfo, parameters) => new
     {
         execute = "add_bannedIp",
         session,

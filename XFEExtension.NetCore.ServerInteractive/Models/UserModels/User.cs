@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 public class User : IUserInfo
 {
     /// <inheritdoc/>
-    public string ID { get; set; } = Guid.NewGuid().ToString("N");
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
     /// <inheritdoc/>
     public string NickName { get; set; } = string.Empty;
     /// <inheritdoc/>

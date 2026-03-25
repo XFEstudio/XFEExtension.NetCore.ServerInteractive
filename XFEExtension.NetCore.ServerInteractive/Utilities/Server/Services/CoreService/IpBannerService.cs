@@ -37,7 +37,7 @@ public class IpBannerService : ServerCoreUserServiceBase
                 if (Json?["bannedIp"] is null) throw Error("无IP地址传入");
                 ServerBaseProfile.BannedIPAddressList.Add(new()
                 {
-                    IPAddress = Json?["bannedIp"]?.ToString() ?? string.Empty,
+                    IpAddress = Json?["bannedIp"]?.ToString() ?? string.Empty,
                     Notes = Json?["notes"]?.ToString()
                 });
                 OK();
@@ -45,7 +45,7 @@ public class IpBannerService : ServerCoreUserServiceBase
             case "remove_bannedIp":
                 Console.Write($"删除禁止的IP地址请求 移除：{Json?["bannedIp"]}");
                 UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["computerInfo"]?.ToString(), ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == Json?["bannedIp"]?.ToString()) ?? throw Error("无IP地址传入");
+                var targetIp = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IpAddress == Json?["bannedIp"]?.ToString()) ?? throw Error("无IP地址传入");
                 await Close(ServerBaseProfile.BannedIPAddressList.Remove(targetIp).ToString());
                 break;
         }

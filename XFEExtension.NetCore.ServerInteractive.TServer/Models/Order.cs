@@ -2,9 +2,9 @@
 
 namespace XFEExtension.NetCore.ServerInteractive.TServer.Models;
 
-public class Order : IIDModel
+public class Order : IIdModel
 {
-    public string ID { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string Description { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
 }

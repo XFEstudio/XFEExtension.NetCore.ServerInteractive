@@ -45,7 +45,7 @@ public class TableRequester
     /// <param name="pageCount">每页个数</param>
     /// <param name="page">当前页面</param>
     /// <returns>表内容</returns>
-    public async Task<TableRequestResult<T>> Get<T>(string tableName, int pageCount, int page) where T : IIDModel
+    public async Task<TableRequestResult<T>> Get<T>(string tableName, int pageCount, int page) where T : IIdModel
     {
         try
         {
@@ -79,14 +79,14 @@ public class TableRequester
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     /// <returns>表内容</returns>
-    public async Task<TableRequestResult<T>> Get<T>(int pageCount, int page) where T : IIDModel => await Get<T>(GetRequestName<T>(), pageCount, page);
+    public async Task<TableRequestResult<T>> Get<T>(int pageCount, int page) where T : IIdModel => await Get<T>(GetRequestName<T>(), pageCount, page);
 
     /// <summary>
     /// 获取Table列表
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     /// <returns>表内容</returns>
-    public async Task<TableRequestResult<T>> Get<T>() where T : IIDModel => await Get<T>(-1, -1);
+    public async Task<TableRequestResult<T>> Get<T>() where T : IIdModel => await Get<T>(-1, -1);
 
     /// <summary>
     /// 向表中添加一个数据
@@ -95,7 +95,7 @@ public class TableRequester
     /// <param name="tableName">表名称</param>
     /// <param name="data">数据</param>
     /// <returns>是否添加成功</returns>
-    public async Task<bool> Add<T>(string tableName, T data) where T : IIDModel
+    public async Task<bool> Add<T>(string tableName, T data) where T : IIdModel
     {
         try
         {
@@ -128,7 +128,7 @@ public class TableRequester
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="data">数据</param>
     /// <returns>是否添加成功</returns>
-    public async Task<bool> Add<T>(T data) where T : IIDModel => await Add(GetRequestName<T>(), data);
+    public async Task<bool> Add<T>(T data) where T : IIdModel => await Add(GetRequestName<T>(), data);
 
     /// <summary>
     /// 从表中删除一个数据
@@ -137,7 +137,7 @@ public class TableRequester
     /// <param name="tableName">表名称</param>
     /// <param name="id">元素的ID</param>
     /// <returns>是否删除成功</returns>
-    public async Task<bool> Remove<T>(string tableName, string id) where T : IIDModel
+    public async Task<bool> Remove<T>(string tableName, string id) where T : IIdModel
     {
         try
         {
@@ -170,7 +170,7 @@ public class TableRequester
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="id">元素的ID</param>
     /// <returns>是否删除成功</returns>
-    public async Task<bool> Remove<T>(string id) where T : IIDModel => await Remove<T>(GetRequestName<T>(), id);
+    public async Task<bool> Remove<T>(string id) where T : IIdModel => await Remove<T>(GetRequestName<T>(), id);
 
     /// <summary>
     /// 更改表中的数据
@@ -179,7 +179,7 @@ public class TableRequester
     /// <param name="tableName">表名称</param>
     /// <param name="data">数据</param>
     /// <returns></returns>
-    public async Task<bool> Change<T>(string tableName, T data) where T : IIDModel
+    public async Task<bool> Change<T>(string tableName, T data) where T : IIdModel
     {
         try
         {
@@ -212,5 +212,5 @@ public class TableRequester
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="data">数据</param>
     /// <returns>是否修改成功</returns>
-    public async Task<bool> Change<T>(T data) where T : IIDModel => await Change(GetRequestName<T>(), data);
+    public async Task<bool> Change<T>(T data) where T : IIdModel => await Change(GetRequestName<T>(), data);
 }

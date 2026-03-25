@@ -20,7 +20,7 @@ public class ServerCoreReturnArgs : Exception
     /// <summary>
     /// 客户端IP地址
     /// </summary>
-    public string ClientIP { get; set; } = string.Empty;
+    public string ClientIp { get; set; } = string.Empty;
     /// <summary>
     /// 是否已经处理完成
     /// </summary>

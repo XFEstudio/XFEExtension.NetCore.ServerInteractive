@@ -18,7 +18,7 @@ public interface IXFEServerCoreServiceBase
     /// <summary>
     /// 客户端IP地址
     /// </summary>
-    string ClientIP { get; set; }
+    string ClientIp { get; set; }
 
     /// <summary>
     /// 是否是标准错误（如果是标准错误，服务器将自动处理并返回给客户端；如果不是，服务器将输出报错及堆栈信息）

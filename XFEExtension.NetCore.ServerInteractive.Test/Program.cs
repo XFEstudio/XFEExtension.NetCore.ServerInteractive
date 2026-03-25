@@ -37,7 +37,7 @@ internal class Program
         {
             Console.WriteLine(result.Result.Session);
             Console.WriteLine(result.Result.ExpireDate);
-            Console.WriteLine(result.Result.UserInfo.ID);
+            Console.WriteLine(result.Result.UserInfo.Id);
             Console.WriteLine(result.Result.UserInfo.NickName);
             Console.WriteLine(result.Result.UserInfo.PermissionLevel);
             TableRequester.RequestAddress = XFEClientRequester.RequestAddress;
@@ -75,7 +75,7 @@ internal class Program
         var result = await XFEClientRequester.Request<UserFaceInfo>("relogin");
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            Console.WriteLine(result.Result.ID);
+            Console.WriteLine(result.Result.Id);
             Console.WriteLine(result.Result.NickName);
             Console.WriteLine(result.Result.PermissionLevel);
         }
@@ -147,7 +147,7 @@ internal class Program
         var result = await TableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
-            Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
+            Console.WriteLine($"ID:{order.Id}\tName:{order.Name}\tDS:{order.Description}");
         }
     }
 
@@ -156,7 +156,7 @@ internal class Program
     {
         var result = await TableRequester.Get<Order>();
         var order = result.DataList[0];
-        Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
+        Console.WriteLine($"ID:{order.Id}\tName:{order.Name}\tDS:{order.Description}");
         order.Description = "这是一条修改后的测试订单";
         order.Name = "Test001";
         await TableRequester.Change(order);
@@ -168,7 +168,7 @@ internal class Program
         var result = await TableRequester.Get<Order>();
         foreach (var order in result.DataList)
         {
-            Console.WriteLine($"ID:{order.ID}\tName:{order.Name}\tDS:{order.Description}");
+            Console.WriteLine($"ID:{order.Id}\tName:{order.Name}\tDS:{order.Description}");
         }
         Console.ReadLine();
     }

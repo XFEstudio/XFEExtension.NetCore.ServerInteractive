@@ -38,7 +38,7 @@ public abstract class XFEDataTableManagerBuilder
     /// <typeparam name="T">数据类型</typeparam>
     /// <param name="xFEDataTable">数据表</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T>(XFEDataTable<T> xFEDataTable) where T : IIDModel
+    public XFEDataTableManagerBuilder AddTable<T>(XFEDataTable<T> xFEDataTable) where T : IIdModel
     {
         _dataTableList.Add(xFEDataTable);
         ExecuteList.AddRange([$"get_{xFEDataTable.TableNameInRequest}", $"add_{xFEDataTable.TableNameInRequest}", $"change_{xFEDataTable.TableNameInRequest}", $"remove_{xFEDataTable.TableNameInRequest}"]);
@@ -57,7 +57,7 @@ public abstract class XFEDataTableManagerBuilder
     /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
     /// <param name="jsonSerializerOptions">JSON转换器</param>
     /// <returns></returns>
-    public XFEDataTableManagerBuilder AddTable<T, TP>(string tableShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIDModel where TP : XFEProfile => AddTable(new XFEDataTable<T>(typeof(TP))
+    public XFEDataTableManagerBuilder AddTable<T, TP>(string tableShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where T : IIdModel where TP : XFEProfile => AddTable(new XFEDataTable<T>(typeof(TP))
     {
         TableShowName = tableShowName,
         AddPermissionLevel = addPermissionLevel,

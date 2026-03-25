@@ -19,7 +19,7 @@ public static class UserHelper
     /// <param name="id"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static IUserFaceInfo? GetUser(string id, IEnumerable<IUserFaceInfo> userInfoList) => userInfoList.FirstOrDefault(user => user.ID == id);
+    public static IUserFaceInfo? GetUser(string id, IEnumerable<IUserFaceInfo> userInfoList) => userInfoList.FirstOrDefault(user => user.Id == id);
 
     /// <summary>
     /// 获取用户（通过Session）
@@ -40,7 +40,7 @@ public static class UserHelper
             return UserOperateResult.LoginExpired;
         if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not { } targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
             return UserOperateResult.UserNotFound;
-        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !(encryptedUserLoginModel.UserLoginModel.LastIPAddress is "127.0.0.1" or "::1" && ipAddress is "127.0.0.1" or "::1")))
+        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIpAddress != ipAddress && !(encryptedUserLoginModel.UserLoginModel.LastIpAddress is "127.0.0.1" or "::1" && ipAddress is "127.0.0.1" or "::1")))
             return UserOperateResult.LoginExpired;
         if (GetUser(targetUserLoginModel.Uid, userInfoList) is not IUserInfo userInfo)
             return UserOperateResult.UserNotFound;

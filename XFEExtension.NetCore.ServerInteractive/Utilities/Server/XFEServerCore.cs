@@ -66,9 +66,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             Args = e
         };
-        var clientIP = e.ClientIP;
-        try { clientIP = GetIpFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
-        r.ClientIP = clientIP;
+        var clientIp = e.ClientIP;
+        try { clientIp = GetIpFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
+        r.ClientIp = clientIp;
         try
         {
             if (ServerCoreVerifyServiceList.Any(serverCoreVerifyService => !serverCoreVerifyService.VerifyRequest(sender, e, r)))
@@ -113,7 +113,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (execute.IsNullOrEmpty()) return;
-            Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
+            Console.Write($"({ServerCoreName})【{clientIp}】请求方法-{execute}：");
             var stopWatch = Stopwatch.StartNew();
             if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
             {
@@ -194,7 +194,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <returns></returns>
     public override async Task StartServerCore()
     {
-        CyberCommServer.ServerURLs = [BindingIPAddress];
+        CyberCommServer.ServerURLs = [BindingIpAddress];
         CyberCommServer.RequestReceived += CyberCommServer_RequestReceived;
         await CyberCommServer.StartCyberCommServer();
     }

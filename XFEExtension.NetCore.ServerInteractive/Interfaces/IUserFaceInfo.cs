@@ -5,12 +5,12 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces;
 /// <summary>
 /// 用户信息
 /// </summary>
-public interface IUserFaceInfo : IIDModel
+public interface IUserFaceInfo : IIdModel
 {
     /// <summary>
     /// 用户ID，唯一标识符
     /// </summary>
-    new string ID { get; set; }
+    new string Id { get; set; }
     /// <summary>
     /// 昵称，显示使用
     /// </summary>

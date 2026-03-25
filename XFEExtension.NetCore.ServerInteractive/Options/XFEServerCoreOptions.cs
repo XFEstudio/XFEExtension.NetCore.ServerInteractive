@@ -10,7 +10,7 @@ public class XFEServerCoreOptions
     /// <summary>
     /// 绑定的IP地址（服务初始化执行完成后才会刷新）
     /// </summary>
-    public string BindingIPAddress { get; set; } = string.Empty;
+    public string BindingIpAddress { get; set; } = string.Empty;
     /// <summary>
     /// 核心服务器名称
     /// </summary>

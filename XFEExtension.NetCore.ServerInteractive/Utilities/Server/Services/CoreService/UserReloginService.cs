@@ -28,7 +28,7 @@ public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T :
         if (userLoginModel.Uid.IsNullOrWhiteSpace() || userLoginModel.Uid != encryptedUserLoginModel.UserLoginModel.Uid)
             throw Error("登录用户ID不匹配");
         var user = UserHelper.GetUser(userLoginModel.Uid, GetUserFunction()) ?? throw Error("用户ID未注册", HttpStatusCode.Forbidden);
-        if (userLoginModel.LastIPAddress != ReturnArgs.Args.ClientIP || userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) throw Error("IP地址不匹配");
+        if (userLoginModel.LastIpAddress != ReturnArgs.Args.ClientIP || userLoginModel.LastIpAddress != encryptedUserLoginModel.UserLoginModel.LastIpAddress) throw Error("IP地址不匹配");
         if (userLoginModel.EndDateTime < DateTime.Now || userLoginModel.EndDateTime != encryptedUserLoginModel.UserLoginModel.EndDateTime) throw Error("登录已过期");
         if (userLoginModel.ComputerInfo != encryptedUserLoginModel.UserLoginModel.ComputerInfo) throw Error("电脑信息不匹配");
         await Close(JsonSerializer.Serialize(LoginResultConvertFunction(user), JsonSerializerOptions));

@@ -22,7 +22,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         if (computerInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
         var user = UserHelper.GetUser(account, password, GetUserFunction(), ReturnArgs);
         Console.Write($"{account}（{computerInfo[..10]}...）");
-        var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.Uid == user.ID);
+        var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.Uid == user.Id);
         //for (int i = 0; i < userLoginList.Count(); i++)
         //{
         //    var otherLogin = userLoginList.ElementAt(i);
@@ -40,9 +40,9 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 Key = AesHelper.GenerateRandomKey(),
                 UserLoginModel = new UserLoginModel
                 {
-                    Uid = user.ID,
+                    Uid = user.Id,
                     ComputerInfo = computerInfo,
-                    LastIPAddress = ReturnArgs.Args.ClientIP,
+                    LastIpAddress = ReturnArgs.Args.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
             };
@@ -52,14 +52,14 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         else
         {
             userLogin.UserLoginModel.ComputerInfo = computerInfo;
-            userLogin.UserLoginModel.LastIPAddress = ReturnArgs.Args.ClientIP;
+            userLogin.UserLoginModel.LastIpAddress = ReturnArgs.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.Write($"到期时间：{userLogin.UserLoginModel.EndDateTime}");
         }
 
         await Close(JsonSerializer.Serialize(new
         {
-            session = $"{user.ID}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
+            session = $"{user.Id}|{UserHelper.Encrypt(userLogin.Key, userLogin.UserLoginModel)}",
             expireDate = userLogin.UserLoginModel.EndDateTime,
             userInfo = LoginResultConvertFunction(user)
         }, JsonSerializerOptions));

@@ -16,7 +16,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 /// XFE数据表格
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
+public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
 {
     /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
@@ -83,12 +83,12 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
         RemoveFromTableFunction = id =>
         {
             var table = GetTableFunction();
-            removeMethod.Invoke(table, [table.FirstOrDefault(item => item.ID == id)]);
+            removeMethod.Invoke(table, [table.FirstOrDefault(item => item.Id == id)]);
         };
         ChangeItemTableFunction = item =>
         {
             var table = GetTableFunction();
-            var targetItem = table.FirstOrDefault(originItem => originItem.ID == item.ID);
+            var targetItem = table.FirstOrDefault(originItem => originItem.Id == item.Id);
             if (targetItem is null) return;
             foreach (var itemProperty in targetItem.GetType().GetProperties())
             {
@@ -163,15 +163,15 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
-                    Console.Write($"：{item.ID}");
+                    Console.Write($"：{item.Id}");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["computerInfo"], r.Args.ClientIP, AddPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
-                    if (item.ID.IsNullOrWhiteSpace())
+                    if (item.Id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"{TableShowName}ID不能为空");
                     }
-                    while (IDModelHelper.HasSameID(item.ID, GetTableFunction().Cast<IIDModel>()))
-                        item.ID = Guid.NewGuid().ToString();
+                    while (IdModelHelper.HasSameId(item.Id, GetTableFunction().Cast<IIdModel>()))
+                        item.Id = Guid.NewGuid().ToString();
                     Add(item);
                     r.Args.Close();
                     break;
@@ -196,8 +196,8 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIDModel
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
-                    Console.Write($"：{item.ID}");
-                    if (item.ID.IsNullOrWhiteSpace() || item.ID.IsNullOrWhiteSpace())
+                    Console.Write($"：{item.Id}");
+                    if (item.Id.IsNullOrWhiteSpace() || item.Id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");

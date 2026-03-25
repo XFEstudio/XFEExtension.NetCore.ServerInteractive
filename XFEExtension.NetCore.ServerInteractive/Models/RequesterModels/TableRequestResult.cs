@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 /// 表格请求结果
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class TableRequestResult<T> where T : IIDModel
+public class TableRequestResult<T> where T : IIdModel
 {
     /// <summary>
     /// 数据列表
