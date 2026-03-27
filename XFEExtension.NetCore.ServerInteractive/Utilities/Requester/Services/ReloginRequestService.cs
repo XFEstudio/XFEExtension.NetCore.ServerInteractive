@@ -19,10 +19,10 @@ public class ReloginRequestService<T> : XFERequestServiceBase where T : IUserFac
     public override object AnalyzeResponse(string response) => JsonSerializer.Deserialize<T>(response, _jsonSerializerOptions)!;
 
     /// <inheritdoc/>
-    public override object PostRequest(string execute, params object[] parameters) => new
+    public override object PostRequest() => new
     {
-        execute,
-        session = XFEClientRequester.Session,
-        deviceInfo = XFEClientRequester.DeviceInfo,
+        execute = Execute,
+        session = Session,
+        deviceInfo = DeviceInfo,
     };
 }

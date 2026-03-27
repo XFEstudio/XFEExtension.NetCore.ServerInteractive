@@ -13,8 +13,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientRequesterBuilder>
 {
     private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
-    private readonly Dictionary<string, IRequestService> _requestServiceDictionary = [];
-    private readonly Dictionary<string, IXFERequestService> _xFERequestServiceDictionary = [];
+    private readonly Dictionary<string, Func<IRequestService>> _requestServiceDictionary = [];
+    private readonly Dictionary<string, Func<IXFERequestService>> _xFERequestServiceDictionary = [];
     private readonly Dictionary<string, XFEClientInstanceRequest> _xFEClientInstanceRequestDictionary = [];
     /// <summary>
     /// 创建构建器
@@ -35,8 +35,13 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns></returns>
     public XFEClientRequesterBuilder AddRequest(string serviceName, IRequestService requestService)
     {
-        ApplyParameter(requestService);
-        _requestServiceDictionary.Add(serviceName, requestService);
+        var type = requestService.GetType();
+        _requestServiceDictionary.Add(serviceName, () =>
+        {
+            var inst = (IRequestService)Activator.CreateInstance(type)!;
+            ApplyParameter(inst);
+            return inst;
+        });
         return this;
     }
 
@@ -46,7 +51,16 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IRequestService, new() => AddRequest(serviceName, new T());
+    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IRequestService, new()
+    {
+        _requestServiceDictionary.Add(serviceName, () =>
+        {
+            var inst = new T();
+            ApplyParameter(inst);
+            return inst;
+        });
+        return this;
+    }
 
     /// <summary>
     /// 添加XFE请求器
@@ -56,8 +70,13 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <returns></returns>
     public XFEClientRequesterBuilder AddXFERequest(string serviceName, IXFERequestService xFERequestService)
     {
-        ApplyParameter(xFERequestService);
-        _xFERequestServiceDictionary.Add(serviceName, xFERequestService);
+        var type = xFERequestService.GetType();
+        _xFERequestServiceDictionary.Add(serviceName, () =>
+        {
+            var inst = (IXFERequestService)Activator.CreateInstance(type)!;
+            ApplyParameter(inst);
+            return inst;
+        });
         return this;
     }
 
@@ -67,7 +86,16 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求服务名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddXFERequest<T>(string serviceName) where T : IXFERequestService, new() => AddXFERequest(serviceName, new T());
+    public XFEClientRequesterBuilder AddXFERequest<T>(string serviceName) where T : IXFERequestService, new()
+    {
+        _xFERequestServiceDictionary.Add(serviceName, () =>
+        {
+            var inst = new T();
+            ApplyParameter(inst);
+            return inst;
+        });
+        return this;
+    }
 
     /// <summary>
     /// 添加实例请求

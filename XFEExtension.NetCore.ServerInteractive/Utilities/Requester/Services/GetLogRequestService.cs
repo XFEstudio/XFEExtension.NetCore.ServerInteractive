@@ -11,12 +11,12 @@ public class GetLogRequestService : XFERequestServiceBase
     public override object AnalyzeResponse(string response) => response;
 
     /// <inheritdoc/>
-    public override object PostRequest(string execute, params object[] parameters) => new
+    public override object PostRequest() => new
     {
-        execute,
-        session = XFEClientRequester.Session,
-        deviceInfo = XFEClientRequester.DeviceInfo,
-        startDateTime = parameters[0],
-        endDateTime = parameters[1],
+        execute = Execute,
+        session = Session,
+        deviceInfo = DeviceInfo,
+        startDateTime = Parameters[0],
+        endDateTime = Parameters[1],
     };
 }

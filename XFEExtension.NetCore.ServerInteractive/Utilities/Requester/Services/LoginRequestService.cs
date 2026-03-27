@@ -21,16 +21,16 @@ public class LoginRequestService<T> : XFERequestServiceBase where T : IUserFaceI
     public override object AnalyzeResponse(string response)
     {
         var result = JsonSerializer.Deserialize<UserLoginResult<T>>(response, _jsonSerializerOptions);
-        XFEClientRequester.Session = result!.Session;
+        Session = result!.Session;
         return result;
     }
 
     /// <inheritdoc/>
-    public override object PostRequest(string execute, params object[] parameters) => new
+    public override object PostRequest() => new
     {
-        execute,
-        deviceInfo = XFEClientRequester.DeviceInfo,
-        account = parameters[0],
-        password = parameters[1]
+        execute = Execute,
+        deviceInfo = DeviceInfo,
+        account = Parameters[0],
+        password = Parameters[1]
     };
 }

@@ -18,8 +18,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 public abstract class XFEClientRequester : IRequesterBase
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
-    internal Dictionary<string, IRequestService> RequestServiceDictionary = [];
-    internal Dictionary<string, IXFERequestService> XFERequestServiceDictionary = [];
+    internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
+    internal Dictionary<string, Func<IXFERequestService>> XFERequestServiceDictionary = [];
     internal Dictionary<string, XFEClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
     /// <summary>
     /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
@@ -64,13 +64,20 @@ public abstract class XFEClientRequester : IRequesterBase
         var result = new ClientRequestResult<object>();
         try
         {
-            if (RequestServiceDictionary.TryGetValue(serviceName, out var service))
+            if (RequestServiceDictionary.TryGetValue(serviceName, out var serviceFactory))
             {
+                var service = serviceFactory();
+                service.XFEClientRequester = this;
                 result = await service.Request<object>(parameters);
             }
-            else if (XFERequestServiceDictionary.TryGetValue(serviceName, out var xFEService))
+            else if (XFERequestServiceDictionary.TryGetValue(serviceName, out var xFEServiceFactory))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(serviceName, parameters), _jsonSerializerOptions);
+                var xFEService = xFEServiceFactory();
+                xFEService.XFEClientRequester = this;
+                xFEService.Execute = serviceName;
+                xFEService.DeviceInfo = this.DeviceInfo;
+                xFEService.Parameters = parameters;
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {

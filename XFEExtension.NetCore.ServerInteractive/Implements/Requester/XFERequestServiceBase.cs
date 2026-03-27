@@ -9,6 +9,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 public abstract class XFERequestServiceBase : IXFERequestService
 {
     /// <inheritdoc/>
+    public string Session { get => XFEClientRequester.Session; set => XFEClientRequester.Session = value; }
+    /// <inheritdoc/>
     public string Execute { get; set; } = string.Empty;
     /// <inheritdoc/>
     public string DeviceInfo { get; set; } = string.Empty;
@@ -16,7 +18,6 @@ public abstract class XFERequestServiceBase : IXFERequestService
     public object[] Parameters { get; set; } = [];
     /// <inheritdoc/>
     public XFEClientRequester XFEClientRequester { get; set; }
-
     /// <inheritdoc/>
     public abstract object AnalyzeResponse(string response);
 

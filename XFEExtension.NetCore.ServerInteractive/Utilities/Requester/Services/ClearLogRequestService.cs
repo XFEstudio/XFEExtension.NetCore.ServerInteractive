@@ -11,10 +11,10 @@ public class ClearLogRequestService : XFERequestServiceBase
     public override object AnalyzeResponse(string response) => true;
 
     /// <inheritdoc/>
-    public override object PostRequest(string execute, params object[] parameters) => new
+    public override object PostRequest() => new
     {
-        execute,
-        session = XFEClientRequester.Session,
-        deviceInfo = XFEClientRequester.DeviceInfo
+        execute = Execute,
+        session = Session,
+        deviceInfo = DeviceInfo
     };
 }

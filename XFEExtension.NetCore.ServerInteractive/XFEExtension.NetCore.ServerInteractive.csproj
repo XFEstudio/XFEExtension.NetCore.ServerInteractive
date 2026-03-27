@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.0.2</Version>
+		<Version>2.1.0</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      XFEClientRequesterOptions 默认电脑信息自动获取
+      重构请求服务注册与实例化机制，提升安全性
 
-      将 DeviceInfo 默认值改为自动获取唯一硬件ID，增强设备识别能力；新增 DeviceHelper 命名空间引用；项目版本号升级至 2.0.2。
+      本次更新对请求服务的注册、实例化和调用流程进行了重构，采用工厂方法动态创建服务实例，避免状态污染，提升线程安全性和可扩展性。统一了 IXFERequestService 属性访问级别，新增 Session 属性，简化 PostRequest 方法签名。同步调整命名与属性，版本号升级至 2.1.0。完善了文档和注释，整体提升了代码可维护性。
 
       ## 新增
 

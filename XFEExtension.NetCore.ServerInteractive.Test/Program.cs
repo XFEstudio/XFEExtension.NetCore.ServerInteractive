@@ -43,7 +43,7 @@ internal class Program
             Console.WriteLine(result.Result.UserInfo.PermissionLevel);
             TableRequester.RequestAddress = XFEClientRequester.RequestAddress;
             TableRequester.Session = result.Result.Session;
-            TableRequester.ComputerInfo = XFEClientRequester.ComputerInfo;
+            TableRequester.DeviceInfo = XFEClientRequester.DeviceInfo;
         }
         else
         {
