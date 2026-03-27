@@ -42,11 +42,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 核心校验服务列表
     /// </summary>
-    internal List<IServerCoreVerifyService> ServerCoreVerifyServiceList = [];
-    /// <summary>
-    /// 核心异步校验服务列表
-    /// </summary>
-    internal List<IServerCoreVerifyAsyncService> ServerCoreVerifyAsyncServiceList = [];
+    internal List<Func<IServerCoreVerifyService>> ServerCoreVerifyServiceList = [];
     /// <summary>
     /// 核心标准服务工厂字典（按请求创建实例）
     /// </summary>
@@ -71,11 +67,13 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         r.ClientIP = clientIP;
         try
         {
-            if (ServerCoreVerifyServiceList.Any(serverCoreVerifyService => !serverCoreVerifyService.VerifyRequest(sender, e, r)))
-                return;
-            foreach (var serverCoreVerifyAsyncService in ServerCoreVerifyAsyncServiceList)
-                if (!await serverCoreVerifyAsyncService.VerifyRequestAsync(sender, e, r))
+            foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList.Select(serverCoreVerifyFactory => serverCoreVerifyFactory()))
+            {
+                serverCoreVerifyService.ReturnArgs = r;
+                serverCoreVerifyService.Request = e.Request;
+                if (!serverCoreVerifyService.VerifyRequest() || !await serverCoreVerifyService.VerifyRequestAsync())
                     return;
+            }
         }
         catch (Exception ex)
         {

@@ -1,6 +1,4 @@
-﻿using XFEExtension.NetCore.CyberComm;
-using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
+﻿using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
@@ -10,5 +8,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 public abstract class ServerCoreVerifyServiceBase : XFEServerCoreServiceBase, IServerCoreVerifyService
 {
     /// <inheritdoc/>
-    public abstract bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r);
+    public virtual bool VerifyRequest() => true;
+
+    /// <inheritdoc/>
+    public virtual Task<bool> VerifyRequestAsync() => Task.FromResult(true);
 }

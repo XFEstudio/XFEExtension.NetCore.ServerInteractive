@@ -15,8 +15,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     private static int s_serverCount = 1;
     private readonly XFEServerCore _xFEServerCore = new XFEServerCoreImpl();
     private readonly List<IServerCoreOriginalService> _serverCoreServiceList = [];
-    private readonly List<IServerCoreVerifyService> _serverCoreVerifyServiceList = [];
-    private readonly List<IServerCoreVerifyAsyncService> _serverCoreVerifyAsyncServiceList = [];
+    private readonly List<Func<IServerCoreVerifyService>> _serverCoreVerifyServiceList = [];
     private readonly Dictionary<string, Func<IServerCoreStandardService>> _serverStandardCoreServiceDictionary = [];
     private readonly Dictionary<List<string>, Func<IServerCoreStandardService>> _serverMultiStandardCoreServiceDictionary = [];
 
@@ -53,40 +52,18 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <summary>
     /// 添加校验服务
     /// </summary>
-    /// <param name="serverCoreVerifyService">校验服务对象</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddVerifyService(IServerCoreVerifyService serverCoreVerifyService)
-    {
-        ApplyParameter(serverCoreVerifyService);
-        _serverCoreVerifyServiceList.Add(serverCoreVerifyService);
-        return this;
-    }
-
-    /// <summary>
-    /// 添加校验服务
-    /// </summary>
     /// <typeparam name="T">校验服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddVerifyService<T>() where T : IServerCoreVerifyService, new() => AddVerifyService(new T());
-
-    /// <summary>
-    /// 添加校验服务
-    /// </summary>
-    /// <param name="serverCoreVerifyAsyncService">校验服务对象</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddVerifyAsyncService(IServerCoreVerifyAsyncService serverCoreVerifyAsyncService)
+    public XFEServerCoreBuilder AddVerifyService<T>() where T : IServerCoreVerifyService, new()
     {
-        ApplyParameter(serverCoreVerifyAsyncService);
-        _serverCoreVerifyAsyncServiceList.Add(serverCoreVerifyAsyncService);
+        _serverCoreVerifyServiceList.Add(() =>
+        {
+            var inst = new T();
+            ApplyParameter(inst);
+            return inst;
+        });
         return this;
     }
-
-    /// <summary>
-    /// 添加校验服务
-    /// </summary>
-    /// <typeparam name="T">校验服务泛型</typeparam>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddVerifyAsyncService<T>() where T : IServerCoreVerifyAsyncService, new() => AddVerifyAsyncService(new T());
 
     /// <summary>
     /// 注册标准服务
@@ -143,7 +120,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
             _xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
         }
         _xFEServerCore.ServerCoreVerifyServiceList = _serverCoreVerifyServiceList;
-        _xFEServerCore.ServerCoreVerifyAsyncServiceList = _serverCoreVerifyAsyncServiceList;
         _xFEServerCore.StandardCoreServiceDictionary = _serverStandardCoreServiceDictionary;
         _xFEServerCore.StandardMultiCoreServiceDictionary = _serverMultiStandardCoreServiceDictionary;
 

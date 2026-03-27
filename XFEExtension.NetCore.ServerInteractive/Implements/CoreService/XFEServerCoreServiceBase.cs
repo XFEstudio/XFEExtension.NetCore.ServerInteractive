@@ -9,7 +9,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 /// <summary>
 /// 服务器核心服务基类
 /// </summary>
-public abstract class XFEServerCoreServiceBase : IXFEServerCoreServiceBase
+public abstract class XFEServerCoreServiceBase : IXFEStandardServerCoreServiceBase
 {
     /// <inheritdoc/>
     public bool Handled { get => ReturnArgs.Handled; set => ReturnArgs.Handled = value; }

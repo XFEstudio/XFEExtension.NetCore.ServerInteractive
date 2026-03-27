@@ -1,19 +1,19 @@
-﻿using XFEExtension.NetCore.CyberComm;
-using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
-
-namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
+﻿namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 
 /// <summary>
 /// 服务器核心初始化服务
 /// </summary>
-public interface IServerCoreVerifyService : IXFEServerCoreServiceBase
+public interface IServerCoreVerifyService : IXFEStandardServerCoreServiceBase
 {
     /// <summary>
     /// 校验请求
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="r"></param>
-    /// <returns></returns>
-    bool VerifyRequest(object? sender, CyberCommRequestEventArgs e, ServerCoreReturnArgs r);
+    /// <returns>如果请求通过校验，返回true；否则返回false。</returns>
+    bool VerifyRequest();
+
+    /// <summary>
+    /// 校验请求
+    /// </summary>
+    /// <returns>如果请求通过校验，返回true；否则返回false。</returns>
+    Task<bool> VerifyRequestAsync();
 }

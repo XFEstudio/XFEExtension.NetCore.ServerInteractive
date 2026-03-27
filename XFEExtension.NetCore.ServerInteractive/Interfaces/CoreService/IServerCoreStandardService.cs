@@ -3,7 +3,7 @@
 /// <summary>
 /// 服务器标准核心服务
 /// </summary>
-public interface IServerCoreStandardService : IXFEServerCoreServiceBase
+public interface IServerCoreStandardService : IXFEStandardServerCoreServiceBase
 {
     /// <summary>
     /// 服务器标准核心服务初始化事件（在请求初始化的时候执行）

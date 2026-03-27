@@ -78,7 +78,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加服务器入口点校验
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddEntryPointVerify() => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyServer>();
+        public XFEServerCoreBuilder AddEntryPointVerify() => xFEServerCoreBuilder.AddVerifyService<EntryPointVerifyService>();
 
         /// <summary>
         /// 添加服务器日志请求
@@ -133,11 +133,22 @@ public static class XFEServerCoreBuilderExtensions
             }
 
             // Common services that don't strictly require user functions
-            builder = builder.AddEntryPointVerify()
-                .AddDailyCounterService()
-                .AddXFEErrorProcessService()
-                .AddConnectService();
-
+            if (options.UseEntryPointVerifyService)
+            {
+                builder = builder.AddEntryPointVerify();
+            }
+            if (options.UseDailyCounterService)
+            {
+                builder = builder.AddDailyCounterService();
+            }
+            if (options.UseXFEErrorProcessService)
+            {
+                builder = builder.AddXFEErrorProcessService();
+            }
+            if (options.UseConnectService)
+            {
+                builder = builder.AddConnectService();
+            }
             // Add services that depend on user functions if available
             if (hasUserFunctions)
             {

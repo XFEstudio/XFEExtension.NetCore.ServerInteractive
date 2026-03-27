@@ -18,7 +18,7 @@ internal class Program
         }, response => response)
         .Build(options =>
         {
-            options.RequestAddress = "http://localhost:8080/management";
+            options.RequestAddress = "http://localhost:3300/management";
         });
 
     private static readonly TableRequester TableRequester = new();
@@ -30,7 +30,7 @@ internal class Program
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    [SMTest("Admin", "12345641")]
+    [SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)
     {
         var result = await XFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
