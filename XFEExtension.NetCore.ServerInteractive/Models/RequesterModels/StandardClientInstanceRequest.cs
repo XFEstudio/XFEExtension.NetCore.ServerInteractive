@@ -1,9 +1,9 @@
 ﻿namespace XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 
 /// <summary>
-/// XFE客户端实例请求
+/// 标准客户端实例请求
 /// </summary>
-public class XFEClientInstanceRequest
+public class StandardClientInstanceRequest
 {
     /// <summary>
     /// 构建请求体
@@ -12,5 +12,5 @@ public class XFEClientInstanceRequest
     /// <summary>
     /// 处理请求
     /// </summary>
-    public Func<string, object>? ProcessResponse { get; set; }
+    public Func<string, object>? ProcessResponse { get; set; } = response => response;
 }

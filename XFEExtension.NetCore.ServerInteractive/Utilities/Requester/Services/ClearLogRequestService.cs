@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 /// <summary>
 /// 清除日志请求服务
 /// </summary>
-public class ClearLogRequestService : XFERequestServiceBase
+public class ClearLogRequestService : StandardRequestServiceBase
 {
     /// <inheritdoc/>
     public override object AnalyzeResponse(string response) => true;

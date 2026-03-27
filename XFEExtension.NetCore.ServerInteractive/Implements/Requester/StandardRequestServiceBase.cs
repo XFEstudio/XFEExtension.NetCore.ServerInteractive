@@ -4,9 +4,9 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 
 /// <summary>
-/// XFE请求服务基类
+/// 标准请求服务基类
 /// </summary>
-public abstract class XFERequestServiceBase : IXFERequestService
+public abstract class StandardRequestServiceBase : IStandardRequestService
 {
     /// <inheritdoc/>
     public string Session { get => XFEClientRequester.Session; set => XFEClientRequester.Session = value; }

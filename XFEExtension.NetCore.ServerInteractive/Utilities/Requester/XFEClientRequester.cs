@@ -19,8 +19,8 @@ public abstract class XFEClientRequester : IRequesterBase
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
-    internal Dictionary<string, Func<IXFERequestService>> XFERequestServiceDictionary = [];
-    internal Dictionary<string, XFEClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
+    internal Dictionary<string, Func<IStandardRequestService>> XFERequestServiceDictionary = [];
+    internal Dictionary<string, StandardClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
     /// <summary>
     /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
     /// </summary>

@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 /// <summary>
 /// 获取日志请求服务
 /// </summary>
-public class GetLogRequestService : XFERequestServiceBase
+public class GetLogRequestService : StandardRequestServiceBase
 {
     /// <inheritdoc/>
     public override object AnalyzeResponse(string response) => response;

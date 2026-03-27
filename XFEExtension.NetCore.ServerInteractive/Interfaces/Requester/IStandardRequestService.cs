@@ -1,9 +1,9 @@
 ﻿namespace XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 
 /// <summary>
-/// XFE请求服务
+/// 标准请求服务
 /// </summary>
-public interface IXFERequestService : IRequestServiceBase
+public interface IStandardRequestService : IRequestServiceBase
 {
     /// <summary>
     /// 待请求的方法（如 check_connect）
