@@ -19,7 +19,7 @@ public interface IRequesterBase
     /// <summary>
     /// 电脑信息
     /// </summary>
-    string ComputerInfo { get; set; }
+    string DeviceInfo { get; set; }
     /// <summary>
     /// 请求消息返回事件
     /// </summary>

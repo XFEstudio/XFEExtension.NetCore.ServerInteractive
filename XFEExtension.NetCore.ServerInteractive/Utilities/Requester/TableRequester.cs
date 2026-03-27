@@ -21,7 +21,7 @@ public class TableRequester
     /// <summary>
     /// 电脑信息
     /// </summary>
-    public string ComputerInfo { get; set; } = string.Empty;
+    public string DeviceInfo { get; set; } = string.Empty;
     /// <summary>
     /// 用户登录Session
     /// </summary>
@@ -55,7 +55,7 @@ public class TableRequester
                 pageCount,
                 page,
                 session = Session,
-                computerInfo = ComputerInfo
+                deviceInfo = DeviceInfo
             }.ToJson());
             if (code == HttpStatusCode.OK)
             {
@@ -104,7 +104,7 @@ public class TableRequester
                 execute = $"add_{tableName}",
                 data = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data, JsonSerializerOptions))),
                 session = Session,
-                computerInfo = ComputerInfo
+                deviceInfo = DeviceInfo
             }.ToJson());
             if (code == HttpStatusCode.OK)
             {
@@ -146,7 +146,7 @@ public class TableRequester
                 execute = $"remove_{tableName}",
                 id,
                 session = Session,
-                computerInfo = ComputerInfo
+                deviceInfo = DeviceInfo
             }.ToJson());
             if (code == HttpStatusCode.OK)
             {
@@ -188,7 +188,7 @@ public class TableRequester
                 execute = $"change_{tableName}",
                 data = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data, JsonSerializerOptions))),
                 session = Session,
-                computerInfo = ComputerInfo
+                deviceInfo = DeviceInfo
             }.ToJson());
             if (code == HttpStatusCode.OK)
             {

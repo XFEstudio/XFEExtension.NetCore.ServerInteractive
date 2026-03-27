@@ -6,12 +6,22 @@
 public interface IXFERequestService : IRequestServiceBase
 {
     /// <summary>
+    /// 待请求的方法（如 check_connect）
+    /// </summary>
+    string Execute { get; set; }
+    /// <summary>
+    /// 设备信息
+    /// </summary>
+    string DeviceInfo { get; set; }
+    /// <summary>
+    /// 待请求的方法的参数列表
+    /// </summary>
+    object[] Parameters { get; set; }
+    /// <summary>
     /// 提交请求体
     /// </summary>
-    /// <param name="execute">执行的操作名称</param>
-    /// <param name="parameters"></param>
     /// <returns></returns>
-    object PostRequest(string execute, params object[] parameters);
+    object PostRequest();
     /// <summary>
     /// 接收到返回后解析
     /// </summary>

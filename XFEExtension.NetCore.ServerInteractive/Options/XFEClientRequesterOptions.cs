@@ -18,7 +18,7 @@ public class XFEClientRequesterOptions
     /// <summary>
     /// 电脑信息
     /// </summary>
-    public string ComputerInfo { get; set; } = DeviceHelper.GetUniqueHardwareId();
+    public string DeviceInfo { get; set; } = DeviceHelper.GetUniqueHardwareId();
     /// <summary>
     /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
     /// </summary>

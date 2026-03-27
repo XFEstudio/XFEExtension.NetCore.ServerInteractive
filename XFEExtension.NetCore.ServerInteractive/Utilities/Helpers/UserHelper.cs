@@ -26,18 +26,18 @@ public static class UserHelper
     /// 获取用户（通过Session）
     /// </summary>
     /// <param name="session"></param>
-    /// <param name="computerInfo"></param>
+    /// <param name="deviceInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static UserOperateResult GetUser(string session, string computerInfo, string ipAddress, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
+    public static UserOperateResult GetUser(string session, string deviceInfo, string ipAddress, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserFaceInfo> userInfoList, out IUserInfo? user)
     {
         user = null;
         session = Regex.Unescape(session);
         var split = session.Split('|');
-        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel || encryptedUserLoginModel.UserLoginModel.ComputerInfo != computerInfo)
+        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel || encryptedUserLoginModel.UserLoginModel.DeviceInfo != deviceInfo)
             return UserOperateResult.LoginExpired;
         if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not { } targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
             return UserOperateResult.UserNotFound;
@@ -134,17 +134,17 @@ public static class UserHelper
     /// 校验用户权限（使用Session）
     /// </summary>
     /// <param name="sessionId"></param>
-    /// <param name="computerInfo"></param>
+    /// <param name="deviceInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="requiredPermissionLevel"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string? sessionId, string? computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string? sessionId, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
     {
-        if (sessionId.IsNullOrWhiteSpace() || computerInfo.IsNullOrWhiteSpace())
+        if (sessionId.IsNullOrWhiteSpace() || deviceInfo.IsNullOrWhiteSpace())
             return UserOperateResult.UserNotFound;
-        var result = GetUser(sessionId, computerInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
+        var result = GetUser(sessionId, deviceInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
         return user!.PermissionLevel < requiredPermissionLevel ? UserOperateResult.PermissionDenied : UserOperateResult.Success;
@@ -201,16 +201,16 @@ public static class UserHelper
     /// 校验权限（使用Session）
     /// </summary>
     /// <param name="sessionId"></param>
-    /// <param name="computerInfo"></param>
+    /// <param name="deviceInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="requiredPermissionLevel"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <param name="r"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string? sessionId, string? computerInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    public static void ValidatePermission(string? sessionId, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
-        var result = ValidateUserPermission(sessionId, computerInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
+        var result = ValidateUserPermission(sessionId, deviceInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
             throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
     }

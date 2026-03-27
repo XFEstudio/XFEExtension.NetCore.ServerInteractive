@@ -16,7 +16,7 @@ public class UserLoginModel
     /// <summary>
     /// 电脑配置信息
     /// </summary>
-    public string ComputerInfo { get; set; } = string.Empty;
+    public string DeviceInfo { get; set; } = string.Empty;
     /// <summary>
     /// 登录到期时间
     /// </summary>

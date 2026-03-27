@@ -16,12 +16,12 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         Console.Write("登录请求");
         var account = Json?["account"]?.ToString();
         var password = Json?["password"]?.ToString();
-        var computerInfo = Json?["computerInfo"]?.ToString();
+        var deviceInfo = Json?["deviceInfo"]?.ToString();
         if (account.IsNullOrWhiteSpace()) throw Error("账户名不能为空");
         if (password.IsNullOrWhiteSpace()) throw Error("登录密码不能为空");
-        if (computerInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
+        if (deviceInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
         var user = UserHelper.GetUser(account, password, GetUserFunction(), ReturnArgs);
-        Console.Write($"{account}（{computerInfo[..10]}...）");
+        Console.Write($"{account}（{deviceInfo[..10]}...）");
         var userLogin = GetEncryptedUserLoginModelFunction().FirstOrDefault(userLogin => userLogin.UserLoginModel.Uid == user.Id);
         //for (int i = 0; i < userLoginList.Count(); i++)
         //{
@@ -30,7 +30,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         //    {
         //        RemoveEncryptedUserLoginModelFunction(otherLogin);
         //        i--;
-        //        Console.WriteLine($"[DEBUG]删除用户 {otherLogin.UserLoginModel.UID} 在电脑 {computerInfo} 上的登录状态");
+        //        Console.WriteLine($"[DEBUG]删除用户 {otherLogin.UserLoginModel.UID} 在电脑 {deviceInfo} 上的登录状态");
         //    }
         //}
         if (userLogin is null)
@@ -41,7 +41,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
                 UserLoginModel = new UserLoginModel
                 {
                     Uid = user.Id,
-                    ComputerInfo = computerInfo,
+                    DeviceInfo = deviceInfo,
                     LastIPAddress = ReturnArgs.Args.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
@@ -51,7 +51,7 @@ public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : c
         }
         else
         {
-            userLogin.UserLoginModel.ComputerInfo = computerInfo;
+            userLogin.UserLoginModel.DeviceInfo = deviceInfo;
             userLogin.UserLoginModel.LastIPAddress = ReturnArgs.Args.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.Write($"到期时间：{userLogin.UserLoginModel.EndDateTime}");

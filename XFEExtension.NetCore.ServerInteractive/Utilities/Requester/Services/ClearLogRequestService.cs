@@ -15,6 +15,6 @@ public class ClearLogRequestService : XFERequestServiceBase
     {
         execute,
         session = XFEClientRequester.Session,
-        computerInfo = XFEClientRequester.ComputerInfo
+        deviceInfo = XFEClientRequester.DeviceInfo
     };
 }

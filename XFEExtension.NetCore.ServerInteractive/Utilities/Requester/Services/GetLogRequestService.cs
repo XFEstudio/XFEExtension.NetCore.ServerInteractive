@@ -15,7 +15,7 @@ public class GetLogRequestService : XFERequestServiceBase
     {
         execute,
         session = XFEClientRequester.Session,
-        computerInfo = XFEClientRequester.ComputerInfo,
+        deviceInfo = XFEClientRequester.DeviceInfo,
         startDateTime = parameters[0],
         endDateTime = parameters[1],
     };

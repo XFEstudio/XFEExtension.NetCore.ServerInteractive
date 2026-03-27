@@ -85,7 +85,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// 添加实例请求
     /// </summary>
     /// <param name="serviceName">请求服务名称</param>
-    /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> computerInfo, <seealso cref="object"/>[] parameters)</param>
+    /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> deviceInfo, <seealso cref="object"/>[] parameters)</param>
     /// <param name="processResponse">处理响应方法<seealso cref="object"/> (<seealso cref="string"/> response)</param>
     /// <returns></returns>
     public XFEClientRequesterBuilder AddRequest(string serviceName, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(serviceName, new XFEClientInstanceRequest()
@@ -102,7 +102,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     {
         _xFEClientRequester.RequestAddress = options.RequestAddress;
         _xFEClientRequester.Session = options.Session;
-        _xFEClientRequester.ComputerInfo = options.ComputerInfo;
+        _xFEClientRequester.DeviceInfo = options.DeviceInfo;
         _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.XFERequestServiceDictionary = _xFERequestServiceDictionary;
@@ -120,7 +120,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         optionsBuilder(options);
         _xFEClientRequester.RequestAddress = options.RequestAddress;
         _xFEClientRequester.Session = options.Session;
-        _xFEClientRequester.ComputerInfo = options.ComputerInfo;
+        _xFEClientRequester.DeviceInfo = options.DeviceInfo;
         _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.XFERequestServiceDictionary = _xFERequestServiceDictionary;

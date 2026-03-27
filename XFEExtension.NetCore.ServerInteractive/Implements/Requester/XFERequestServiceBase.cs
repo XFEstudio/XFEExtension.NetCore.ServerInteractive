@@ -9,10 +9,17 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 public abstract class XFERequestServiceBase : IXFERequestService
 {
     /// <inheritdoc/>
+    public string Execute { get; set; } = string.Empty;
+    /// <inheritdoc/>
+    public string DeviceInfo { get; set; } = string.Empty;
+    /// <inheritdoc/>
+    public object[] Parameters { get; set; } = [];
+    /// <inheritdoc/>
     public XFEClientRequester XFEClientRequester { get; set; }
 
     /// <inheritdoc/>
     public abstract object AnalyzeResponse(string response);
+
     /// <inheritdoc/>
-    public abstract object PostRequest(string execute, params object[] parameters);
+    public abstract object PostRequest();
 }

@@ -23,6 +23,6 @@ public class ReloginRequestService<T> : XFERequestServiceBase where T : IUserFac
     {
         execute,
         session = XFEClientRequester.Session,
-        computerInfo = XFEClientRequester.ComputerInfo,
+        deviceInfo = XFEClientRequester.DeviceInfo,
     };
 }

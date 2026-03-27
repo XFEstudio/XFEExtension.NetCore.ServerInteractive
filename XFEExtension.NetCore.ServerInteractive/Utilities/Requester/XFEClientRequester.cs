@@ -30,7 +30,7 @@ public abstract class XFEClientRequester : IRequesterBase
     /// <inheritdoc/>
     public string Session { get; set; } = string.Empty;
     /// <inheritdoc/>
-    public string ComputerInfo { get; set; } = string.Empty;
+    public string DeviceInfo { get; set; } = string.Empty;
     /// <inheritdoc/>
     public event XFEEventHandler<object?, ServerInteractiveEventArgs>? MessageReceived;
 
@@ -87,7 +87,7 @@ public abstract class XFEClientRequester : IRequesterBase
             }
             else if (XFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, ComputerInfo, parameters), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (AutoUnescapeResponse)
                     response = Regex.Unescape(response);

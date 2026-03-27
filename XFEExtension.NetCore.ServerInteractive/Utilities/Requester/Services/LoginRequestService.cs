@@ -29,7 +29,7 @@ public class LoginRequestService<T> : XFERequestServiceBase where T : IUserFaceI
     public override object PostRequest(string execute, params object[] parameters) => new
     {
         execute,
-        computerInfo = XFEClientRequester.ComputerInfo,
+        deviceInfo = XFEClientRequester.DeviceInfo,
         account = parameters[0],
         password = parameters[1]
     };

@@ -32,41 +32,41 @@ public static class XFEClientRequesterBuilderExtensions
         /// 添加日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest("get_log", static (session, computerInfo, parameters) => new
+        public XFEClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest("get_log", static (session, deviceInfo, parameters) => new
         {
             execute = "get_log",
             session,
-            computerInfo,
+            deviceInfo,
             startDateTime = parameters[0],
             endDateTime = parameters[1]
-        }, static response => response).AddRequest("clear_log", static (session, computerInfo, _) => new
+        }, static response => response).AddRequest("clear_log", static (session, deviceInfo, _) => new
         {
             execute = "clear_log",
             session,
-            computerInfo
+            deviceInfo
         }, static response => response);
 
         /// <summary>
         /// 添加IP封禁请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddBannedIPRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIPList", static (session, computerInfo, _) => new
+        public XFEClientRequesterBuilder AddBannedIPRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIPList", static (session, deviceInfo, _) => new
         {
             execute = "get_bannedIPList",
             session,
-            computerInfo
-        }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIP", static (session, computerInfo, parameters) => new
+            deviceInfo
+        }, static response => JsonSerializer.Deserialize<List<IPAddressInfo>>(response, JsonSerializerOptions)!).AddRequest("add_bannedIP", static (session, deviceInfo, parameters) => new
         {
             execute = "add_bannedIP",
             session,
-            computerInfo,
+            deviceInfo,
             bannedIP = parameters[0],
             notes = parameters[1]
-        }, static response => response).AddRequest("remove_bannedIP", static (session, computerInfo, parameters) => new
+        }, static response => response).AddRequest("remove_bannedIP", static (session, deviceInfo, parameters) => new
         {
             execute = "remove_bannedIP",
             session,
-            computerInfo,
+            deviceInfo,
             bannedIP = parameters[0]
         }, static response => bool.Parse(response));
 
