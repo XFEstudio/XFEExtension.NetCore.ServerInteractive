@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.3.0</Version>
+		<Version>2.3.1</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,11 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      支持多服务名标准请求，优化构建器与接口命名
+      用户登录会话清理逻辑优化及依赖升级
 
-      本次更新引入 StandardMultiRequestServiceListDictionary，支持一个标准请求服务绑定多个服务名，并完善了 XFEClientRequester 的请求分发逻辑。重命名部分字段与方法以提升一致性，新增 AddRequest 方法重载，优化构建器 Build 方法，提升代码可读性和灵活性。版本号升级至 2.3.0。
+      - 增加对 XFEExtension.NetCore.StringExtension 的引用，支持字符串扩展方法。
+      - 优化 UserLoginAutoCleanService，清理 Uid 为空或全空白的无效会话。
+      - 项目版本升级至 2.3.1，并将 XFEExtension.NetCore 依赖提升至 4.2.*。
 
       ## 新增
 
@@ -57,7 +59,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Management" Version="11.0.0-preview.2.26159.112" />
-		<PackageReference Include="XFEExtension.NetCore" Version="4.0.*" />
+		<PackageReference Include="XFEExtension.NetCore" Version="4.2.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
 		<PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
 		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.0.*" />

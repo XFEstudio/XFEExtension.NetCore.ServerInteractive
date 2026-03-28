@@ -5,6 +5,7 @@ using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
+using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -51,7 +52,7 @@ public class UserLoginAutoCleanService : ServerCoreOriginalServiceBase, IUserSer
         Console.WriteLine($"[DEBUG]服务器({XFEServerCore.ServerCoreName})正在清理过期的Session...");
         try
         {
-            var expiredSessions = GetEncryptedUserLoginModelFunction().Where(user => user.UserLoginModel.EndDateTime < DateTime.Now).ToList();
+            var expiredSessions = GetEncryptedUserLoginModelFunction().Where(user => user.UserLoginModel.EndDateTime < DateTime.Now || user.UserLoginModel.Uid.NullOrWhiteSpace).ToList();
             if (expiredSessions.Count > 0)
             {
                 for (var i = expiredSessions.Count - 1; i >= 0; i--)
