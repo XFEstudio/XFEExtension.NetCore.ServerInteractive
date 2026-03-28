@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.CodeDom.Compiler;
+using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using XFEExtension.NetCore.AutoImplement;
@@ -19,8 +20,9 @@ public abstract class XFEClientRequester : IRequesterBase
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
-    internal Dictionary<string, Func<IStandardRequestService>> XFERequestServiceDictionary = [];
-    internal Dictionary<string, StandardClientInstanceRequest> XFEClientInstanceRequestDictionary = [];
+    internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
+    internal Dictionary<List<string>, Func<IStandardRequestService>> StandardMultiRequestServiceListDictionary = [];
+    internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
     /// <summary>
     /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
     /// </summary>
@@ -70,12 +72,12 @@ public abstract class XFEClientRequester : IRequesterBase
                 service.XFEClientRequester = this;
                 result = await service.Request<object>(parameters);
             }
-            else if (XFERequestServiceDictionary.TryGetValue(serviceName, out var xFEServiceFactory))
+            else if (StandardRequestServiceDictionary.TryGetValue(serviceName, out var xFEServiceFactory))
             {
                 var xFEService = xFEServiceFactory();
                 xFEService.XFEClientRequester = this;
                 xFEService.Execute = serviceName;
-                xFEService.DeviceInfo = this.DeviceInfo;
+                xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(), _jsonSerializerOptions);
                 result.StatusCode = code;
@@ -92,7 +94,7 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
-            else if (XFEClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
+            else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
@@ -104,6 +106,29 @@ public abstract class XFEClientRequester : IRequesterBase
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
                     result.Result = requestResult ?? new();
+                }
+                else
+                {
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+                    result.Message = response;
+                }
+            }
+            foreach (var instance in from key in StandardMultiRequestServiceListDictionary.Keys where key.Contains(serviceName) select StandardMultiRequestServiceListDictionary[key] into factory select factory())
+            {
+                instance.XFEClientRequester = this;
+                instance.Execute = serviceName;
+                instance.DeviceInfo = DeviceInfo;
+                instance.Parameters = parameters;
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.PostRequest(), _jsonSerializerOptions);
+                if (AutoUnescapeResponse)
+                    response = Regex.Unescape(response);
+                result.StatusCode = code;
+                if (code == HttpStatusCode.OK)
+                {
+                    var requestResult = instance.AnalyzeResponse(response);
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
+                    result.Message = "Success";
+                    result.Result = requestResult;
                 }
                 else
                 {
