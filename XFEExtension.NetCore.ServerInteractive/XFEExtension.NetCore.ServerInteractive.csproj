@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.2.0</Version>
+		<Version>2.3.0</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,12 +21,9 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      重构服务接口与校验机制，提升标准化与扩展性
+      支持多服务名标准请求，优化构建器与接口命名
 
-      本次提交对核心服务接口进行了标准化重构，新增 IXFEStandardServerCoreServiceBase 作为统一基类，简化了校验服务实现，移除异步校验接口，所有校验服务统一为同步/异步方法。
-      校验服务注册方式改为工厂模式，避免状态污染，并支持通过配置灵活启用内置服务。
-      同步更新客户端请求构建器，提升整体可维护性和扩展性。
-      版本号提升至 2.2.0。
+      本次更新引入 StandardMultiRequestServiceListDictionary，支持一个标准请求服务绑定多个服务名，并完善了 XFEClientRequester 的请求分发逻辑。重命名部分字段与方法以提升一致性，新增 AddRequest 方法重载，优化构建器 Build 方法，提升代码可读性和灵活性。版本号升级至 2.3.0。
 
       ## 新增
 

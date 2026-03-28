@@ -15,6 +15,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
     private readonly Dictionary<string, Func<IRequestService>> _requestServiceDictionary = [];
     private readonly Dictionary<string, Func<IStandardRequestService>> _standardRequestServiceDictionary = [];
+    private readonly Dictionary<List<string>, Func<IStandardRequestService>> _standardMultiRequestServiceListDictionary = [];
     private readonly Dictionary<string, StandardClientInstanceRequest> _standardClientInstanceRequestDictionary = [];
     /// <summary>
     /// 创建构建器
@@ -33,7 +34,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IRequestService, new()
+    public XFEClientRequesterBuilder AddOriginRequest<T>(string serviceName) where T : IRequestService, new()
     {
         _requestServiceDictionary.Add(serviceName, () =>
         {
@@ -50,9 +51,26 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求服务名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddStandardRequest<T>(string serviceName) where T : IStandardRequestService, new()
+    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IStandardRequestService, new()
     {
         _standardRequestServiceDictionary.Add(serviceName, () =>
+        {
+            var inst = new T();
+            ApplyParameter(inst);
+            return inst;
+        });
+        return this;
+    }
+
+    /// <summary>
+    /// 添加标准请求器
+    /// </summary>
+    /// <typeparam name="T">请求服务泛型</typeparam>
+    /// <param name="serviceName">请求服务名称</param>
+    /// <returns></returns>
+    public XFEClientRequesterBuilder AddRequest<T>(List<string> serviceName) where T : IStandardRequestService, new()
+    {
+        _standardMultiRequestServiceListDictionary.Add(serviceName, () =>
         {
             var inst = new T();
             ApplyParameter(inst);
@@ -97,8 +115,9 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         _xFEClientRequester.DeviceInfo = options.DeviceInfo;
         _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
-        _xFEClientRequester.XFERequestServiceDictionary = _standardRequestServiceDictionary;
-        _xFEClientRequester.XFEClientInstanceRequestDictionary = _standardClientInstanceRequestDictionary;
+        _xFEClientRequester.StandardRequestServiceDictionary = _standardRequestServiceDictionary;
+        _xFEClientRequester.StandardMultiRequestServiceListDictionary = _standardMultiRequestServiceListDictionary;
+        _xFEClientRequester.StandardClientInstanceRequestDictionary = _standardClientInstanceRequestDictionary;
         return _xFEClientRequester;
     }
 
@@ -110,13 +129,6 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     {
         var options = new XFEClientRequesterOptions();
         optionsBuilder(options);
-        _xFEClientRequester.RequestAddress = options.RequestAddress;
-        _xFEClientRequester.Session = options.Session;
-        _xFEClientRequester.DeviceInfo = options.DeviceInfo;
-        _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
-        _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
-        _xFEClientRequester.XFERequestServiceDictionary = _standardRequestServiceDictionary;
-        _xFEClientRequester.XFEClientInstanceRequestDictionary = _standardClientInstanceRequestDictionary;
-        return _xFEClientRequester;
+        return Build(options);
     }
 }
