@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 public class GetLogRequestService : StandardRequestServiceBase
 {
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response) => response;
+    public override object AnalyzeResponse() => Response;
 
     /// <inheritdoc/>
     public override object PostRequest() => new

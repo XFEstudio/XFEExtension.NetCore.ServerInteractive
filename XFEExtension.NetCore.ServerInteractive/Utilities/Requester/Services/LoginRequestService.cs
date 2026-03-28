@@ -18,9 +18,9 @@ public class LoginRequestService<T> : StandardRequestServiceBase where T : IUser
     public LoginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response)
+    public override object AnalyzeResponse()
     {
-        var result = JsonSerializer.Deserialize<UserLoginResult<T>>(response, _jsonSerializerOptions);
+        var result = JsonSerializer.Deserialize<UserLoginResult<T>>(Response, _jsonSerializerOptions);
         Session = result!.Session;
         return result;
     }

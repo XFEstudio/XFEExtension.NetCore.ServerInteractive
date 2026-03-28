@@ -15,11 +15,16 @@ public abstract class StandardRequestServiceBase : IStandardRequestService
     /// <inheritdoc/>
     public string DeviceInfo { get; set; } = string.Empty;
     /// <inheritdoc/>
+    public string UnescapedResponse { get; set; }
+    /// <inheritdoc/>
+    public string Response { get; set; }
+    /// <inheritdoc/>
     public object[] Parameters { get; set; } = [];
     /// <inheritdoc/>
     public XFEClientRequester XFEClientRequester { get; set; }
+
     /// <inheritdoc/>
-    public abstract object AnalyzeResponse(string response);
+    public abstract object AnalyzeResponse();
 
     /// <inheritdoc/>
     public abstract object PostRequest();

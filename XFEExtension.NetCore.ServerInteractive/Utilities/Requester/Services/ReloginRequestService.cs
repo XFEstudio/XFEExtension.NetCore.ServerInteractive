@@ -16,7 +16,7 @@ public class ReloginRequestService<T> : StandardRequestServiceBase where T : IUs
     /// </summary>
     public ReloginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response) => JsonSerializer.Deserialize<T>(response, _jsonSerializerOptions)!;
+    public override object AnalyzeResponse() => JsonSerializer.Deserialize<T>(Response, _jsonSerializerOptions)!;
 
     /// <inheritdoc/>
     public override object PostRequest() => new

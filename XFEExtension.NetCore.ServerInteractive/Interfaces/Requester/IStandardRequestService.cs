@@ -18,6 +18,14 @@ public interface IStandardRequestService : IRequestServiceBase
     /// </summary>
     string Session { get; set; }
     /// <summary>
+    /// 返回结果字符串（转义后）
+    /// </summary>
+    string UnescapedResponse { get; set; }
+    /// <summary>
+    /// 返回结果字符串
+    /// </summary>
+    string Response { get; set;  }
+    /// <summary>
     /// 待请求的方法的参数列表
     /// </summary>
     object[] Parameters { get; internal set; }
@@ -29,7 +37,6 @@ public interface IStandardRequestService : IRequestServiceBase
     /// <summary>
     /// 接收到返回后解析
     /// </summary>
-    /// <param name="response"></param>
     /// <returns></returns>
-    object AnalyzeResponse(string response);
+    object AnalyzeResponse();
 }

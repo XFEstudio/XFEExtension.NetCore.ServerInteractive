@@ -113,7 +113,6 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         _xFEClientRequester.RequestAddress = options.RequestAddress;
         _xFEClientRequester.Session = options.Session;
         _xFEClientRequester.DeviceInfo = options.DeviceInfo;
-        _xFEClientRequester.AutoUnescapeResponse = options.AutoUnescapeResponse;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.StandardRequestServiceDictionary = _standardRequestServiceDictionary;
         _xFEClientRequester.StandardMultiRequestServiceListDictionary = _standardMultiRequestServiceListDictionary;

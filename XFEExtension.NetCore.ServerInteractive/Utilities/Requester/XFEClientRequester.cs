@@ -1,7 +1,5 @@
-﻿using System.CodeDom.Compiler;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
@@ -23,10 +21,6 @@ public abstract class XFEClientRequester : IRequesterBase
     internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
     internal Dictionary<List<string>, Func<IStandardRequestService>> StandardMultiRequestServiceListDictionary = [];
     internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
-    /// <summary>
-    /// 自动反转义响应内容（针对XFERequestService和XFEClientInstanceRequest的响应内容进行反转义处理，默认为true）
-    /// </summary>
-    public bool AutoUnescapeResponse { get; set; } = true;
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
     /// <inheritdoc/>
@@ -83,7 +77,9 @@ public abstract class XFEClientRequester : IRequesterBase
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
-                    var requestResult = xFEService.AnalyzeResponse(response);
+                    xFEService.Response = response;
+                    xFEService.UnescapedResponse = response;
+                    var requestResult = xFEService.AnalyzeResponse();
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
                     result.Result = requestResult;
@@ -98,8 +94,6 @@ public abstract class XFEClientRequester : IRequesterBase
             {
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
-                if (AutoUnescapeResponse)
-                    response = Regex.Unescape(response);
                 if (code == HttpStatusCode.OK)
                 {
                     var requestResult = instance.ProcessResponse?.Invoke(response);
@@ -120,12 +114,12 @@ public abstract class XFEClientRequester : IRequesterBase
                 instance.DeviceInfo = DeviceInfo;
                 instance.Parameters = parameters;
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.PostRequest(), _jsonSerializerOptions);
-                if (AutoUnescapeResponse)
-                    response = Regex.Unescape(response);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
-                    var requestResult = instance.AnalyzeResponse(response);
+                    instance.Response = response;
+                    instance.UnescapedResponse = response;
+                    var requestResult = instance.AnalyzeResponse();
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
                     result.Result = requestResult;

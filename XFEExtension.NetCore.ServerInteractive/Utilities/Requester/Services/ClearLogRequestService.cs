@@ -8,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 public class ClearLogRequestService : StandardRequestServiceBase
 {
     /// <inheritdoc/>
-    public override object AnalyzeResponse(string response) => true;
+    public override object AnalyzeResponse() => true;
 
     /// <inheritdoc/>
     public override object PostRequest() => new
