@@ -17,7 +17,6 @@ public static class XFEServerBuilderExtensions
         /// <returns></returns>
         public XFEServerBuilder UseXFEServer() => xFEServerBuilder.UseXFELog()
             .AddXFEExceptionProcess()
-            .AddXFEIPInitializer()
             .AddXFECoreProcessor();
 
         /// <summary>
@@ -42,6 +41,7 @@ public static class XFEServerBuilderExtensions
         /// 使用XFEIP初始化器
         /// </summary>
         /// <returns></returns>
+        [Obsolete("核心服务器现已不再使用单一IP，故IP初始化器不再提供", DiagnosticId = "XFW0002", UrlFormat = "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFW0002")]
         public XFEServerBuilder AddXFEIPInitializer() => xFEServerBuilder.AddInitializer<ServerIPInitializer>();
     }
 }

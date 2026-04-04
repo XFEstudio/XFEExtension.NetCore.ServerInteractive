@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
@@ -78,7 +79,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 if (code == HttpStatusCode.OK)
                 {
                     xFEService.Response = response;
-                    xFEService.UnescapedResponse = response;
+                    xFEService.UnescapedResponse = Regex.Unescape(response);
                     var requestResult = xFEService.AnalyzeResponse();
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
@@ -118,7 +119,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 if (code == HttpStatusCode.OK)
                 {
                     instance.Response = response;
-                    instance.UnescapedResponse = response;
+                    instance.UnescapedResponse = Regex.Unescape(response);
                     var requestResult = instance.AnalyzeResponse();
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";

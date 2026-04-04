@@ -8,7 +8,7 @@ public interface IServerCoreService : IXFEServerServiceBase
     /// <summary>
     /// 绑定的IP地址（服务初始化执行完成后才会刷新）
     /// </summary>
-    string BindingIPAddress { get; set; }
+    List<string> BindingIPAddressList { get; set; }
     /// <summary>
     /// 核心服务器名称
     /// </summary>

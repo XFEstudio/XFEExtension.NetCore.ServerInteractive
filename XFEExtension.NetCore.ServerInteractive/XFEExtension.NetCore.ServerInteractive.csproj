@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.4.0</Version>
+		<Version>2.5.0</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,11 +21,7 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      重构响应处理，移除自动反转义，接口调整
-
-      重构 IStandardRequestService 及其实现，新增 Response/UnescapedResponse 属性，AnalyzeResponse 方法不再传递参数，统一通过属性获取响应内容。
-      XFEClientRequester 移除 AutoUnescapeResponse 相关逻辑及配置项，响应处理更清晰。
-      版本号升级至 2.4.0。
+      将绑定IP地址改为多IP绑定
 
       ## 新增
 

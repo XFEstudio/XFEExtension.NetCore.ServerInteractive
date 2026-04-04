@@ -7,6 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 /// <summary>
 /// 服务器IP初始化服务
 /// </summary>
+[Obsolete("核心服务器现已不再使用单一IP，故IP初始化器不再提供", DiagnosticId = "XFW0002", UrlFormat = "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFW0002")]
 public class ServerIPInitializer : ServerInitializerServiceBase
 {
     private static int s_nextDefaultPort = 3300;
@@ -32,7 +33,7 @@ public class ServerIPInitializer : ServerInitializerServiceBase
                 }
                 ServerBaseProfile.ServerLastBindingAddressDictionary[serverCoreService.ServerCoreName] = ipAddress;
             }
-            serverCoreService.BindingIPAddress = ipAddress;
+            serverCoreService.BindingIPAddressList = [];
             Console.WriteLine($"服务器{serverCoreService.ServerCoreName}设置完成！IP为：{ipAddress}");
         }
         ServerBaseProfile.SaveProfile();

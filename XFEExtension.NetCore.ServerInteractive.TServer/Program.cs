@@ -26,6 +26,10 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                                .AddTable<User, UserProfile>("用户", (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.业务员);      // 添加名为用户的表格User类    型，       AutoConfig为         UserProfile。获取权限为业务员，添加移除更改权限为经理
                                        })
                                        .AddStandardService<TestCoreService>("test")
-                                       .Build()) // 构建核心服务器
+                                       .Build(options =>
+                                       {
+                                           options.BindIP("http://localhost:3305/")
+                                                  .BindIP("https://localhost:3306/");
+                                       })) // 构建核心服务器
     .Build(); // 构建服务器
 await server.Start(); // 启动服务

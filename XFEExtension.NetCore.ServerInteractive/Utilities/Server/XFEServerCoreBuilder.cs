@@ -129,8 +129,8 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
             _xFEServerCore.AutoUnescapeJson = xFEServerCoreOptions.AutoUnescapeJson;
             _xFEServerCore.AcceptNonStandardJson = xFEServerCoreOptions.AcceptNonStandardJson;
             _xFEServerCore.GetIPFunction = xFEServerCoreOptions.GetIPFunction;
-            if(!xFEServerCoreOptions.BindingIPAddress.IsNullOrEmpty())
-                _xFEServerCore.BindingIPAddress = xFEServerCoreOptions.BindingIPAddress;
+            if (xFEServerCoreOptions.BindingIPAddress.Count > 0)
+                _xFEServerCore.BindingIPAddressList = xFEServerCoreOptions.BindingIPAddress;
         }
 
         if (_xFEServerCore.ServerCoreName.IsNullOrEmpty())

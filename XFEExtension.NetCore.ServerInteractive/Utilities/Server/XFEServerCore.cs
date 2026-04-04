@@ -192,7 +192,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <returns></returns>
     public override async Task StartServerCore()
     {
-        CyberCommServer.ServerUrlArray = [BindingIPAddress];
+        CyberCommServer.ServerUrlArray = [.. BindingIPAddressList];
         CyberCommServer.RequestReceived += CyberCommServer_RequestReceived;
         await CyberCommServer.StartCyberCommServer();
     }
