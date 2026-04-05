@@ -122,7 +122,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
         var compilationUnit = methodDeclaration.SyntaxTree.GetRoot() as CompilationUnitSyntax;
         var usingDirectives = compilationUnit?.Usings
             .Select(u => u.ToString().Trim())
-            .ToArray() ?? new string[0];
+            .ToArray() ?? System.Array.Empty<string>();
 
         return new ClientRequestMethodCandidate(
             containingType.ContainingNamespace.ToDisplayString(),
@@ -241,7 +241,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
             }
 
             // 确保基础using存在
-            if (!allUsings.Any(u => u.Contains("System;") && !u.Contains("System.")))
+            if (!allUsings.Any(u => u.Trim() == "using System;"))
                 sourceBuilder.AppendLine("using System;");
             if (!allUsings.Any(u => u.Contains("System.Collections.Generic")))
                 sourceBuilder.AppendLine("using System.Collections.Generic;");
