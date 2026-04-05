@@ -12,6 +12,6 @@ public partial class EchoCoreService : ServerCoreStandardServiceBase
     public async Task EchoEntryPoint()
     {
         var message = Json?["message"]?.GetValue<string>() ?? string.Empty;
-        await Close(new { echo = message });
+        await Close(message);
     }
 }

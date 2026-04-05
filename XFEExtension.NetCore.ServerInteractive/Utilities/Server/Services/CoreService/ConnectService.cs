@@ -12,7 +12,7 @@ public partial class ConnectService : ServerCoreStandardServiceBase
     /// <summary>
     /// 连接检查入口点
     /// </summary>
-    [EntryPoint("connect")]
+    [EntryPoint("check_connect")]
     public async Task Connect()
     {
         

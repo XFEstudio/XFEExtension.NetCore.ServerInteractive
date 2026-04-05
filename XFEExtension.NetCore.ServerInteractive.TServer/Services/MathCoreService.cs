@@ -1,5 +1,4 @@
-﻿using System.Net;
-using XFEExtension.NetCore.ServerInteractive.Attributes;
+﻿using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
 namespace XFEExtension.NetCore.ServerInteractive.TServer.Services;

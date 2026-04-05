@@ -43,10 +43,6 @@ internal class Program
             execute = "greet",
             name = parameters.Length > 0 ? parameters[0] : string.Empty
         }, response => response)
-        .AddRequest("greet_empty", (_, _, _) => new
-        {
-            execute = "greet"
-        }, response => response)
         .AddRequest("time", (_, _, _) => new
         {
             execute = "time"
@@ -373,7 +369,7 @@ internal class Program
     [SMTest]
     public static async Task GreetEmptyNameTest()
     {
-        var result = await s_xFEClientRequester.Request<string>("greet_empty");
+        var result = await s_xFEClientRequester.Request<string>("greet");
         Console.WriteLine($"空名称状态码：{result.StatusCode}");
         Console.WriteLine($"空名称消息：{result.Message}");
     }

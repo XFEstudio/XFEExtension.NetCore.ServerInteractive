@@ -11,11 +11,12 @@ public partial class StatusCoreService : ServerCoreStandardServiceBase
     [EntryPoint("status")]
     public async Task StatusEntryPoint()
     {
+        var version = typeof(StatusCoreService).Assembly.GetName().Version?.ToString() ?? "unknown";
         await Close(new
         {
             status = "running",
             timestamp = DateTime.UtcNow,
-            version = "1.0.0"
+            version
         });
     }
 }
