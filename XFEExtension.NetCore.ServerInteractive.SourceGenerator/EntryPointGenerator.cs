@@ -91,6 +91,7 @@ public class EntryPointGenerator : IIncrementalGenerator
             return null;
 
         // 检查返回类型：根据返回类型（而非async关键字）判断同步/异步
+        // 注意：Task和Task<T>都是有效的异步返回类型（Task<T>可通过协变赋值给Func<Task>）
         var returnType = methodSymbol.ReturnType;
         var isVoid = returnType.SpecialType == SpecialType.System_Void;
         var isTaskLike = returnType.Name == "Task" &&
@@ -102,9 +103,9 @@ public class EntryPointGenerator : IIncrementalGenerator
         var classDeclaration = methodDeclaration.Parent as ClassDeclarationSyntax;
         var isContainingTypePartial = classDeclaration?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
 
-        // 获取泛型类型参数和约束（从语法节点获取以保留原始文本）
-        var typeParameters = classDeclaration?.TypeParameterList?.ToString() ?? "";
-        var typeConstraints = classDeclaration?.ConstraintClauses.ToString() ?? "";
+        // 获取泛型类型参数和约束（从语法节点获取以保留原始文本，并去除多余空白）
+        var typeParameters = classDeclaration?.TypeParameterList?.ToString().Trim() ?? "";
+        var typeConstraints = classDeclaration?.ConstraintClauses.ToString().Trim() ?? "";
 
         var containingType = methodSymbol.ContainingType;
 
