@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.1</Version>
+    <Version>3.0.1-preview.1.26046.1</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>True</SignAssembly>
     <Copyright>寰宇朽力网络科技有限公司版权所有</Copyright>
-    <PackageProjectUrl>https://github.com/XFEstudio/XFEExtension</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</PackageProjectUrl>
     <PackageIcon>logoIcon.png</PackageIcon>
     <Description>Server interaction extension, including user identity verification and querying in conjunction with AutoConfig</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,7 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      修复部分问题
+      更新版本号及依赖，完善项目信息
+
+      将项目版本号提升为预览版 3.0.1-preview.1.26046.1，调整 PackageProjectUrl 指向更具体的仓库地址，并将 System.Management 包依赖从预览版降级为稳定版 10.0.5。
 
       ## 新增
 
@@ -54,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="System.Management" Version="10.0.5" />
     <PackageReference Include="XFEExtension.NetCore" Version="4.2.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
