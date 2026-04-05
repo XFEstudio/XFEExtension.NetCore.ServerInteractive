@@ -88,7 +88,6 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         }
 
         // 从URL路径中提取路由信息
-        var route = string.Empty;
         QueryableJsonNode? queryableJsonNode = null;
         try
         {
@@ -130,6 +129,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             var segments = url.Segments.Skip(1).Select(s => s.TrimEnd('/')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
             // 如果MainEntryPoint不为空，则需要匹配主入口点
+            string route;
             if (!string.IsNullOrEmpty(MainEntryPoint))
             {
                 if (segments.Length == 0 || segments[0] != MainEntryPoint)

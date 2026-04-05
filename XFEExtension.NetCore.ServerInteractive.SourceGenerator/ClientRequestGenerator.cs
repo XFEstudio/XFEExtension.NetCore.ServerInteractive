@@ -69,7 +69,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsCandidateMethod(s),
                 transform: static (ctx, _) => GetMethodsForGeneration(ctx))
-            .Where(static m => !m.IsDefault && m.Length > 0)
+            .Where(static m => m is { IsDefault: false, Length: > 0 })
             .SelectMany(static (m, _) => m);
 
         // 按类分组
@@ -117,7 +117,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
         var compilationUnit = methodDeclaration.SyntaxTree.GetRoot() as CompilationUnitSyntax;
         var usingDirectives = compilationUnit?.Usings
             .Select(u => u.ToString().Trim())
-            .ToArray() ?? System.Array.Empty<string>();
+            .ToArray() ?? [];
 
         var results = new List<ClientRequestMethodCandidate>();
 
@@ -189,10 +189,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
                 usingDirectives));
         }
 
-        if (results.Count == 0)
-            return default;
-
-        return results.ToImmutableArray();
+        return results.Count == 0 ? default : [..results];
     }
 
     private static void Execute(Compilation compilation, ImmutableArray<ClientRequestMethodCandidate> methods, SourceProductionContext context)
@@ -301,7 +298,7 @@ public class ClientRequestGenerator : IIncrementalGenerator
             }
 
             // 确保基础using存在
-            if (!allUsings.Any(u => u.Trim() == "using System;"))
+            if (allUsings.All(u => u.Trim() != "using System;"))
                 sourceBuilder.AppendLine("using System;");
             if (!allUsings.Any(u => u.Contains("System.Collections.Generic")))
                 sourceBuilder.AppendLine("using System.Collections.Generic;");

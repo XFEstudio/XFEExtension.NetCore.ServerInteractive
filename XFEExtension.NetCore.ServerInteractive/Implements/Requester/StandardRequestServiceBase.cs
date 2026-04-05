@@ -6,7 +6,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 /// <summary>
 /// 标准请求服务基类
 /// </summary>
-public abstract partial class StandardRequestServiceBase : IStandardRequestService
+public abstract class StandardRequestServiceBase : IStandardRequestService
 {
     /// <summary>
     /// 本类型的请求路由路径列表（由增量生成器自动填充）
