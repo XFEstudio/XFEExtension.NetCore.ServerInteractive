@@ -69,9 +69,16 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreStandardService, IServerCoreRouteProvider, new()
+    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreStandardService, new()
     {
-        var entryPointList = T.EntryPointList;
+        var probeService = new T();
+        ApplyParameter(probeService);
+
+        var entryPointList = probeService.SyncEntryPoints.Keys
+            .Concat(probeService.AsyncEntryPoints.Keys)
+            .Distinct()
+            .ToList();
+
         if (entryPointList is null || entryPointList.Count == 0)
             throw new InvalidOperationException($"类型 {typeof(T).Name} 的 EntryPointList 为空");
 
