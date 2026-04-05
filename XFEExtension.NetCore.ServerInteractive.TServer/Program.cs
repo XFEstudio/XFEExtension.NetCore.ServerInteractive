@@ -23,6 +23,11 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                            options.LoginResultConvertFunction = static user => (IUserFaceInfo)user;                                              // 登录结果转换方法
                                        })
                                        .AddService<TestCoreService>()
+                                       .AddService<EchoCoreService>()
+                                       .AddService<MathCoreService>()
+                                       .AddService<StatusCoreService>()
+                                       .AddService<GreetCoreService>()
+                                       .AddService<TimeCoreService>()
                                        .Build(options =>
                                        {
                                            options.MainEntryPoint = "api";
