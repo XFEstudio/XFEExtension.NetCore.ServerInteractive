@@ -69,14 +69,9 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreStandardService, new()
+    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreStandardService, IServerCoreRouteProvider, new()
     {
-        // 从T的静态EntryPointList属性获取所有路由路径
-        var entryPointListProperty = typeof(T).GetProperty("EntryPointList", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
-        if (entryPointListProperty is null)
-            throw new InvalidOperationException($"类型 {typeof(T).Name} 没有静态的 EntryPointList 属性");
-
-        var entryPointList = entryPointListProperty.GetValue(null) as List<string>;
+        var entryPointList = T.EntryPointList;
         if (entryPointList is null || entryPointList.Count == 0)
             throw new InvalidOperationException($"类型 {typeof(T).Name} 的 EntryPointList 为空");
 

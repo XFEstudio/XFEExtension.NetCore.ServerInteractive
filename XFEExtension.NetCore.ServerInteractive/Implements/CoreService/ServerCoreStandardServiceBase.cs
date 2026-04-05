@@ -5,7 +5,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 /// <summary>
 /// 服务器标准核心服务基类
 /// </summary>
-public abstract partial class ServerCoreStandardServiceBase : XFEServerCoreServiceBase, IServerCoreStandardService
+public abstract class ServerCoreStandardServiceBase : XFEServerCoreServiceBase, IServerCoreStandardService, IServerCoreRouteProvider
 {
     /// <summary>
     /// 所有入口点路径列表（由增量生成器自动填充）
