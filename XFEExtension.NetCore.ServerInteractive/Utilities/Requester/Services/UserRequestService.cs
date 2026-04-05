@@ -8,16 +8,16 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 
 /// <summary>
-/// 登录请求服务
+/// 用户请求服务（包含登录与登录校验）
 /// </summary>
-public partial class LoginRequestService<T> : StandardRequestServiceBase where T : IUserFaceInfo
+public partial class UserRequestService<T> : StandardRequestServiceBase where T : IUserFaceInfo
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
 
     /// <summary>
-    /// 登录请求服务
+    /// 用户请求服务
     /// </summary>
-    public LoginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    public UserRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
     /// <summary>
     /// 解析登录响应
@@ -39,5 +39,21 @@ public partial class LoginRequestService<T> : StandardRequestServiceBase where T
         deviceInfo = DeviceInfo,
         account = Parameters[0],
         password = Parameters[1]
+    };
+
+    /// <summary>
+    /// 解析登录校验响应
+    /// </summary>
+    [Response("user/relogin")]
+    public object AnalyzeReloginResponse() => JsonSerializer.Deserialize<T>(Response, _jsonSerializerOptions)!;
+
+    /// <summary>
+    /// 构造登录校验请求体
+    /// </summary>
+    [Request("user/relogin")]
+    public object PostReloginRequest() => new
+    {
+        session = Session,
+        deviceInfo = DeviceInfo,
     };
 }
