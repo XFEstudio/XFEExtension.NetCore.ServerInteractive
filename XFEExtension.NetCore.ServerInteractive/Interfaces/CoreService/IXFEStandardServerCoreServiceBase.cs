@@ -10,9 +10,9 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 public interface IXFEStandardServerCoreServiceBase : IXFEServerCoreServiceBase
 {
     /// <summary>
-    /// 当前请求的执行语句
+    /// 当前请求的路由路径
     /// </summary>
-    string Execute { get; set; }
+    string Route { get; set; }
 
     /// <summary>
     /// 客户端IP地址

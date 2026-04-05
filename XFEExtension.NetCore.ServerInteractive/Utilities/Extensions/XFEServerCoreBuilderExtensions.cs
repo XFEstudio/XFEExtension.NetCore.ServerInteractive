@@ -21,7 +21,24 @@ public static class XFEServerCoreBuilderExtensions
         /// <param name="getUserFunction"></param>
         /// <param name="getEncryptedUserLoginModelFunction"></param>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddDataTableManager(XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction) => xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction)).AddStandardService<XFEDataTableManagerService>(xFEDataTableManagerBuilder.ExecuteList);
+        public XFEServerCoreBuilder AddDataTableManager(XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction)
+        {
+            xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction));
+
+            // Register the service for each table operation route
+            // Convert old format "get_tableName" to new format "table/get/tableName"
+            foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
+            {
+                var parts = execute.Split('_', 2);
+                if (parts.Length == 2)
+                {
+                    var route = $"table/{parts[0]}/{parts[1]}";
+                    xFEServerCoreBuilder.AddStandardService<XFEDataTableManagerService>(route);
+                }
+            }
+
+            return xFEServerCoreBuilder;
+        }
 
         /// <summary>
         /// 添加用户基本参数

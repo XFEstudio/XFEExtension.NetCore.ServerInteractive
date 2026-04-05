@@ -28,9 +28,9 @@ public class XFEServerCoreOptions
     /// </summary>
     public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
     /// <summary>
-    /// 主入口点路径（ServerCore主要入口点），默认为"api"
+    /// 主入口点路径（ServerCore主要入口点），默认为空字符串（为空时直接使用次级入口点）
     /// </summary>
-    public string MainEntryPoint { get; set; } = "api";
+    public string MainEntryPoint { get; set; } = string.Empty;
 
     /// <summary>
     /// 绑定IP地址

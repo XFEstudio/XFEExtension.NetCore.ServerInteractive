@@ -37,9 +37,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
     /// <summary>
-    /// 主入口点路径（ServerCore主要入口点），默认为"api"
+    /// 主入口点路径（ServerCore主要入口点），默认为空字符串（为空时直接使用次级入口点）
     /// </summary>
-    public string MainEntryPoint { get; set; } = "api";
+    public string MainEntryPoint { get; set; } = string.Empty;
     /// <summary>
     /// 核心服务列表
     /// </summary>
@@ -49,13 +49,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     internal List<Func<IServerCoreVerifyService>> ServerCoreVerifyServiceList = [];
     /// <summary>
-    /// 核心标准服务工厂字典（按请求创建实例）
+    /// 核心标准服务工厂字典（按路由路径创建实例）
     /// </summary>
     internal Dictionary<string, Func<IServerCoreStandardService>> StandardCoreServiceDictionary = [];
-    /// <summary>
-    /// 核心多重标准服务工厂字典（按请求创建实例）
-    /// </summary>
-    internal Dictionary<List<string>, Func<IServerCoreStandardService>> StandardMultiCoreServiceDictionary = [];
     /// <summary>
     /// 网络通讯服务器
     /// </summary>
@@ -91,12 +87,17 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             });
             return;
         }
-        var execute = string.Empty;
+
+        // 从URL路径中提取路由信息
+        var route = string.Empty;
         QueryableJsonNode? queryableJsonNode = null;
         try
         {
-            queryableJsonNode = e.RequestBody ?? throw new ProcessStandardRequestException("请求的API接口不正确");
-            execute = queryableJsonNode["execute"]?.ToString() ?? string.Empty;
+            // 尝试解析请求体为JSON（可选）
+            if (e.RequestBody is not null)
+            {
+                queryableJsonNode = e.RequestBody;
+            }
         }
         catch (Exception ex)
         {
@@ -111,48 +112,81 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 return;
             }
         }
+
         try
         {
-            if (queryableJsonNode is null && !AcceptNonStandardJson)
-                throw new ProcessStandardRequestException("QueryableJsonNode为空");
-            if (execute.IsNullOrEmpty()) return;
-            Console.Write($"({ServerCoreName})【{clientIP}】请求次级入口点-{execute}：");
+            // 从URL中提取路由：www.xxx.com/[mainEntryPoint?][/subEntryPoint?]*
+            var url = e.Request.Url;
+            if (url is null)
+            {
+                ServerCoreError?.Invoke(this, new()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ReturnArgs = r,
+                    ServerException = new ProcessStandardRequestException("请求URL为空")
+                });
+                return;
+            }
+
+            var segments = url.Segments.Skip(1).Select(s => s.TrimEnd('/')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+            // 如果MainEntryPoint不为空，则需要匹配主入口点
+            if (!string.IsNullOrEmpty(MainEntryPoint))
+            {
+                if (segments.Length == 0 || segments[0] != MainEntryPoint)
+                {
+                    ServerCoreError?.Invoke(this, new()
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ReturnArgs = r,
+                        ServerException = new ProcessStandardRequestException($"请求路径不匹配主入口点: {MainEntryPoint}")
+                    });
+                    return;
+                }
+                // 跳过主入口点，获取次级路由
+                route = string.Join("/", segments.Skip(1));
+            }
+            else
+            {
+                // 直接使用所有segments作为路由
+                route = string.Join("/", segments);
+            }
+
+            if (route.IsNullOrEmpty())
+            {
+                ServerCoreError?.Invoke(this, new()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ReturnArgs = r,
+                    ServerException = new ProcessStandardRequestException("请求路由为空")
+                });
+                return;
+            }
+
+            Console.Write($"({ServerCoreName})【{clientIP}】请求路由-{route}：");
             var stopWatch = Stopwatch.StartNew();
-            if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
+
+            // 在字典中查找对应的服务
+            if (StandardCoreServiceDictionary.TryGetValue(route, out var serviceFactory))
             {
                 var serviceInstance = serviceFactory();
                 try
                 {
                     serviceInstance.XFEServerCore = this;
-                    serviceInstance.Execute = execute;
+                    serviceInstance.Route = route;
                     serviceInstance.Json = queryableJsonNode;
                     serviceInstance.Request = e.Request;
                     serviceInstance.ReturnArgs = r;
                     serviceInstance.Initialize();
 
-                    // 根据次级入口点调用对应的处理方法
-                    var hasSyncHandler = serviceInstance.SyncEntryPoints.TryGetValue(execute, out var syncHandler);
-                    var hasAsyncHandler = serviceInstance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler);
+                    // 根据路由调用对应的处理方法
+                    var hasSyncHandler = serviceInstance.SyncEntryPoints.TryGetValue(route, out var syncHandler);
+                    var hasAsyncHandler = serviceInstance.AsyncEntryPoints.TryGetValue(route, out var asyncHandler);
 
-                    if (hasSyncHandler || hasAsyncHandler)
-                    {
-                        // 使用新的入口点字典系统
-                        if (hasSyncHandler)
-                            syncHandler!();
-                        if (hasAsyncHandler)
-                            await asyncHandler!();
-                    }
-                    else
-                    {
-                        // 向后兼容：如果字典为空，使用旧的RequestReceive方法
-                        if (serviceInstance is ServerCoreStandardServiceBase baseService)
-                        {
-#pragma warning disable CS0618 // 类型或成员已过时
-                            baseService.RequestReceive();
-                            await baseService.RequestReceiveAsync();
-#pragma warning restore CS0618 // 类型或成员已过时
-                        }
-                    }
+                    if (hasSyncHandler)
+                        syncHandler!();
+                    if (hasAsyncHandler)
+                        await asyncHandler!();
                 }
                 catch (Exception ex)
                 {
@@ -161,67 +195,19 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         StatusCode = r.StatusCode,
                         Handled = r.Handled,
                         ReturnArgs = r,
-                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
+                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{route}", ex)
                     });
                 }
                 stopWatch.Stop();
                 Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                 return;
             }
-            foreach (var instance in from key in StandardMultiCoreServiceDictionary.Keys where key.Contains(execute) select StandardMultiCoreServiceDictionary[key] into factory select factory())
-            {
-                try
-                {
-                    instance.XFEServerCore = this;
-                    instance.Execute = execute;
-                    instance.Json = queryableJsonNode;
-                    instance.Request = e.Request;
-                    instance.ReturnArgs = r;
-                    instance.Initialize();
 
-                    // 根据次级入口点调用对应的处理方法
-                    var hasSyncHandler = instance.SyncEntryPoints.TryGetValue(execute, out var syncHandler);
-                    var hasAsyncHandler = instance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler);
-
-                    if (hasSyncHandler || hasAsyncHandler)
-                    {
-                        // 使用新的入口点字典系统
-                        if (hasSyncHandler)
-                            syncHandler!();
-                        if (hasAsyncHandler)
-                            await asyncHandler!();
-                    }
-                    else
-                    {
-                        // 向后兼容：如果字典为空，使用旧的RequestReceive方法
-                        if (instance is ServerCoreStandardServiceBase baseService)
-                        {
-#pragma warning disable CS0618 // 类型或成员已过时
-                            baseService.RequestReceive();
-                            await baseService.RequestReceiveAsync();
-#pragma warning restore CS0618 // 类型或成员已过时
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ServerCoreError?.Invoke(this, new()
-                    {
-                        StatusCode = r.StatusCode,
-                        Handled = r.Handled,
-                        ReturnArgs = r,
-                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{execute}", ex)
-                    });
-                }
-                stopWatch.Stop();
-                Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                return;
-            }
             ServerCoreError?.Invoke(this, new()
             {
-                StatusCode = HttpStatusCode.BadRequest,
+                StatusCode = HttpStatusCode.NotFound,
                 ReturnArgs = r,
-                ServerException = new ExecutionUnregisteredException($"请求的次级入口点未注册-{execute}")
+                ServerException = new ExecutionUnregisteredException($"请求的路由未注册-{route}")
             });
         }
         catch (Exception ex)

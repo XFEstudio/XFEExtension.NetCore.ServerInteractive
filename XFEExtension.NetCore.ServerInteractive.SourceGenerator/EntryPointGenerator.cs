@@ -58,7 +58,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         if (string.IsNullOrEmpty(path))
             return null;
 
-        // 检查是否为异步方法
+        // 自动检查是否为异步方法
         var isAsync = methodSymbol.IsAsync ||
                       (methodSymbol.ReturnType is INamedTypeSymbol returnType &&
                        returnType.Name == "Task");
@@ -104,8 +104,22 @@ namespace {namespaceName}
     /// </summary>
     public partial class {className}
     {{
+        /// <summary>
+        /// 静态构造函数，用于初始化EntryPointList
+        /// </summary>
+        static {className}()
+        {{");
+
+            // 添加所有入口点到静态列表
+            foreach (var method in methodInfos)
+            {
+                sourceBuilder.AppendLine($"            EntryPointList.Add(\"{method!.Path}\");");
+            }
+
+            sourceBuilder.AppendLine($@"        }}
+
         /// <inheritdoc/>
-        public Dictionary<string, Action> SyncEntryPoints {{ get; }} = new()
+        public new Dictionary<string, Action> SyncEntryPoints {{ get; }} = new()
         {{");
 
             // 添加同步入口点
@@ -117,7 +131,7 @@ namespace {namespaceName}
             sourceBuilder.AppendLine($@"        }};
 
         /// <inheritdoc/>
-        public Dictionary<string, Func<Task>> AsyncEntryPoints {{ get; }} = new()
+        public new Dictionary<string, Func<Task>> AsyncEntryPoints {{ get; }} = new()
         {{");
 
             // 添加异步入口点

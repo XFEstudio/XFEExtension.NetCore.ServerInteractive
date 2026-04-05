@@ -1,4 +1,5 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Profiles;
+﻿using XFEExtension.NetCore.ServerInteractive.Attributes;
+using XFEExtension.NetCore.ServerInteractive.Profiles;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension.Json;
 
@@ -7,7 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// IP封禁服务
 /// </summary>
-public class IPBannerService : ServerCoreUserServiceBase
+public partial class IPBannerService : ServerCoreUserServiceBase
 {
     /// <summary>
     /// 获取权限
@@ -21,33 +22,44 @@ public class IPBannerService : ServerCoreUserServiceBase
     /// 移除权限
     /// </summary>
     public int RemovePermission { get; set; } = 0;
-    /// <inheritdoc/>
-    public override async Task RequestReceiveAsync()
+
+    /// <summary>
+    /// 获取禁止的IP地址列表
+    /// </summary>
+    [EntryPoint("ip/banned/get")]
+    public async Task GetBannedIPList()
     {
-        switch (Execute)
+        Console.Write("获取禁止的IP地址列表请求");
+        UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+        await Close(ServerBaseProfile.BannedIPAddressList.ToJson());
+    }
+
+    /// <summary>
+    /// 添加禁止的IP地址
+    /// </summary>
+    [EntryPoint("ip/banned/add")]
+    public void AddBannedIP()
+    {
+        Console.Write($"添加禁止的IP地址请求 添加：{Json?["bannedIP"]}");
+        UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, AddPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+        if (Json?["bannedIP"] is null) throw Error("无IP地址传入");
+        ServerBaseProfile.BannedIPAddressList.Add(new()
         {
-            case "get_bannedIPList":
-                Console.Write("获取禁止的IP地址列表请求");
-                UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, GetPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                await Close(ServerBaseProfile.BannedIPAddressList.ToJson());
-                break;
-            case "add_bannedIP":
-                Console.Write($"添加禁止的IP地址请求 添加：{Json?["bannedIP"]}");
-                UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, AddPermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                if (Json?["bannedIP"] is null) throw Error("无IP地址传入");
-                ServerBaseProfile.BannedIPAddressList.Add(new()
-                {
-                    IPAddress = Json?["bannedIP"]?.ToString() ?? string.Empty,
-                    Notes = Json?["notes"]?.ToString()
-                });
-                OK();
-                break;
-            case "remove_bannedIP":
-                Console.Write($"删除禁止的IP地址请求 移除：{Json?["bannedIP"]}");
-                UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
-                var targetIP = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == Json?["bannedIP"]?.ToString()) ?? throw Error("无IP地址传入");
-                await Close(ServerBaseProfile.BannedIPAddressList.Remove(targetIP).ToString());
-                break;
-        }
+            IPAddress = Json?["bannedIP"]?.ToString() ?? string.Empty,
+            Notes = Json?["notes"]?.ToString()
+        });
+        OK();
+    }
+
+    /// <summary>
+    /// 移除禁止的IP地址
+    /// </summary>
+    [EntryPoint("ip/banned/remove")]
+    public async Task RemoveBannedIP()
+    {
+        Console.Write($"删除禁止的IP地址请求 移除：{Json?["bannedIP"]}");
+        UserHelper.ValidatePermission(Json?["session"]?.ToString(), Json?["deviceInfo"]?.ToString(), ReturnArgs.Args.ClientIP, RemovePermission, GetEncryptedUserLoginModelFunction(), GetUserFunction(), ReturnArgs);
+        var targetIP = ServerBaseProfile.BannedIPAddressList.FirstOrDefault(ip => ip.IPAddress == Json?["bannedIP"]?.ToString()) ?? throw Error("无IP地址传入");
+        await Close(ServerBaseProfile.BannedIPAddressList.Remove(targetIP).ToString());
     }
 }
