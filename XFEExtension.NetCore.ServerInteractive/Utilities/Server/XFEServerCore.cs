@@ -36,6 +36,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
     /// <summary>
+    /// 主入口点路径（ServerCore主要入口点），默认为"api"
+    /// </summary>
+    public string MainEntryPoint { get; set; } = "api";
+    /// <summary>
     /// 核心服务列表
     /// </summary>
     internal readonly List<IServerCoreOriginalService> ServerCoreServiceList = [];
@@ -111,7 +115,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             if (queryableJsonNode is null && !AcceptNonStandardJson)
                 throw new ProcessStandardRequestException("QueryableJsonNode为空");
             if (execute.IsNullOrEmpty()) return;
-            Console.Write($"({ServerCoreName})【{clientIP}】请求方法-{execute}：");
+            Console.Write($"({ServerCoreName})【{clientIP}】请求次级入口点-{execute}：");
             var stopWatch = Stopwatch.StartNew();
             if (StandardCoreServiceDictionary.TryGetValue(execute, out var serviceFactory))
             {
@@ -124,8 +128,16 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     serviceInstance.Request = e.Request;
                     serviceInstance.ReturnArgs = r;
                     serviceInstance.Initialize();
-                    serviceInstance.RequestReceive();
-                    await serviceInstance.RequestReceiveAsync();
+
+                    // 根据次级入口点调用对应的处理方法
+                    if (serviceInstance.SyncEntryPoints.TryGetValue(execute, out var syncHandler))
+                    {
+                        syncHandler();
+                    }
+                    if (serviceInstance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler))
+                    {
+                        await asyncHandler();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -151,8 +163,16 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     instance.Request = e.Request;
                     instance.ReturnArgs = r;
                     instance.Initialize();
-                    instance.RequestReceive();
-                    await instance.RequestReceiveAsync();
+
+                    // 根据次级入口点调用对应的处理方法
+                    if (instance.SyncEntryPoints.TryGetValue(execute, out var syncHandler))
+                    {
+                        syncHandler();
+                    }
+                    if (instance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler))
+                    {
+                        await asyncHandler();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -172,7 +192,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             {
                 StatusCode = HttpStatusCode.BadRequest,
                 ReturnArgs = r,
-                ServerException = new ExecutionUnregisteredException($"请求的方法未注册-{execute}")
+                ServerException = new ExecutionUnregisteredException($"请求的次级入口点未注册-{execute}")
             });
         }
         catch (Exception ex)
