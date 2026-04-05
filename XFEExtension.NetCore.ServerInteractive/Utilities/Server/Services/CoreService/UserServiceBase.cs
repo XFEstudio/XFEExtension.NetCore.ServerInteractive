@@ -23,6 +23,6 @@ public abstract class UserServiceBase : IUserServiceBase
     /// <inheritdoc/>
     public JsonSerializerOptions JsonSerializerOptions { get; set; } = new();
 
-    /// <inheritdoc/>
-    public UserServiceBase() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    /// <inheritdoc cref="IUserServiceBase" />
+    protected UserServiceBase() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 }

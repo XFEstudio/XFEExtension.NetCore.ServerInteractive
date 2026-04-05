@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
@@ -6,11 +7,15 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 连接校验服务
 /// </summary>
-public class ConnectService : ServerCoreStandardServiceBase
+public partial class ConnectService : ServerCoreStandardServiceBase
 {
-    /// <inheritdoc/>
-    public override async Task RequestReceiveAsync()
+    /// <summary>
+    /// 连接检查入口点
+    /// </summary>
+    [EntryPoint("check_connect")]
+    public async Task Connect()
     {
+        
         Console.Write("检查连接");
         await Close(DateTime.Now.ToString(CultureInfo.CurrentCulture));
     }

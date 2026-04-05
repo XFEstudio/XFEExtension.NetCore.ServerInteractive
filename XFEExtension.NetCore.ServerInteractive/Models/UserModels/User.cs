@@ -7,7 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 /// </summary>
 public class User : IUserInfo
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IUserFaceInfo.Id" />
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     /// <inheritdoc/>
     public string NickName { get; set; } = string.Empty;

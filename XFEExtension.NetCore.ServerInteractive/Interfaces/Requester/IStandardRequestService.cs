@@ -6,10 +6,6 @@
 public interface IStandardRequestService : IRequestServiceBase
 {
     /// <summary>
-    /// 待请求的方法（如 check_connect）
-    /// </summary>
-    string Execute { get; internal set; }
-    /// <summary>
     /// 设备信息
     /// </summary>
     string DeviceInfo { get; internal set; }
@@ -17,6 +13,10 @@ public interface IStandardRequestService : IRequestServiceBase
     /// 当前会话ID
     /// </summary>
     string Session { get; set; }
+    /// <summary>
+    /// 请求路由（不带斜杠开头），如"user/relogin"
+    /// </summary>
+    string Route { get; set; }
     /// <summary>
     /// 返回结果字符串（转义后）
     /// </summary>
@@ -30,13 +30,15 @@ public interface IStandardRequestService : IRequestServiceBase
     /// </summary>
     object[] Parameters { get; internal set; }
     /// <summary>
-    /// 提交请求体
+    /// 请求方法字典，Key为请求路径或名称(别名)，Value为对应的构造请求体方法
     /// </summary>
-    /// <returns></returns>
-    object PostRequest();
+    Dictionary<string, Func<object>> RequestPoints { get; }
     /// <summary>
-    /// 接收到返回后解析
+    /// 响应方法字典，Key为请求路径或名称(别名)，Value为对应的解析响应方法
     /// </summary>
-    /// <returns></returns>
-    object AnalyzeResponse();
+    Dictionary<string, Func<object>> ResponsePoints { get; }
+    /// <summary>
+    /// 请求路由映射，Key为请求路径或名称，Value为实际路由路径（用于URL构建）
+    /// </summary>
+    Dictionary<string, string> RequestRouteMap { get; }
 }

@@ -27,6 +27,10 @@ public class XFEServerCoreOptions
     /// 获取IP地址的函数，默认为从请求事件参数中获取客户端IP地址
     /// </summary>
     public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
+    /// <summary>
+    /// 主入口点路径（ServerCore主要入口点），默认为空字符串（为空时直接使用次级入口点）
+    /// </summary>
+    public string MainEntryPoint { get; set; } = string.Empty;
 
     /// <summary>
     /// 绑定IP地址

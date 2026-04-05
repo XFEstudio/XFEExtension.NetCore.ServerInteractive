@@ -9,6 +9,8 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 /// </summary>
 public static class InteractiveHelper
 {
+    private static readonly HttpClient s_client = new();
+
     /// <summary>
     /// 获取响应
     /// </summary>
@@ -17,8 +19,7 @@ public static class InteractiveHelper
     /// <returns></returns>
     public static async Task<(string, HttpStatusCode)> GetServerResponse(string requestAddress, string postBody)
     {
-        using var client = new HttpClient();
-        var result = await client.PostAsync(requestAddress, new StringContent(postBody));
+        var result = await s_client.PostAsync(requestAddress, new StringContent(postBody));
         try
         {
             return (await result.Content.ReadAsStringAsync(), result.StatusCode);
