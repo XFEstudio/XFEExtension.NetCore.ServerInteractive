@@ -30,11 +30,10 @@ public static class XFEServerCoreBuilderExtensions
             foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
             {
                 var parts = execute.Split('_', 2);
-                if (parts.Length == 2)
-                {
-                    var route = $"table/{parts[0]}/{parts[1]}";
-                    xFEServerCoreBuilder.AddServiceWithRoute<XFEDataTableManagerService>(route);
-                }
+                if (parts.Length != 2)
+                    throw new InvalidOperationException($"执行语句格式无效：'{execute}'，期望格式为 '{{operation}}_{{tableName}}'");
+                var route = $"table/{parts[0]}/{parts[1]}";
+                xFEServerCoreBuilder.AddServiceWithRoute<XFEDataTableManagerService>(route);
             }
 
             return xFEServerCoreBuilder;
