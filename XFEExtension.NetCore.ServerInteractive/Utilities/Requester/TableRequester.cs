@@ -49,9 +49,8 @@ public class TableRequester
     {
         try
         {
-            var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, new
+            var (response, code) = await InteractiveHelper.GetServerResponse($"{RequestAddress}/table/get/{tableName}", new
             {
-                execute = $"get_{tableName}",
                 pageCount,
                 page,
                 session = Session,
@@ -99,9 +98,8 @@ public class TableRequester
     {
         try
         {
-            var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, new
+            var (response, code) = await InteractiveHelper.GetServerResponse($"{RequestAddress}/table/add/{tableName}", new
             {
-                execute = $"add_{tableName}",
                 data = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data, JsonSerializerOptions))),
                 session = Session,
                 deviceInfo = DeviceInfo
@@ -141,9 +139,8 @@ public class TableRequester
     {
         try
         {
-            var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, new
+            var (response, code) = await InteractiveHelper.GetServerResponse($"{RequestAddress}/table/remove/{tableName}", new
             {
-                execute = $"remove_{tableName}",
                 id,
                 session = Session,
                 deviceInfo = DeviceInfo
@@ -183,9 +180,8 @@ public class TableRequester
     {
         try
         {
-            var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, new
+            var (response, code) = await InteractiveHelper.GetServerResponse($"{RequestAddress}/table/change/{tableName}", new
             {
-                execute = $"change_{tableName}",
                 data = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data, JsonSerializerOptions))),
                 session = Session,
                 deviceInfo = DeviceInfo

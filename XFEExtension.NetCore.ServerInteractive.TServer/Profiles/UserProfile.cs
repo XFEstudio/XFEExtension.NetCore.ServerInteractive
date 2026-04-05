@@ -1,7 +1,8 @@
 ﻿using XFEExtension.NetCore.AutoConfig;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
+using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 
-namespace XFEExtension.NetCore.ServerInteractive.TServer;
+namespace XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
 
 public partial class UserProfile : XFEProfile
 {

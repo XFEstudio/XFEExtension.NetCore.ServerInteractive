@@ -32,19 +32,7 @@ public static class XFEClientRequesterBuilderExtensions
         /// 添加日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest("get_log", static (session, deviceInfo, parameters) => new
-        {
-            execute = "get_log",
-            session,
-            deviceInfo,
-            startDateTime = parameters[0],
-            endDateTime = parameters[1]
-        }, static response => response).AddRequest("clear_log", static (session, deviceInfo, _) => new
-        {
-            execute = "clear_log",
-            session,
-            deviceInfo
-        }, static response => response);
+        public XFEClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest<LogRequestService>();
 
         /// <summary>
         /// 添加IP封禁请求
@@ -75,7 +63,7 @@ public static class XFEClientRequesterBuilderExtensions
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddLoginRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddRequest<LoginRequestService<T>>("login").AddRequest<ReloginRequestService<T>>("relogin");
+        public XFEClientRequesterBuilder AddLoginRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddRequest<UserRequestService<T>>();
 
         /// <summary>
         /// 使用XFE标准服务器服务请求

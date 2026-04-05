@@ -20,7 +20,6 @@ public abstract class XFEClientRequester : IRequesterBase
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
     internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
-    internal Dictionary<List<string>, Func<IStandardRequestService>> StandardMultiRequestServiceListDictionary = [];
     internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
@@ -71,19 +70,29 @@ public abstract class XFEClientRequester : IRequesterBase
             {
                 var xFEService = xFEServiceFactory();
                 xFEService.XFEClientRequester = this;
-                xFEService.Execute = serviceName;
                 xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(), _jsonSerializerOptions);
+                // 通过RequestRouteMap解析实际路由路径
+                var actualRoute = xFEService.RequestRouteMap.GetValueOrDefault(serviceName, serviceName);
+                xFEService.Route = actualRoute;
+                if (!xFEService.RequestPoints.TryGetValue(serviceName, out var requestHandler))
+                    throw new XFERequesterException($"未找到'{serviceName}'对应的请求处理方法（[Request]标记的方法）");
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{actualRoute}", requestHandler(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
                     xFEService.Response = response;
                     xFEService.UnescapedResponse = Regex.Unescape(response);
-                    var requestResult = xFEService.AnalyzeResponse();
+                    if (xFEService.ResponsePoints.TryGetValue(serviceName, out var responseHandler))
+                    {
+                        result.Result = responseHandler();
+                    }
+                    else
+                    {
+                        result.Result = response;
+                    }
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
-                    result.Result = requestResult;
                 }
                 else
                 {
@@ -93,7 +102,7 @@ public abstract class XFEClientRequester : IRequesterBase
             }
             else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -101,29 +110,6 @@ public abstract class XFEClientRequester : IRequesterBase
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
                     result.Result = requestResult ?? new();
-                }
-                else
-                {
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                    result.Message = response;
-                }
-            }
-            foreach (var instance in from key in StandardMultiRequestServiceListDictionary.Keys where key.Contains(serviceName) select StandardMultiRequestServiceListDictionary[key] into factory select factory())
-            {
-                instance.XFEClientRequester = this;
-                instance.Execute = serviceName;
-                instance.DeviceInfo = DeviceInfo;
-                instance.Parameters = parameters;
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.PostRequest(), _jsonSerializerOptions);
-                result.StatusCode = code;
-                if (code == HttpStatusCode.OK)
-                {
-                    instance.Response = response;
-                    instance.UnescapedResponse = Regex.Unescape(response);
-                    var requestResult = instance.AnalyzeResponse();
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
-                    result.Message = "Success";
-                    result.Result = requestResult;
                 }
                 else
                 {

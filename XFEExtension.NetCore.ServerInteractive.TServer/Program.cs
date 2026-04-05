@@ -7,6 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.TServer.Services;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
+using UserProfile = XFEExtension.NetCore.ServerInteractive.TServer.Profiles.UserProfile;
 
 var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
     .UseXFEServer()                           // 使用XFE服务器架构
@@ -25,9 +26,15 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                                .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)  // 添加名为订单的表格Order    类   型，     AutoConfig   为      DataProfile。添加更改获取权限为业务员，移除权限为经理
                                                .AddTable<User, UserProfile>("用户", (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.业务员);      // 添加名为用户的表格User类    型，       AutoConfig为         UserProfile。获取权限为业务员，添加移除更改权限为经理
                                        })
-                                       .AddStandardService<TestCoreService>("test")
+                                       .AddService<TestCoreService>()
+                                       .AddService<EchoCoreService>()
+                                       .AddService<MathCoreService>()
+                                       .AddService<StatusCoreService>()
+                                       .AddService<GreetCoreService>()
+                                       .AddService<TimeCoreService>()
                                        .Build(options =>
                                        {
+                                           options.MainEntryPoint = "api";
                                            options.BindIP("http://localhost:3305/")
                                                   .BindIP("https://localhost:3306/");
                                        })) // 构建核心服务器
