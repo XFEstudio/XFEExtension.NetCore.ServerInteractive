@@ -65,6 +65,26 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     }
 
     /// <summary>
+    /// 注册标准服务（手动指定路由路径，适用于动态路由的服务）
+    /// </summary>
+    /// <typeparam name="T">服务泛型</typeparam>
+    /// <param name="route">路由路径</param>
+    /// <returns>XFE服务器核心构建器</returns>
+    public XFEServerCoreBuilder AddServiceWithRoute<T>(string route) where T : IServerCoreStandardService, new()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(route, nameof(route));
+        route = route.Trim('/');
+
+        _serverStandardCoreServiceDictionary.Add(route, () =>
+        {
+            var inst = new T();
+            ApplyParameter(inst);
+            return inst;
+        });
+        return this;
+    }
+
+    /// <summary>
     /// 注册标准服务（从EntryPointList自动获取路由路径）
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>

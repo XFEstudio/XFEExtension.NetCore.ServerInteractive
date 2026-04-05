@@ -24,7 +24,18 @@ public static class XFEServerCoreBuilderExtensions
         public XFEServerCoreBuilder AddDataTableManager(XFEDataTableManagerBuilder xFEDataTableManagerBuilder, Func<IEnumerable<User>> getUserFunction, Func<IEnumerable<EncryptedUserLoginModel>> getEncryptedUserLoginModelFunction)
         {
             xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction));
-            // TODO: 完善数据表格管理器的服务注册
+
+            // Register the service for each table operation route
+            // XFEDataTableManagerService uses dynamic routing, so we use AddServiceWithRoute
+            foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
+            {
+                var parts = execute.Split('_', 2);
+                if (parts.Length != 2)
+                    throw new InvalidOperationException($"执行语句格式无效：'{execute}'，期望格式为 '{{operation}}_{{tableName}}'");
+                var route = $"table/{parts[0]}/{parts[1]}";
+                xFEServerCoreBuilder.AddServiceWithRoute<XFEDataTableManagerService>(route);
+            }
+
             return xFEServerCoreBuilder;
         }
 
