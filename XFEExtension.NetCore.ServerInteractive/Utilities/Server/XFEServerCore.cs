@@ -178,14 +178,20 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     serviceInstance.ReturnArgs = r;
                     serviceInstance.Initialize();
 
-                    // 根据路由调用对应的处理方法
-                    var hasSyncHandler = serviceInstance.SyncEntryPoints.TryGetValue(route, out var syncHandler);
-                    var hasAsyncHandler = serviceInstance.AsyncEntryPoints.TryGetValue(route, out var asyncHandler);
-
-                    if (hasSyncHandler)
-                        syncHandler!();
-                    if (hasAsyncHandler)
-                        await asyncHandler!();
+                    // 根据路由调用对应的处理方法（同步与异步互斥，优先同步）
+                    if (serviceInstance.SyncEntryPoints.TryGetValue(route, out var syncHandler))
+                        syncHandler();
+                    else if (serviceInstance.AsyncEntryPoints.TryGetValue(route, out var asyncHandler))
+                        await asyncHandler();
+                    else
+                    {
+                        ServerCoreError?.Invoke(this, new()
+                        {
+                            StatusCode = HttpStatusCode.NotFound,
+                            ReturnArgs = r,
+                            ServerException = new ExecutionUnregisteredException($"服务已注册但路由未找到对应处理方法-{route}")
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
