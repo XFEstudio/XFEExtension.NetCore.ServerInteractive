@@ -46,41 +46,12 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     }
 
     /// <summary>
-    /// 添加标准请求器（从RouteList自动获取路由）
-    /// </summary>
-    /// <typeparam name="T">请求服务泛型</typeparam>
-    /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>() where T : IStandardRequestService, new()
-    {
-        // 从T的静态RouteList属性获取所有路由
-        var routeListProperty = typeof(T).GetProperty("RouteList", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-        if (routeListProperty is null)
-            throw new InvalidOperationException($"类型 {typeof(T).Name} 没有静态的 RouteList 属性");
-
-        var routeList = routeListProperty.GetValue(null) as List<string>;
-        if (routeList is null || routeList.Count == 0)
-            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 RouteList 为空");
-
-        // 为每个路由注册服务工厂
-        foreach (var route in routeList)
-        {
-            _standardRequestServiceDictionary.Add(route, () =>
-            {
-                var inst = new T();
-                ApplyParameter(inst);
-                return inst;
-            });
-        }
-        return this;
-    }
-
-    /// <summary>
-    /// 添加标准请求器（手动指定路由，用于向后兼容或特殊场景）
+    /// 添加标准请求器
     /// </summary>
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求服务名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequestWithRoute<T>(string serviceName) where T : IStandardRequestService, new()
+    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IStandardRequestService, new()
     {
         _standardRequestServiceDictionary.Add(serviceName, () =>
         {

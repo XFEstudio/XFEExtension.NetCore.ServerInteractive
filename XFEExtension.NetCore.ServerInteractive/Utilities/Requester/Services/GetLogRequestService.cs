@@ -13,7 +13,6 @@ public class GetLogRequestService : StandardRequestServiceBase
     /// <inheritdoc/>
     public override object PostRequest() => new
     {
-        execute = Execute,
         session = Session,
         deviceInfo = DeviceInfo,
         startDateTime = Parameters[0],

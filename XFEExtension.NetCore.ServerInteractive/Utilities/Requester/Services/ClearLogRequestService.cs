@@ -13,7 +13,6 @@ public class ClearLogRequestService : StandardRequestServiceBase
     /// <inheritdoc/>
     public override object PostRequest() => new
     {
-        execute = Execute,
         session = Session,
         deviceInfo = DeviceInfo
     };

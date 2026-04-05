@@ -14,11 +14,6 @@ public class LoginRequestService<T> : StandardRequestServiceBase where T : IUser
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
 
     /// <summary>
-    /// 路由列表
-    /// </summary>
-    public new static List<string> RouteList { get; } = new() { "user/login" };
-
-    /// <summary>
     /// 登录请求服务
     /// </summary>
     public LoginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
@@ -34,7 +29,6 @@ public class LoginRequestService<T> : StandardRequestServiceBase where T : IUser
     /// <inheritdoc/>
     public override object PostRequest() => new
     {
-        execute = Execute,
         deviceInfo = DeviceInfo,
         account = Parameters[0],
         password = Parameters[1]

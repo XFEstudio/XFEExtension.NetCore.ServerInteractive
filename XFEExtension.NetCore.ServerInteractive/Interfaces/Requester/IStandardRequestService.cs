@@ -6,10 +6,6 @@
 public interface IStandardRequestService : IRequestServiceBase
 {
     /// <summary>
-    /// 待请求的方法（如 check_connect）
-    /// </summary>
-    string Execute { get; internal set; }
-    /// <summary>
     /// 设备信息
     /// </summary>
     string DeviceInfo { get; internal set; }
@@ -17,6 +13,10 @@ public interface IStandardRequestService : IRequestServiceBase
     /// 当前会话ID
     /// </summary>
     string Session { get; set; }
+    /// <summary>
+    /// 请求路由（不带斜杠开头），如"user/relogin"
+    /// </summary>
+    string Route { get; set; }
     /// <summary>
     /// 返回结果字符串（转义后）
     /// </summary>

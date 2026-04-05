@@ -13,11 +13,6 @@ public class ReloginRequestService<T> : StandardRequestServiceBase where T : IUs
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
 
     /// <summary>
-    /// 路由列表
-    /// </summary>
-    public new static List<string> RouteList { get; } = new() { "user/relogin" };
-
-    /// <summary>
     /// 登录校验请求服务
     /// </summary>
     public ReloginRequestService() => _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
@@ -27,7 +22,6 @@ public class ReloginRequestService<T> : StandardRequestServiceBase where T : IUs
     /// <inheritdoc/>
     public override object PostRequest() => new
     {
-        execute = Execute,
         session = Session,
         deviceInfo = DeviceInfo,
     };

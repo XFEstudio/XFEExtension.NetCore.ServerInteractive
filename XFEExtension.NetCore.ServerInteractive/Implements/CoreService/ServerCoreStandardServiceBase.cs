@@ -10,7 +10,7 @@ public abstract partial class ServerCoreStandardServiceBase : XFEServerCoreServi
     /// <summary>
     /// 所有入口点路径列表（由增量生成器自动填充）
     /// </summary>
-    public static List<string> EntryPointList { get; } = new();
+    public static List<string> EntryPointList { get; } = [];
 
     /// <inheritdoc/>
     public virtual Dictionary<string, Action> SyncEntryPoints { get; } = new();

@@ -71,7 +71,7 @@ public abstract class XFEClientRequester : IRequesterBase
             {
                 var xFEService = xFEServiceFactory();
                 xFEService.XFEClientRequester = this;
-                xFEService.Execute = serviceName;
+                xFEService.Route = serviceName;
                 xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(), _jsonSerializerOptions);
@@ -111,7 +111,7 @@ public abstract class XFEClientRequester : IRequesterBase
             foreach (var instance in from key in StandardMultiRequestServiceListDictionary.Keys where key.Contains(serviceName) select StandardMultiRequestServiceListDictionary[key] into factory select factory())
             {
                 instance.XFEClientRequester = this;
-                instance.Execute = serviceName;
+                instance.Route = serviceName;
                 instance.DeviceInfo = DeviceInfo;
                 instance.Parameters = parameters;
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.PostRequest(), _jsonSerializerOptions);

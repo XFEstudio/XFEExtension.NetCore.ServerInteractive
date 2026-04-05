@@ -8,21 +8,16 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 /// </summary>
 public abstract class StandardRequestServiceBase : IStandardRequestService
 {
-    /// <summary>
-    /// 此服务对应的路由列表（由派生类定义）
-    /// </summary>
-    public static List<string> RouteList { get; } = new();
-
     /// <inheritdoc/>
     public string Session { get => XFEClientRequester.Session; set => XFEClientRequester.Session = value; }
-    /// <inheritdoc/>
-    public string Execute { get; set; } = string.Empty;
+    /// <inheritdoc />
+    public string Route { get; set; } = string.Empty;
     /// <inheritdoc/>
     public string DeviceInfo { get; set; } = string.Empty;
     /// <inheritdoc/>
-    public string UnescapedResponse { get; set; }
+    public string UnescapedResponse { get; set; } = string.Empty;
     /// <inheritdoc/>
-    public string Response { get; set; }
+    public string Response { get; set; } = string.Empty;
     /// <inheritdoc/>
     public object[] Parameters { get; set; } = [];
     /// <inheritdoc/>
