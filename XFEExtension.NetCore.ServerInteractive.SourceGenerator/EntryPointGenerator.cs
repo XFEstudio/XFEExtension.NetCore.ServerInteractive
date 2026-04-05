@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using XFEExtension.NetCore.ServerInteractive.SourceGenerator.Models;
 
 namespace XFEExtension.NetCore.ServerInteractive.SourceGenerator;
 
@@ -22,7 +23,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         messageFormat: "类'{0}'必须声明为partial以便增量生成器可以生成入口点代码",
         category: "XFEServerInteractive",
         defaultSeverity: DiagnosticSeverity.Error,
-        helpLinkUri: "",
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0003",
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor MethodMustBeParameterlessRule = new(
@@ -31,6 +32,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         messageFormat: "方法'{0}'标记了[EntryPoint]但包含参数，入口点方法必须是无参数的",
         category: "XFEServerInteractive",
         defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0004",
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor InvalidReturnTypeRule = new(
@@ -39,6 +41,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         messageFormat: "方法'{0}'的返回类型'{1}'无效，入口点方法必须返回void或Task",
         category: "XFEServerInteractive",
         defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0005",
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor InvalidPathCharactersRule = new(
@@ -47,6 +50,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         messageFormat: "入口点路径'{0}'包含无效字符（引号或反斜杠），这些字符不允许在路径中使用",
         category: "XFEServerInteractive",
         defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0006",
         isEnabledByDefault: true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -63,7 +67,7 @@ public class EntryPointGenerator : IIncrementalGenerator
 
         // 生成源代码
         context.RegisterSourceOutput(compilationAndMethods,
-            static (spc, source) => Execute(source.Left, source.Right!, spc));
+            static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
     private static bool IsCandidateMethod(SyntaxNode node) => node is MethodDeclarationSyntax { AttributeLists.Count: > 0 };
@@ -275,75 +279,5 @@ namespace {namespaceName}
     private static string EscapeStringLiteral(string value)
     {
         return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
-    }
-
-    /// <summary>
-    /// 轻量级位置信息，避免在增量生成器缓存中持有SyntaxTree引用
-    /// </summary>
-    private readonly struct LocationInfo
-    {
-        public string FilePath { get; }
-        public TextSpan TextSpan { get; }
-        public LinePositionSpan LineSpan { get; }
-
-        private LocationInfo(string filePath, TextSpan textSpan, LinePositionSpan lineSpan)
-        {
-            FilePath = filePath;
-            TextSpan = textSpan;
-            LineSpan = lineSpan;
-        }
-
-        public static LocationInfo From(Location location)
-        {
-            var mappedSpan = location.GetMappedLineSpan();
-            return new LocationInfo(
-                mappedSpan.Path ?? "",
-                location.SourceSpan,
-                mappedSpan.Span);
-        }
-
-        public Location ToLocation()
-        {
-            return Location.Create(FilePath, TextSpan, LineSpan);
-        }
-    }
-
-    /// <summary>
-    /// 方法候选信息，包含验证所需的所有数据
-    /// </summary>
-    private class MethodCandidate
-    {
-        public string Namespace { get; }
-        public string ClassName { get; }
-        public string MethodName { get; }
-        public string Path { get; }
-        public bool IsAsync { get; }
-        public bool IsContainingTypePartial { get; }
-        public int ParameterCount { get; }
-        public bool HasValidReturnType { get; }
-        public string ReturnTypeName { get; }
-        public LocationInfo MethodLocation { get; }
-        public LocationInfo ClassLocation { get; }
-        public string TypeParameters { get; }
-        public string TypeConstraints { get; }
-
-        public MethodCandidate(string namespaceName, string className, string methodName, string path, bool isAsync,
-            bool isContainingTypePartial, int parameterCount, bool hasValidReturnType, string returnTypeName,
-            LocationInfo methodLocation, LocationInfo classLocation, string typeParameters, string typeConstraints)
-        {
-            Namespace = namespaceName;
-            ClassName = className;
-            MethodName = methodName;
-            Path = path;
-            IsAsync = isAsync;
-            IsContainingTypePartial = isContainingTypePartial;
-            ParameterCount = parameterCount;
-            HasValidReturnType = hasValidReturnType;
-            ReturnTypeName = returnTypeName;
-            MethodLocation = methodLocation;
-            ClassLocation = classLocation;
-            TypeParameters = typeParameters;
-            TypeConstraints = typeConstraints;
-        }
     }
 }
