@@ -37,4 +37,8 @@ public interface IStandardRequestService : IRequestServiceBase
     /// 响应方法字典，Key为请求路径，Value为对应的解析响应方法
     /// </summary>
     Dictionary<string, Func<object>> ResponsePoints { get; }
+    /// <summary>
+    /// 请求路由映射，Key为请求路径或名称，Value为实际路由路径（用于URL构建）
+    /// </summary>
+    Dictionary<string, string> RequestRouteMap { get; }
 }

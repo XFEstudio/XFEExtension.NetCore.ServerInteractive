@@ -33,4 +33,7 @@ public abstract partial class StandardRequestServiceBase : IStandardRequestServi
 
     /// <inheritdoc/>
     public virtual Dictionary<string, Func<object>> ResponsePoints { get; } = new();
+
+    /// <inheritdoc/>
+    public virtual Dictionary<string, string> RequestRouteMap { get; } = new();
 }

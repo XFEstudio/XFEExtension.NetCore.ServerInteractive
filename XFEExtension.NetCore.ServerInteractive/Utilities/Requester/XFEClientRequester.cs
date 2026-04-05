@@ -20,7 +20,6 @@ public abstract class XFEClientRequester : IRequesterBase
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
     internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
-    internal Dictionary<List<string>, Func<IStandardRequestService>> StandardMultiRequestServiceListDictionary = [];
     internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
@@ -71,12 +70,14 @@ public abstract class XFEClientRequester : IRequesterBase
             {
                 var xFEService = xFEServiceFactory();
                 xFEService.XFEClientRequester = this;
-                xFEService.Route = serviceName;
                 xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
+                // 通过RequestRouteMap解析实际路由路径
+                var actualRoute = xFEService.RequestRouteMap.TryGetValue(serviceName, out var route) ? route : serviceName;
+                xFEService.Route = actualRoute;
                 if (!xFEService.RequestPoints.TryGetValue(serviceName, out var requestHandler))
                     throw new XFERequesterException($"未找到路由'{serviceName}'对应的[Request]方法");
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", requestHandler(), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{actualRoute}", requestHandler(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -106,34 +107,6 @@ public abstract class XFEClientRequester : IRequesterBase
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
                     result.Result = requestResult ?? new();
-                }
-                else
-                {
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                    result.Message = response;
-                }
-            }
-            foreach (var instance in from key in StandardMultiRequestServiceListDictionary.Keys where key.Contains(serviceName) select StandardMultiRequestServiceListDictionary[key] into factory select factory())
-            {
-                instance.XFEClientRequester = this;
-                instance.Route = serviceName;
-                instance.DeviceInfo = DeviceInfo;
-                instance.Parameters = parameters;
-                if (!instance.RequestPoints.TryGetValue(serviceName, out var requestHandler))
-                    throw new XFERequesterException($"未找到路由'{serviceName}'对应的[Request]方法");
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", requestHandler(), _jsonSerializerOptions);
-                result.StatusCode = code;
-                if (code == HttpStatusCode.OK)
-                {
-                    instance.Response = response;
-                    instance.UnescapedResponse = Regex.Unescape(response);
-                    if (instance.ResponsePoints.TryGetValue(serviceName, out var responseHandler))
-                    {
-                        var requestResult = responseHandler();
-                        result.Result = requestResult;
-                    }
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
-                    result.Message = "Success";
                 }
                 else
                 {

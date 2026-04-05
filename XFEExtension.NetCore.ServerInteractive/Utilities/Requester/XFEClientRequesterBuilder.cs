@@ -15,7 +15,6 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
     private readonly Dictionary<string, Func<IRequestService>> _requestServiceDictionary = [];
     private readonly Dictionary<string, Func<IStandardRequestService>> _standardRequestServiceDictionary = [];
-    private readonly Dictionary<List<string>, Func<IStandardRequestService>> _standardMultiRequestServiceListDictionary = [];
     private readonly Dictionary<string, StandardClientInstanceRequest> _standardClientInstanceRequestDictionary = [];
     /// <summary>
     /// 创建构建器
@@ -46,36 +45,34 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     }
 
     /// <summary>
-    /// 添加标准请求器
+    /// 注册标准请求服务（从RequestPoints/ResponsePoints/RequestRouteMap自动获取路由路径和名称）
     /// </summary>
     /// <typeparam name="T">请求服务泛型</typeparam>
-    /// <param name="serviceName">请求服务名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>(string serviceName) where T : IStandardRequestService, new()
+    public XFEClientRequesterBuilder AddRequest<T>() where T : IStandardRequestService, new()
     {
-        _standardRequestServiceDictionary.Add(serviceName, () =>
-        {
-            var inst = new T();
-            ApplyParameter(inst);
-            return inst;
-        });
-        return this;
-    }
+        var probeService = new T();
+        ApplyParameter(probeService);
 
-    /// <summary>
-    /// 添加标准请求器
-    /// </summary>
-    /// <typeparam name="T">请求服务泛型</typeparam>
-    /// <param name="serviceName">请求服务名称</param>
-    /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>(List<string> serviceName) where T : IStandardRequestService, new()
-    {
-        _standardMultiRequestServiceListDictionary.Add(serviceName, () =>
+        var routeKeys = probeService.RequestPoints.Keys
+            .Concat(probeService.ResponsePoints.Keys)
+            .Concat(probeService.RequestRouteMap.Keys)
+            .Distinct()
+            .ToList();
+
+        if (routeKeys.Count == 0)
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 RequestPoints/ResponsePoints 为空");
+
+        // 为每个路径/名称注册服务工厂
+        foreach (var key in routeKeys)
         {
-            var inst = new T();
-            ApplyParameter(inst);
-            return inst;
-        });
+            _standardRequestServiceDictionary.Add(key, () =>
+            {
+                var inst = new T();
+                ApplyParameter(inst);
+                return inst;
+            });
+        }
         return this;
     }
 
@@ -115,7 +112,6 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         _xFEClientRequester.DeviceInfo = options.DeviceInfo;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.StandardRequestServiceDictionary = _standardRequestServiceDictionary;
-        _xFEClientRequester.StandardMultiRequestServiceListDictionary = _standardMultiRequestServiceListDictionary;
         _xFEClientRequester.StandardClientInstanceRequestDictionary = _standardClientInstanceRequestDictionary;
         return _xFEClientRequester;
     }

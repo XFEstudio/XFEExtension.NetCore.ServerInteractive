@@ -53,14 +53,24 @@ public class ClientRequestGenerator : IIncrementalGenerator
         helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0010",
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor DuplicatePathRule = new(
+        id: "XFE0011",
+        title: "Request/Response路径重复注册",
+        messageFormat: "路径或名称'{0}'在类'{1}'的[{2}]方法中重复注册",
+        category: "XFEServerInteractive",
+        defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0011",
+        isEnabledByDefault: true);
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // 找到所有标记了RequestAttribute或ResponseAttribute的方法
         var methodDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsCandidateMethod(s),
-                transform: static (ctx, _) => GetMethodForGeneration(ctx))
-            .Where(static m => m is not null);
+                transform: static (ctx, _) => GetMethodsForGeneration(ctx))
+            .Where(static m => !m.IsDefault && m.Length > 0)
+            .SelectMany(static (m, _) => m);
 
         // 按类分组
         var compilationAndMethods = context.CompilationProvider.Combine(methodDeclarations.Collect());
@@ -72,77 +82,120 @@ public class ClientRequestGenerator : IIncrementalGenerator
 
     private static bool IsCandidateMethod(SyntaxNode node) => node is MethodDeclarationSyntax { AttributeLists.Count: > 0 };
 
-    private static ClientRequestMethodCandidate? GetMethodForGeneration(GeneratorSyntaxContext context)
+    private static ImmutableArray<ClientRequestMethodCandidate> GetMethodsForGeneration(GeneratorSyntaxContext context)
     {
         var methodDeclaration = (MethodDeclarationSyntax)context.Node;
         var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
 
         if (methodSymbol is null)
-            return null;
+            return default;
 
-        // 检查是否有RequestAttribute或ResponseAttribute
-        var requestAttribute = methodSymbol.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.Name == "RequestAttribute");
-        var responseAttribute = methodSymbol.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.Name == "ResponseAttribute");
+        var attributes = methodSymbol.GetAttributes();
+        var requestAttributes = attributes.Where(a => a.AttributeClass?.Name == "RequestAttribute").ToList();
+        var responseAttributes = attributes.Where(a => a.AttributeClass?.Name == "ResponseAttribute").ToList();
 
-        if (requestAttribute is null && responseAttribute is null)
-            return null;
+        if (requestAttributes.Count == 0 && responseAttributes.Count == 0)
+            return default;
 
-        var isRequest = requestAttribute is not null;
-        var attribute = isRequest ? requestAttribute! : responseAttribute!;
-        var attributeName = isRequest ? "Request" : "Response";
-
-        // 获取Path参数
-        var path = attribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
-        if (string.IsNullOrEmpty(path))
-            return null;
-
-        // 检查返回类型：必须为object
+        // 共有信息
         var returnType = methodSymbol.ReturnType;
         var isObjectReturn = returnType.SpecialType == SpecialType.System_Object;
 
-        // 检查包含类型是否为partial
         var classDeclaration = methodDeclaration.Parent as ClassDeclarationSyntax;
         var isContainingTypePartial = classDeclaration?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
 
-        // 获取泛型类型参数和约束
         var typeParameters = classDeclaration?.TypeParameterList?.ToString().Trim() ?? "";
         var typeConstraints = classDeclaration?.ConstraintClauses.ToString().Trim() ?? "";
 
         var containingType = methodSymbol.ContainingType;
 
-        // 获取位置信息
         var methodLocation = LocationInfo.From(methodDeclaration.GetLocation());
         var classLocation = classDeclaration is not null
             ? LocationInfo.From(classDeclaration.Identifier.GetLocation())
             : methodLocation;
 
-        // 收集源文件的using指令
         var compilationUnit = methodDeclaration.SyntaxTree.GetRoot() as CompilationUnitSyntax;
         var usingDirectives = compilationUnit?.Usings
             .Select(u => u.ToString().Trim())
             .ToArray() ?? System.Array.Empty<string>();
 
-        return new ClientRequestMethodCandidate(
-            containingType.ContainingNamespace.ToDisplayString(),
-            containingType.Name,
-            methodSymbol.Name,
-            path!,
-            isRequest,
-            isContainingTypePartial,
-            methodSymbol.Parameters.Length,
-            isObjectReturn,
-            returnType.ToDisplayString(),
-            methodLocation,
-            classLocation,
-            typeParameters,
-            typeConstraints,
-            attributeName,
-            usingDirectives);
+        var results = new List<ClientRequestMethodCandidate>();
+
+        // 为每个Request属性创建候选
+        foreach (var attr in requestAttributes)
+        {
+            var path = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
+            if (string.IsNullOrEmpty(path))
+                continue;
+
+            var name = (string?)null;
+            if (!attr.NamedArguments.IsDefaultOrEmpty)
+            {
+                var nameArg = attr.NamedArguments.FirstOrDefault(kvp => kvp.Key == "Name");
+                if (nameArg.Key is not null)
+                    name = nameArg.Value.Value?.ToString();
+            }
+
+            results.Add(new ClientRequestMethodCandidate(
+                containingType.ContainingNamespace.ToDisplayString(),
+                containingType.Name,
+                methodSymbol.Name,
+                path!,
+                name,
+                isRequest: true,
+                isContainingTypePartial,
+                methodSymbol.Parameters.Length,
+                isObjectReturn,
+                returnType.ToDisplayString(),
+                methodLocation,
+                classLocation,
+                typeParameters,
+                typeConstraints,
+                "Request",
+                usingDirectives));
+        }
+
+        // 为每个Response属性创建候选
+        foreach (var attr in responseAttributes)
+        {
+            var path = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
+            if (string.IsNullOrEmpty(path))
+                continue;
+
+            var name = (string?)null;
+            if (!attr.NamedArguments.IsDefaultOrEmpty)
+            {
+                var nameArg = attr.NamedArguments.FirstOrDefault(kvp => kvp.Key == "Name");
+                if (nameArg.Key is not null)
+                    name = nameArg.Value.Value?.ToString();
+            }
+
+            results.Add(new ClientRequestMethodCandidate(
+                containingType.ContainingNamespace.ToDisplayString(),
+                containingType.Name,
+                methodSymbol.Name,
+                path!,
+                name,
+                isRequest: false,
+                isContainingTypePartial,
+                methodSymbol.Parameters.Length,
+                isObjectReturn,
+                returnType.ToDisplayString(),
+                methodLocation,
+                classLocation,
+                typeParameters,
+                typeConstraints,
+                "Response",
+                usingDirectives));
+        }
+
+        if (results.Count == 0)
+            return default;
+
+        return results.ToImmutableArray();
     }
 
-    private static void Execute(Compilation compilation, ImmutableArray<ClientRequestMethodCandidate?> methods, SourceProductionContext context)
+    private static void Execute(Compilation compilation, ImmutableArray<ClientRequestMethodCandidate> methods, SourceProductionContext context)
     {
         if (methods.IsDefaultOrEmpty)
             return;
@@ -152,8 +205,6 @@ public class ClientRequestGenerator : IIncrementalGenerator
         // 校验并报告诊断信息
         foreach (var method in methods)
         {
-            if (method is null) continue;
-
             var isValid = true;
 
             // 校验：包含类型必须为partial
@@ -219,7 +270,16 @@ public class ClientRequestGenerator : IIncrementalGenerator
             var requestMethods = methodInfos.Where(m => m.IsRequest).ToList();
             var responseMethods = methodInfos.Where(m => !m.IsRequest).ToList();
 
-            // 收集所有路径（去重）
+            // 检查重复路径/名称
+            var hasDuplicateError = false;
+
+            hasDuplicateError |= CheckDuplicateKeys(context, requestMethods, className, "Request");
+            hasDuplicateError |= CheckDuplicateKeys(context, responseMethods, className, "Response");
+
+            if (hasDuplicateError)
+                continue;
+
+            // 收集所有路径（去重）— 仅包含实际路由路径
             var allPaths = methodInfos.Select(m => m.Path).Distinct().ToList();
 
             // 收集所有using指令（合并去重）
@@ -275,10 +335,14 @@ namespace {namespaceName}
             get => _generatedRequestPoints ??= new Dictionary<string, Func<object>>()
             {{");
 
-            // 添加请求方法
+            // 添加请求方法（路径 → 方法 + 名称 → 方法）
             foreach (var method in requestMethods)
             {
                 sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Path)}\", {method.MethodName} }},");
+                if (!string.IsNullOrEmpty(method.Name))
+                {
+                    sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Name!)}\", {method.MethodName} }},");
+                }
             }
 
             sourceBuilder.AppendLine($@"            }};
@@ -291,10 +355,39 @@ namespace {namespaceName}
             get => _generatedResponsePoints ??= new Dictionary<string, Func<object>>()
             {{");
 
-            // 添加响应方法
+            // 添加响应方法（路径 → 方法 + 名称 → 方法）
             foreach (var method in responseMethods)
             {
                 sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Path)}\", {method.MethodName} }},");
+                if (!string.IsNullOrEmpty(method.Name))
+                {
+                    sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Name!)}\", {method.MethodName} }},");
+                }
+            }
+
+            sourceBuilder.AppendLine($@"            }};
+        }}
+
+        private Dictionary<string, string>? _generatedRequestRouteMap;
+        /// <inheritdoc/>
+        public override Dictionary<string, string> RequestRouteMap
+        {{
+            get => _generatedRequestRouteMap ??= new Dictionary<string, string>()
+            {{");
+
+            // 构建路由映射（所有键 → 实际路径）
+            var allMappings = new HashSet<string>();
+            foreach (var method in methodInfos)
+            {
+                var pathKey = method.Path;
+                if (allMappings.Add(pathKey))
+                {
+                    sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(pathKey)}\", \"{EscapeStringLiteral(pathKey)}\" }},");
+                }
+                if (!string.IsNullOrEmpty(method.Name) && allMappings.Add(method.Name!))
+                {
+                    sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Name!)}\", \"{EscapeStringLiteral(pathKey)}\" }},");
+                }
             }
 
             sourceBuilder.AppendLine(@"            };
@@ -304,6 +397,42 @@ namespace {namespaceName}
 
             context.AddSource($"{className}.ClientRequests.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
         }
+    }
+
+    /// <summary>
+    /// 检查同类型（Request或Response）候选中是否存在重复的路径或名称键
+    /// </summary>
+    private static bool CheckDuplicateKeys(SourceProductionContext context, List<ClientRequestMethodCandidate> candidates, string className, string attributeName)
+    {
+        var seenKeys = new HashSet<string>();
+        var hasDuplicate = false;
+
+        foreach (var candidate in candidates)
+        {
+            if (!seenKeys.Add(candidate.Path))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    DuplicatePathRule,
+                    candidate.MethodLocation.ToLocation(),
+                    candidate.Path,
+                    className,
+                    attributeName));
+                hasDuplicate = true;
+            }
+
+            if (!string.IsNullOrEmpty(candidate.Name) && !seenKeys.Add(candidate.Name!))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    DuplicatePathRule,
+                    candidate.MethodLocation.ToLocation(),
+                    candidate.Name!,
+                    className,
+                    attributeName));
+                hasDuplicate = true;
+            }
+        }
+
+        return hasDuplicate;
     }
 
     /// <summary>
