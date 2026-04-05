@@ -11,13 +11,13 @@ public partial class LogRequestService : StandardRequestServiceBase
     /// <summary>
     /// 解析获取日志响应
     /// </summary>
-    [Response("log/get")]
+    [Response("log/get", Name = "get_log")]
     public object AnalyzeGetLogResponse() => Response;
 
     /// <summary>
     /// 构造获取日志请求体
     /// </summary>
-    [Request("log/get")]
+    [Request("log/get", Name = "get_log")]
     public object PostGetLogRequest() => new
     {
         session = Session,
@@ -29,13 +29,13 @@ public partial class LogRequestService : StandardRequestServiceBase
     /// <summary>
     /// 解析清除日志响应
     /// </summary>
-    [Response("log/clear")]
+    [Response("log/clear", Name = "clear_log")]
     public object AnalyzeClearLogResponse() => true;
 
     /// <summary>
     /// 构造清除日志请求体
     /// </summary>
-    [Request("log/clear")]
+    [Request("log/clear", Name = "clear_log")]
     public object PostClearLogRequest() => new
     {
         session = Session,

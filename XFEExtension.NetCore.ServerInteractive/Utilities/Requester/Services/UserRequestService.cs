@@ -22,7 +22,7 @@ public partial class UserRequestService<T> : StandardRequestServiceBase where T 
     /// <summary>
     /// 解析登录响应
     /// </summary>
-    [Response("user/login")]
+    [Response("user/login", Name = "login_user")]
     public object AnalyzeLoginResponse()
     {
         var result = JsonSerializer.Deserialize<UserLoginResult<T>>(Response, _jsonSerializerOptions);
@@ -33,7 +33,7 @@ public partial class UserRequestService<T> : StandardRequestServiceBase where T 
     /// <summary>
     /// 构造登录请求体
     /// </summary>
-    [Request("user/login")]
+    [Request("user/login", Name = "login_user")]
     public object PostLoginRequest() => new
     {
         deviceInfo = DeviceInfo,
@@ -44,13 +44,13 @@ public partial class UserRequestService<T> : StandardRequestServiceBase where T 
     /// <summary>
     /// 解析登录校验响应
     /// </summary>
-    [Response("user/relogin")]
+    [Response("user/relogin", Name = "relogin_user")]
     public object AnalyzeReloginResponse() => JsonSerializer.Deserialize<T>(Response, _jsonSerializerOptions)!;
 
     /// <summary>
     /// 构造登录校验请求体
     /// </summary>
-    [Request("user/relogin")]
+    [Request("user/relogin", Name = "relogin_user")]
     public object PostReloginRequest() => new
     {
         session = Session,
