@@ -73,7 +73,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
                 // 通过RequestRouteMap解析实际路由路径
-                var actualRoute = xFEService.RequestRouteMap.TryGetValue(serviceName, out var route) ? route : serviceName;
+                var actualRoute = xFEService.RequestRouteMap.GetValueOrDefault(serviceName, serviceName);
                 xFEService.Route = actualRoute;
                 if (!xFEService.RequestPoints.TryGetValue(serviceName, out var requestHandler))
                     throw new XFERequesterException($"未找到'{serviceName}'对应的请求处理方法（[Request]标记的方法）");

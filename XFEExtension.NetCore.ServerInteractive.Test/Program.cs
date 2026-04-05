@@ -102,7 +102,7 @@ internal class Program
         }
     }
 
-    //[SMTest]
+    [SMTest]
     public static async Task Check()
     {
         try
@@ -142,7 +142,7 @@ internal class Program
     //[SMTest]
     public static string ConvertOrder()
     {
-        var order = new Order()
+        var order = new Order
         {
             Description = "测试订单的描述",
             Name = "测试订单"
