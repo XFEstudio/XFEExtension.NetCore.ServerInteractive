@@ -63,15 +63,17 @@ public static class XFEServerCoreBuilderExtensions
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>("login")
-            .AddStandardService<UserReloginService<T>>("relogin")
+        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>("user/login")
+            .AddStandardService<UserReloginService<T>>("user/relogin")
             .AddService<UserLoginAutoCleanService>();
 
         /// <summary>
         /// 添加IP封禁服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>(["get_bannedIPList", "add_bannedIP", "remove_bannedIP"]);
+        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>("ip/banned/get")
+            .AddStandardService<IPBannerService>("ip/banned/add")
+            .AddStandardService<IPBannerService>("ip/banned/remove");
 
         /// <summary>
         /// 添加日期统计服务
@@ -89,7 +91,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加连接检查服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddStandardService<ConnectService>("check_connect");
+        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddStandardService<ConnectService>("connect");
 
         /// <summary>
         /// 添加服务器入口点校验
@@ -101,7 +103,8 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加服务器日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddStandardService<CoreLogService>(["get_log", "clear_log"]);
+        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddStandardService<CoreLogService>("log/get")
+            .AddStandardService<CoreLogService>("log/clear");
 
         /// <summary>
         /// 使用XFE标准服务器核心
