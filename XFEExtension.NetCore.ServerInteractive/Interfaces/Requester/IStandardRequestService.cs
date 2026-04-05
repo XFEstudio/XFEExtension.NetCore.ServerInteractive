@@ -30,11 +30,11 @@ public interface IStandardRequestService : IRequestServiceBase
     /// </summary>
     object[] Parameters { get; internal set; }
     /// <summary>
-    /// 请求方法字典，Key为请求路径，Value为对应的构造请求体方法
+    /// 请求方法字典，Key为请求路径或名称(别名)，Value为对应的构造请求体方法
     /// </summary>
     Dictionary<string, Func<object>> RequestPoints { get; }
     /// <summary>
-    /// 响应方法字典，Key为请求路径，Value为对应的解析响应方法
+    /// 响应方法字典，Key为请求路径或名称(别名)，Value为对应的解析响应方法
     /// </summary>
     Dictionary<string, Func<object>> ResponsePoints { get; }
     /// <summary>
