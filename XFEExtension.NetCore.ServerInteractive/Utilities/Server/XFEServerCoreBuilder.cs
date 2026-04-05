@@ -65,12 +65,41 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     }
 
     /// <summary>
-    /// 注册标准服务（使用路由路径）
+    /// 注册标准服务（从EntryPointList自动获取路由路径）
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
-    /// <param name="route">路由路径（例如：user/login）</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardService<T>(string route) where T : IServerCoreStandardService, new()
+    public XFEServerCoreBuilder AddStandardService<T>() where T : IServerCoreStandardService, new()
+    {
+        // 从T的静态EntryPointList属性获取所有路由路径
+        var entryPointListProperty = typeof(T).GetProperty("EntryPointList", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        if (entryPointListProperty is null)
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 没有静态的 EntryPointList 属性");
+
+        var entryPointList = entryPointListProperty.GetValue(null) as List<string>;
+        if (entryPointList is null || entryPointList.Count == 0)
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 EntryPointList 为空");
+
+        // 为每个入口点注册服务工厂
+        foreach (var route in entryPointList)
+        {
+            _serverStandardCoreServiceDictionary.Add(route, () =>
+            {
+                var inst = new T();
+                ApplyParameter(inst);
+                return inst;
+            });
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// 注册标准服务（手动指定路由路径，用于动态路由场景）
+    /// </summary>
+    /// <typeparam name="T">服务泛型</typeparam>
+    /// <param name="route">路由路径（例如：table/get/order）</param>
+    /// <returns>XFE服务器核心构建器</returns>
+    public XFEServerCoreBuilder AddStandardServiceWithRoute<T>(string route) where T : IServerCoreStandardService, new()
     {
         _serverStandardCoreServiceDictionary.Add(route, () =>
         {

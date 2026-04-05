@@ -26,14 +26,14 @@ public static class XFEServerCoreBuilderExtensions
             xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction));
 
             // Register the service for each table operation route
-            // Convert old format "get_tableName" to new format "table/get/tableName"
+            // XFEDataTableManagerService uses dynamic routing, so we use AddStandardServiceWithRoute
             foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
             {
                 var parts = execute.Split('_', 2);
                 if (parts.Length == 2)
                 {
                     var route = $"table/{parts[0]}/{parts[1]}";
-                    xFEServerCoreBuilder.AddStandardService<XFEDataTableManagerService>(route);
+                    xFEServerCoreBuilder.AddStandardServiceWithRoute<XFEDataTableManagerService>(route);
                 }
             }
 
@@ -63,17 +63,15 @@ public static class XFEServerCoreBuilderExtensions
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>("user/login")
-            .AddStandardService<UserReloginService<T>>("user/relogin")
+        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>()
+            .AddStandardService<UserReloginService<T>>()
             .AddService<UserLoginAutoCleanService>();
 
         /// <summary>
         /// 添加IP封禁服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>("ip/banned/get")
-            .AddStandardService<IPBannerService>("ip/banned/add")
-            .AddStandardService<IPBannerService>("ip/banned/remove");
+        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>();
 
         /// <summary>
         /// 添加日期统计服务
@@ -91,7 +89,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加连接检查服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddStandardService<ConnectService>("connect");
+        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddStandardService<ConnectService>();
 
         /// <summary>
         /// 添加服务器入口点校验
@@ -103,8 +101,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加服务器日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddStandardService<CoreLogService>("log/get")
-            .AddStandardService<CoreLogService>("log/clear");
+        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddStandardService<CoreLogService>();
 
         /// <summary>
         /// 使用XFE标准服务器核心
