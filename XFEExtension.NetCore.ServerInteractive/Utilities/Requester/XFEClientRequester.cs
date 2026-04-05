@@ -85,8 +85,11 @@ public abstract class XFEClientRequester : IRequesterBase
                     xFEService.UnescapedResponse = Regex.Unescape(response);
                     if (xFEService.ResponsePoints.TryGetValue(serviceName, out var responseHandler))
                     {
-                        var requestResult = responseHandler();
-                        result.Result = requestResult;
+                        result.Result = responseHandler();
+                    }
+                    else
+                    {
+                        result.Result = response;
                     }
                     MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
                     result.Message = "Success";
