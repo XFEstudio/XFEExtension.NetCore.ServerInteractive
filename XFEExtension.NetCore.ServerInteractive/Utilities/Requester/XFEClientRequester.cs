@@ -74,7 +74,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 xFEService.Route = serviceName;
                 xFEService.DeviceInfo = DeviceInfo;
                 xFEService.Parameters = parameters;
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, xFEService.PostRequest(), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", xFEService.PostRequest(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -93,7 +93,7 @@ public abstract class XFEClientRequester : IRequesterBase
             }
             else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {
@@ -114,7 +114,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 instance.Route = serviceName;
                 instance.DeviceInfo = DeviceInfo;
                 instance.Parameters = parameters;
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress, instance.PostRequest(), _jsonSerializerOptions);
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.PostRequest(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)
                 {

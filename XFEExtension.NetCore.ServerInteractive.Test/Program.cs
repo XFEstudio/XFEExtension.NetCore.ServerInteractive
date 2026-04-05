@@ -10,7 +10,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Test;
 
 internal class Program
 {
-    private static readonly XFEClientRequester XFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
+    private static readonly XFEClientRequester s_xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
         .UseXFEStandardRequest<UserFaceInfo>()
         .AddRequest("test", (_, _, _) => new
         {
@@ -18,22 +18,22 @@ internal class Program
         }, response => response)
         .Build(options =>
         {
-            options.RequestAddress = "http://localhost:3300/management";
+            options.RequestAddress = "http://localhost:3305/api";
         });
 
     private static readonly TableRequester TableRequester = new();
 
-    static Program() => XFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
+    static Program() => s_xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
 
     private static void XFEClientRequester_MessageReceived(object? sender, ServerInteractiveEventArgs e)
     {
         Console.WriteLine($"请求完成：{e.StatusCode}\t{e.Message}");
     }
 
-    [SMTest("Admin", "123456")]
+    //[SMTest("Admin", "123456")]
     public static async Task Login(string account, string password)
     {
-        var result = await XFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
+        var result = await s_xFEClientRequester.Request<UserLoginResult<UserFaceInfo>>("login", account, password);
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result.Session);
@@ -41,9 +41,9 @@ internal class Program
             Console.WriteLine(result.Result.UserInfo.Id);
             Console.WriteLine(result.Result.UserInfo.NickName);
             Console.WriteLine(result.Result.UserInfo.PermissionLevel);
-            TableRequester.RequestAddress = XFEClientRequester.RequestAddress;
+            TableRequester.RequestAddress = s_xFEClientRequester.RequestAddress;
             TableRequester.Session = result.Result.Session;
-            TableRequester.DeviceInfo = XFEClientRequester.DeviceInfo;
+            TableRequester.DeviceInfo = s_xFEClientRequester.DeviceInfo;
         }
         else
         {
@@ -53,11 +53,11 @@ internal class Program
     }
 
     //[SMTest]
-    public static async Task Test()
+    public static async Task TestBench()
     {
         await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (_, _) =>
         {
-            var result = await XFEClientRequester.Request<string>("test");
+            var result = await s_xFEClientRequester.Request<string>("test");
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Console.WriteLine(result.Result);
@@ -70,10 +70,25 @@ internal class Program
         });
     }
 
+    [SMTest]
+    public static async Task Test()
+    {
+        var result = await s_xFEClientRequester.Request<string>("test");
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine(result.Result);
+        }
+        else
+        {
+            Console.WriteLine(result.StatusCode);
+            Console.WriteLine(result.Message);
+        }
+    }
+
     //[SMTest]
     public static async Task ReLogin()
     {
-        var result = await XFEClientRequester.Request<UserFaceInfo>("relogin");
+        var result = await s_xFEClientRequester.Request<UserFaceInfo>("relogin");
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result.Id);
@@ -92,7 +107,7 @@ internal class Program
     {
         try
         {
-            var result = await XFEClientRequester.Request<DateTime>("check_connect");
+            var result = await s_xFEClientRequester.Request<DateTime>("check_connect");
             if (result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Console.WriteLine(result.Result);
@@ -112,7 +127,7 @@ internal class Program
     //[SMTest]
     public static async Task GetLog()
     {
-        var result = await XFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
+        var result = await s_xFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
         if (result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             Console.WriteLine(result.Result);
