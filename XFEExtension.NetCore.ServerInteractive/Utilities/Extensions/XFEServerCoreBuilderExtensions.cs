@@ -26,14 +26,14 @@ public static class XFEServerCoreBuilderExtensions
             xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction));
 
             // Register the service for each table operation route
-            // XFEDataTableManagerService uses dynamic routing, so we use AddStandardServiceWithRoute
+            // XFEDataTableManagerService uses dynamic routing, so we use AddServiceWithRoute
             foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
             {
                 var parts = execute.Split('_', 2);
                 if (parts.Length == 2)
                 {
                     var route = $"table/{parts[0]}/{parts[1]}";
-                    xFEServerCoreBuilder.AddService<XFEDataTableManagerService>();
+                    xFEServerCoreBuilder.AddServiceWithRoute<XFEDataTableManagerService>(route);
                 }
             }
 
