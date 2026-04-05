@@ -5,7 +5,7 @@ using XFEExtension.NetCore.ServerInteractive.Profiles;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
 /// <summary>
-/// 服务器入口点校验
+/// 服务器主入口点校验
 /// </summary>
 public class EntryPointVerifyService : ServerCoreVerifyServiceBase
 {
@@ -18,7 +18,8 @@ public class EntryPointVerifyService : ServerCoreVerifyServiceBase
             Console.WriteLine("-校验失败");
             throw Error("您的IP已被封禁", HttpStatusCode.Forbidden);
         }
-        if (Request.Url?.Segments.Length < 2 || $"{Request.Url?.Segments[0]}{Request.Url?.Segments[1]}" != $"/{ServerBaseProfile.EntryPoint}" || Request.HttpMethod != "POST")
+        // 使用XFEServerCore的MainEntryPoint属性进行主入口点校验
+        if (Request.Url?.Segments.Length < 2 || $"{Request.Url?.Segments[0]}{Request.Url?.Segments[1]}" != $"/{XFEServerCore.MainEntryPoint}/" || Request.HttpMethod != "POST")
         {
             Console.WriteLine("-校验失败");
             throw Error("请求的API接口不正确", HttpStatusCode.BadGateway);
