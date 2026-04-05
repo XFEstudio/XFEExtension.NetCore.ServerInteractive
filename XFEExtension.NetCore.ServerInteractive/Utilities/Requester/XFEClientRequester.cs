@@ -76,7 +76,7 @@ public abstract class XFEClientRequester : IRequesterBase
                 var actualRoute = xFEService.RequestRouteMap.TryGetValue(serviceName, out var route) ? route : serviceName;
                 xFEService.Route = actualRoute;
                 if (!xFEService.RequestPoints.TryGetValue(serviceName, out var requestHandler))
-                    throw new XFERequesterException($"未找到路由'{serviceName}'对应的[Request]方法");
+                    throw new XFERequesterException($"未找到'{serviceName}'对应的请求处理方法（[Request]标记的方法）");
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{actualRoute}", requestHandler(), _jsonSerializerOptions);
                 result.StatusCode = code;
                 if (code == HttpStatusCode.OK)

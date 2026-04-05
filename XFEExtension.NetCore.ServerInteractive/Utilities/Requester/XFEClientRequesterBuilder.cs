@@ -61,7 +61,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
             .ToList();
 
         if (routeKeys.Count == 0)
-            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 RequestPoints/ResponsePoints 为空");
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 RequestPoints/ResponsePoints/RequestRouteMap 为空，请确保已使用[Request]或[Response]标记方法");
 
         // 为每个路径/名称注册服务工厂
         foreach (var key in routeKeys)
