@@ -6,8 +6,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 /// <summary>
 /// 标准请求服务基类
 /// </summary>
-public abstract class StandardRequestServiceBase : IStandardRequestService
+public abstract partial class StandardRequestServiceBase : IStandardRequestService
 {
+    /// <summary>
+    /// 本类型的请求路由路径列表（由增量生成器自动填充）
+    /// </summary>
+    public static List<string> RequestRouteList { get; } = [];
+
     /// <inheritdoc/>
     public string Session { get => XFEClientRequester.Session; set => XFEClientRequester.Session = value; }
     /// <inheritdoc />
@@ -24,8 +29,8 @@ public abstract class StandardRequestServiceBase : IStandardRequestService
     public XFEClientRequester XFEClientRequester { get; set; }
 
     /// <inheritdoc/>
-    public abstract object AnalyzeResponse();
+    public virtual Dictionary<string, Func<object>> RequestPoints { get; } = new();
 
     /// <inheritdoc/>
-    public abstract object PostRequest();
+    public virtual Dictionary<string, Func<object>> ResponsePoints { get; } = new();
 }

@@ -1,17 +1,24 @@
-﻿using XFEExtension.NetCore.ServerInteractive.Implements.Requester;
+﻿using XFEExtension.NetCore.ServerInteractive.Attributes;
+using XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 
 /// <summary>
 /// 清除日志请求服务
 /// </summary>
-public class ClearLogRequestService : StandardRequestServiceBase
+public partial class ClearLogRequestService : StandardRequestServiceBase
 {
-    /// <inheritdoc/>
-    public override object AnalyzeResponse() => true;
+    /// <summary>
+    /// 解析清除日志响应
+    /// </summary>
+    [Response("log/clear")]
+    public object AnalyzeClearLogResponse() => true;
 
-    /// <inheritdoc/>
-    public override object PostRequest() => new
+    /// <summary>
+    /// 构造清除日志请求体
+    /// </summary>
+    [Request("log/clear")]
+    public object PostClearLogRequest() => new
     {
         session = Session,
         deviceInfo = DeviceInfo
