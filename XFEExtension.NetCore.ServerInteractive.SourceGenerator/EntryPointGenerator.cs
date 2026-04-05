@@ -224,7 +224,7 @@ namespace {namespaceName}
         /// <summary>
         /// 本类型的入口点路径列表（覆盖基类的空列表）
         /// </summary>
-        public new static List<string> EntryPointList {{ get; }} = new()
+        public override List<string> EntryPointList {{ get; }} = new()
         {{");
 
             // 添加所有入口点到静态列表

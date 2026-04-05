@@ -8,5 +8,5 @@ public interface IServerCoreRouteProvider
     /// <summary>
     /// 入口点路径列表
     /// </summary>
-    static abstract List<string> EntryPointList { get; }
+    List<string> EntryPointList { get; }
 }
