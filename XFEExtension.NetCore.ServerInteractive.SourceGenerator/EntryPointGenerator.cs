@@ -217,17 +217,30 @@ public class EntryPointGenerator : IIncrementalGenerator
 
             // 检查重复路径（路径相同的任意两个方法都报错，无论同步/异步）
             var hasDuplicateError = false;
-            var seenPaths = new HashSet<string>();
+            var pathToMethods = new Dictionary<string, List<MethodCandidate>>();
             foreach (var method in methodInfos)
             {
-                if (!seenPaths.Add(method.Path))
+                if (!pathToMethods.TryGetValue(method.Path, out var list))
+                {
+                    list = new List<MethodCandidate>();
+                    pathToMethods[method.Path] = list;
+                }
+                list.Add(method);
+            }
+
+            foreach (var kvp in pathToMethods)
+            {
+                if (kvp.Value.Count <= 1)
+                    continue;
+
+                hasDuplicateError = true;
+                foreach (var dup in kvp.Value)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(
                         DuplicatePathRule,
-                        method.MethodLocation.ToLocation(),
-                        method.Path,
+                        dup.MethodLocation.ToLocation(),
+                        kvp.Key,
                         className));
-                    hasDuplicateError = true;
                 }
             }
 
