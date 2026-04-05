@@ -61,4 +61,8 @@
 		<PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.0.*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
 </Project>

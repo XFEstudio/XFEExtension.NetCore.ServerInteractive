@@ -4,6 +4,7 @@ using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
+using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
@@ -130,13 +131,27 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     serviceInstance.Initialize();
 
                     // 根据次级入口点调用对应的处理方法
-                    if (serviceInstance.SyncEntryPoints.TryGetValue(execute, out var syncHandler))
+                    var hasSyncHandler = serviceInstance.SyncEntryPoints.TryGetValue(execute, out var syncHandler);
+                    var hasAsyncHandler = serviceInstance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler);
+
+                    if (hasSyncHandler || hasAsyncHandler)
                     {
-                        syncHandler();
+                        // 使用新的入口点字典系统
+                        if (hasSyncHandler)
+                            syncHandler!();
+                        if (hasAsyncHandler)
+                            await asyncHandler!();
                     }
-                    if (serviceInstance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler))
+                    else
                     {
-                        await asyncHandler();
+                        // 向后兼容：如果字典为空，使用旧的RequestReceive方法
+                        if (serviceInstance is ServerCoreStandardServiceBase baseService)
+                        {
+#pragma warning disable CS0618 // 类型或成员已过时
+                            baseService.RequestReceive();
+                            await baseService.RequestReceiveAsync();
+#pragma warning restore CS0618 // 类型或成员已过时
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -165,13 +180,27 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     instance.Initialize();
 
                     // 根据次级入口点调用对应的处理方法
-                    if (instance.SyncEntryPoints.TryGetValue(execute, out var syncHandler))
+                    var hasSyncHandler = instance.SyncEntryPoints.TryGetValue(execute, out var syncHandler);
+                    var hasAsyncHandler = instance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler);
+
+                    if (hasSyncHandler || hasAsyncHandler)
                     {
-                        syncHandler();
+                        // 使用新的入口点字典系统
+                        if (hasSyncHandler)
+                            syncHandler!();
+                        if (hasAsyncHandler)
+                            await asyncHandler!();
                     }
-                    if (instance.AsyncEntryPoints.TryGetValue(execute, out var asyncHandler))
+                    else
                     {
-                        await asyncHandler();
+                        // 向后兼容：如果字典为空，使用旧的RequestReceive方法
+                        if (instance is ServerCoreStandardServiceBase baseService)
+                        {
+#pragma warning disable CS0618 // 类型或成员已过时
+                            baseService.RequestReceive();
+                            await baseService.RequestReceiveAsync();
+#pragma warning restore CS0618 // 类型或成员已过时
+                        }
                     }
                 }
                 catch (Exception ex)
