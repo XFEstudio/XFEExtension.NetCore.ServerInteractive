@@ -34,7 +34,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <param name="serverCoreRegisterService">服务对象</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService(IServerCoreOriginalService serverCoreRegisterService)
+    public XFEServerCoreBuilder AddOriginalService(IServerCoreOriginalService serverCoreRegisterService)
     {
         ApplyParameter(serverCoreRegisterService);
         _serverCoreServiceList.Add(serverCoreRegisterService);
@@ -46,7 +46,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreOriginalService, new() => AddService(new T());
+    public XFEServerCoreBuilder AddOriginalService<T>() where T : IServerCoreOriginalService, new() => AddOriginalService(new T());
 
     /// <summary>
     /// 添加校验服务
@@ -69,7 +69,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardService<T>() where T : IServerCoreStandardService, new()
+    public XFEServerCoreBuilder AddService<T>() where T : IServerCoreStandardService, new()
     {
         // 从T的静态EntryPointList属性获取所有路由路径
         var entryPointListProperty = typeof(T).GetProperty("EntryPointList", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
@@ -90,23 +90,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
                 return inst;
             });
         }
-        return this;
-    }
-
-    /// <summary>
-    /// 注册标准服务（手动指定路由路径，用于动态路由场景）
-    /// </summary>
-    /// <typeparam name="T">服务泛型</typeparam>
-    /// <param name="route">路由路径（例如：table/get/order）</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardServiceWithRoute<T>(string route) where T : IServerCoreStandardService, new()
-    {
-        _serverStandardCoreServiceDictionary.Add(route, () =>
-        {
-            var inst = new T();
-            ApplyParameter(inst);
-            return inst;
-        });
         return this;
     }
 

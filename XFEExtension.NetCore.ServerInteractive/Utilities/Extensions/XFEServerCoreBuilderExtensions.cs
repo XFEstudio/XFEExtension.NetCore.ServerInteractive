@@ -33,7 +33,7 @@ public static class XFEServerCoreBuilderExtensions
                 if (parts.Length == 2)
                 {
                     var route = $"table/{parts[0]}/{parts[1]}";
-                    xFEServerCoreBuilder.AddStandardServiceWithRoute<XFEDataTableManagerService>(route);
+                    xFEServerCoreBuilder.AddService<XFEDataTableManagerService>();
                 }
             }
 
@@ -63,33 +63,33 @@ public static class XFEServerCoreBuilderExtensions
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddStandardService<UserLoginService<T>>()
-            .AddStandardService<UserReloginService<T>>()
-            .AddService<UserLoginAutoCleanService>();
+        public XFEServerCoreBuilder AddStandardLoginService<T>() where T : class => xFEServerCoreBuilder.AddService<UserLoginService<T>>()
+            .AddService<UserReloginService<T>>()
+            .AddOriginalService<UserLoginAutoCleanService>();
 
         /// <summary>
         /// 添加IP封禁服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddStandardService<IPBannerService>();
+        public XFEServerCoreBuilder AddIPBannerService() => xFEServerCoreBuilder.AddService<IPBannerService>();
 
         /// <summary>
         /// 添加日期统计服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddDailyCounterService() => xFEServerCoreBuilder.AddService<DailyCounterService>();
+        public XFEServerCoreBuilder AddDailyCounterService() => xFEServerCoreBuilder.AddOriginalService<DailyCounterService>();
 
         /// <summary>
         /// 添加XFE异常处理服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddXFEErrorProcessService() => xFEServerCoreBuilder.AddService<ServerCoreExceptionProcessService>();
+        public XFEServerCoreBuilder AddXFEErrorProcessService() => xFEServerCoreBuilder.AddOriginalService<ServerCoreExceptionProcessService>();
 
         /// <summary>
         /// 添加连接检查服务
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddStandardService<ConnectService>();
+        public XFEServerCoreBuilder AddConnectService() => xFEServerCoreBuilder.AddService<ConnectService>();
 
         /// <summary>
         /// 添加服务器入口点校验
@@ -101,7 +101,7 @@ public static class XFEServerCoreBuilderExtensions
         /// 添加服务器日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddStandardService<CoreLogService>();
+        public XFEServerCoreBuilder AddServerLogService() => xFEServerCoreBuilder.AddService<CoreLogService>();
 
         /// <summary>
         /// 使用XFE标准服务器核心

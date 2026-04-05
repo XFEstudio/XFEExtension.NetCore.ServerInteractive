@@ -26,7 +26,7 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                                .AddTable<Order, DataProfile>("订单", (int)UserRole.业务员, (int)UserRole.经理, (int)UserRole.业务员, (int)UserRole.业务员)  // 添加名为订单的表格Order    类   型，     AutoConfig   为      DataProfile。添加更改获取权限为业务员，移除权限为经理
                                                .AddTable<User, UserProfile>("用户", (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.经理, (int)UserRole.业务员);      // 添加名为用户的表格User类    型，       AutoConfig为         UserProfile。获取权限为业务员，添加移除更改权限为经理
                                        })
-                                       .AddStandardService<TestCoreService>()
+                                       .AddService<TestCoreService>()
                                        .Build(options =>
                                        {
                                            options.BindIP("http://localhost:3305/")

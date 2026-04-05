@@ -4,7 +4,6 @@ using XFEExtension.NetCore.AutoImplement;
 using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.DelegateExtension;
 using XFEExtension.NetCore.ServerInteractive.Exceptions;
-using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Implements.ServerService;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;

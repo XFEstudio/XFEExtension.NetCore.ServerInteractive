@@ -15,6 +15,7 @@ public partial class ConnectService : ServerCoreStandardServiceBase
     [EntryPoint("connect")]
     public async Task Connect()
     {
+        
         Console.Write("检查连接");
         await Close(DateTime.Now.ToString(CultureInfo.CurrentCulture));
     }
