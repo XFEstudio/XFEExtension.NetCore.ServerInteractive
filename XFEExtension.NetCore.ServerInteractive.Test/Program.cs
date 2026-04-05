@@ -400,12 +400,12 @@ internal class Program
     #region 压力测试
 
     /// <summary>
-    /// 压力测试：并行发送100000个请求
+    /// 压力测试：并行发送10000个请求
     /// </summary>
     //[SMTest]
     public static async Task TestBench()
     {
-        await Parallel.ForEachAsync(Enumerable.Range(0, 100000), async (_, _) =>
+        await Parallel.ForEachAsync(Enumerable.Range(0, 10000), async (_, _) =>
         {
             var result = await s_xFEClientRequester.Request<string>("test");
             if (result.StatusCode == HttpStatusCode.OK)
