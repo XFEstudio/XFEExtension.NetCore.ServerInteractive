@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
@@ -10,10 +11,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录校验服务
 /// </summary>
-public class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
+public partial class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
-    /// <inheritdoc/>
-    public override async Task RequestReceiveAsync()
+    /// <summary>
+    /// 用户登录校验入口点
+    /// </summary>
+    [EntryPoint("user/relogin")]
+    public async Task Relogin()
     {
         Console.Write("校验登录请求：");
         var session = Regex.Unescape(Json?["session"]?.ToString() ?? string.Empty);

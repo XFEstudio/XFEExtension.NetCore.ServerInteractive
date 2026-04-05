@@ -11,6 +11,12 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 public class ReloginRequestService<T> : StandardRequestServiceBase where T : IUserFaceInfo
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
+
+    /// <summary>
+    /// 路由列表
+    /// </summary>
+    public new static List<string> RouteList { get; } = new() { "user/relogin" };
+
     /// <summary>
     /// 登录校验请求服务
     /// </summary>

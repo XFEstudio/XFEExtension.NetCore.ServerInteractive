@@ -12,6 +12,12 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 public class LoginRequestService<T> : StandardRequestServiceBase where T : IUserFaceInfo
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
+
+    /// <summary>
+    /// 路由列表
+    /// </summary>
+    public new static List<string> RouteList { get; } = new() { "user/login" };
+
     /// <summary>
     /// 登录请求服务
     /// </summary>

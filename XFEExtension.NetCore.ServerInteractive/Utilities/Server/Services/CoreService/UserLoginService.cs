@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
@@ -8,10 +9,13 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <summary>
 /// 用户登录服务
 /// </summary>
-public class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
+public partial class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> where T : class
 {
-    /// <inheritdoc/>
-    public override async Task RequestReceiveAsync()
+    /// <summary>
+    /// 用户登录入口点
+    /// </summary>
+    [EntryPoint("user/login")]
+    public async Task Login()
     {
         Console.Write("登录请求");
         var account = Json?["account"]?.ToString();

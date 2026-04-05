@@ -18,7 +18,7 @@ public abstract class XFEServerCoreServiceBase : IXFEStandardServerCoreServiceBa
     /// <inheritdoc/>
     public bool IsStandardError { get => ReturnArgs.IsStandardError; set => ReturnArgs.IsStandardError = value; }
     /// <inheritdoc/>
-    public string Execute { get; set; } = string.Empty;
+    public string Route { get; set; } = string.Empty;
     /// <inheritdoc/>
     public XFEServerCore XFEServerCore { get; set; }
     /// <inheritdoc/>

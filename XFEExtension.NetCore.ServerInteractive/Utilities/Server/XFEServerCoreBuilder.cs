@@ -17,7 +17,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     private readonly List<IServerCoreOriginalService> _serverCoreServiceList = [];
     private readonly List<Func<IServerCoreVerifyService>> _serverCoreVerifyServiceList = [];
     private readonly Dictionary<string, Func<IServerCoreStandardService>> _serverStandardCoreServiceDictionary = [];
-    private readonly Dictionary<List<string>, Func<IServerCoreStandardService>> _serverMultiStandardCoreServiceDictionary = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -66,14 +65,43 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     }
 
     /// <summary>
-    /// 注册标准服务
+    /// 注册标准服务（从EntryPointList自动获取路由路径）
     /// </summary>
     /// <typeparam name="T">服务泛型</typeparam>
-    /// <param name="execute">注册执行语句</param>
     /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardService<T>(string execute) where T : IServerCoreStandardService, new()
+    public XFEServerCoreBuilder AddStandardService<T>() where T : IServerCoreStandardService, new()
     {
-        _serverStandardCoreServiceDictionary.Add(execute, () =>
+        // 从T的静态EntryPointList属性获取所有路由路径
+        var entryPointListProperty = typeof(T).GetProperty("EntryPointList", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+        if (entryPointListProperty is null)
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 没有静态的 EntryPointList 属性");
+
+        var entryPointList = entryPointListProperty.GetValue(null) as List<string>;
+        if (entryPointList is null || entryPointList.Count == 0)
+            throw new InvalidOperationException($"类型 {typeof(T).Name} 的 EntryPointList 为空");
+
+        // 为每个入口点注册服务工厂
+        foreach (var route in entryPointList)
+        {
+            _serverStandardCoreServiceDictionary.Add(route, () =>
+            {
+                var inst = new T();
+                ApplyParameter(inst);
+                return inst;
+            });
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// 注册标准服务（手动指定路由路径，用于动态路由场景）
+    /// </summary>
+    /// <typeparam name="T">服务泛型</typeparam>
+    /// <param name="route">路由路径（例如：table/get/order）</param>
+    /// <returns>XFE服务器核心构建器</returns>
+    public XFEServerCoreBuilder AddStandardServiceWithRoute<T>(string route) where T : IServerCoreStandardService, new()
+    {
+        _serverStandardCoreServiceDictionary.Add(route, () =>
         {
             var inst = new T();
             ApplyParameter(inst);
@@ -81,32 +109,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         });
         return this;
     }
-
-    /// <summary>
-    /// 注册多个执行语句的标准服务
-    /// </summary>
-    /// <param name="executeList">执行语句列表</param>
-    /// <param name="serverCoreStandardRegisterService">标准服务对象</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardService(List<string> executeList, IServerCoreStandardService serverCoreStandardRegisterService)
-    {
-        var type = serverCoreStandardRegisterService.GetType();
-        _serverMultiStandardCoreServiceDictionary.Add(executeList, () =>
-        {
-            var inst = (IServerCoreStandardService)Activator.CreateInstance(type)!;
-            ApplyParameter(inst);
-            return inst;
-        });
-        return this;
-    }
-
-    /// <summary>
-    /// 注册多个执行语句的标准服务
-    /// </summary>
-    /// <typeparam name="T">服务泛型</typeparam>
-    /// <param name="executeList">执行语句列表</param>
-    /// <returns>XFE服务器核心构建器</returns>
-    public XFEServerCoreBuilder AddStandardService<T>(List<string> executeList) where T : IServerCoreStandardService, new() => AddStandardService(executeList, new T());
 
     /// <summary>
     /// 构建XFE服务器核心
@@ -121,7 +123,6 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         }
         _xFEServerCore.ServerCoreVerifyServiceList = _serverCoreVerifyServiceList;
         _xFEServerCore.StandardCoreServiceDictionary = _serverStandardCoreServiceDictionary;
-        _xFEServerCore.StandardMultiCoreServiceDictionary = _serverMultiStandardCoreServiceDictionary;
 
         if (xFEServerCoreOptions is not null)
         {

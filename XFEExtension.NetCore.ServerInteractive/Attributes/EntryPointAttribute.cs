@@ -12,14 +12,9 @@ public class EntryPointAttribute : Attribute
     public string Path { get; }
 
     /// <summary>
-    /// 是否为异步方法
-    /// </summary>
-    public bool IsAsync { get; set; }
-
-    /// <summary>
     /// 创建次级入口点特性
     /// </summary>
-    /// <param name="path">入口点路径</param>
+    /// <param name="path">入口点路径（例如：user/login）</param>
     public EntryPointAttribute(string path)
     {
         Path = path;
