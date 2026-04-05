@@ -14,3 +14,4 @@ XFE0008 | XFEServerInteractive | Error | ClientRequestGenerator, [Documentation]
 XFE0009 | XFEServerInteractive | Error | ClientRequestGenerator, [Documentation](https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0009)
 XFE0010 | XFEServerInteractive | Error | ClientRequestGenerator, [Documentation](https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0010)
 XFE0011 | XFEServerInteractive | Error | ClientRequestGenerator, [Documentation](https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0011)
+XFE0012 | XFEServerInteractive | Error | EntryPointGenerator, [Documentation](https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0012)
