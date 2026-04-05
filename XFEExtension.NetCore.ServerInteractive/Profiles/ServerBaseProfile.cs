@@ -17,11 +17,4 @@ public partial class ServerBaseProfile : XFEProfile
     [ProfilePropertyAddGet("Current._bannedIPAddressList.CurrentProfile = Current")]
     [ProfilePropertyAddGet("return Current._bannedIPAddressList")]
     private ProfileList<IPAddressInfo> _bannedIPAddressList = [];
-    /// <summary>
-    /// 服务器上次绑定的IP地址字典
-    /// </summary>
-    [ProfileProperty]
-    [ProfilePropertyAddGet("Current._serverLastBindingAddressDictionary.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current._serverLastBindingAddressDictionary")]
-    private ProfileDictionary<string, string> _serverLastBindingAddressDictionary = [];
 }

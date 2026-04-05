@@ -46,7 +46,7 @@ public abstract class XFEServerCoreServiceBase : IXFEStandardServerCoreServiceBa
     public async Task Close(Stream stream) => await ReturnArgs.Close(stream);
 
     /// <inheritdoc/>
-    public void OK() => ReturnArgs?.OK();
+    public void OK() => ReturnArgs.OK();
 
     /// <inheritdoc/>
     public async Task CloseWithError(string message, HttpStatusCode code) => await ReturnArgs.CloseWithError(message, code);

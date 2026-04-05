@@ -7,6 +7,7 @@ using XFEExtension.NetCore.ServerInteractive.TServer.Services;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
+using UserProfile = XFEExtension.NetCore.ServerInteractive.TServer.Profiles.UserProfile;
 
 var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
     .UseXFEServer()                           // 使用XFE服务器架构

@@ -6,7 +6,7 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
-/// <inheritdoc/>
+/// <inheritdoc cref="ServerCoreStandardServiceBase" />
 public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase, IUserServiceBase
 {
     /// <inheritdoc/>
@@ -25,5 +25,5 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
     public Action<EncryptedUserLoginModel> RemoveEncryptedUserLoginModelFunction { get; set; } = _ => { };
 
     /// <inheritdoc/>
-    public ServerCoreUserServiceBase() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    protected ServerCoreUserServiceBase() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 }

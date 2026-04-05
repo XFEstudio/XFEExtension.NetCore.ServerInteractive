@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>2.5.0</Version>
+		<Version>2.5.1</Version>
 		<Title>XFEExtension.NetCore.ServerInteractive</Title>
 		<RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,7 @@
 		<PackageReleaseNotes>
       ## 调整
 
-      将绑定IP地址改为多IP绑定
+      优化结构框架
 
       ## 新增
 

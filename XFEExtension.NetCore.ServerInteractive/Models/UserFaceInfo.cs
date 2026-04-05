@@ -7,7 +7,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Models;
 /// </summary>
 public class UserFaceInfo : IUserFaceInfo
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IUserFaceInfo" />
     public string Id { get; set; } = string.Empty;
     /// <inheritdoc/>
     public string NickName { get; set; } = string.Empty;
