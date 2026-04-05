@@ -17,15 +17,16 @@ namespace XFEExtension.NetCore.ServerInteractive.SourceGenerator;
 public class EntryPointGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NonPartialClassRule = new(
-        id: "XFESI001",
+        id: "XFE0003",
         title: "包含EntryPoint方法的类必须为partial",
         messageFormat: "类'{0}'必须声明为partial以便增量生成器可以生成入口点代码",
         category: "XFEServerInteractive",
         defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "",
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor MethodMustBeParameterlessRule = new(
-        id: "XFESI002",
+        id: "XFE0004",
         title: "EntryPoint方法不能有参数",
         messageFormat: "方法'{0}'标记了[EntryPoint]但包含参数，入口点方法必须是无参数的",
         category: "XFEServerInteractive",
@@ -33,7 +34,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor InvalidReturnTypeRule = new(
-        id: "XFESI003",
+        id: "XFE0005",
         title: "EntryPoint方法返回类型无效",
         messageFormat: "方法'{0}'的返回类型'{1}'无效，入口点方法必须返回void或Task",
         category: "XFEServerInteractive",
@@ -41,7 +42,7 @@ public class EntryPointGenerator : IIncrementalGenerator
         isEnabledByDefault: true);
 
     private static readonly DiagnosticDescriptor InvalidPathCharactersRule = new(
-        id: "XFESI004",
+        id: "XFE0006",
         title: "EntryPoint路径包含无效字符",
         messageFormat: "入口点路径'{0}'包含无效字符（引号或反斜杠），这些字符不允许在路径中使用",
         category: "XFEServerInteractive",
@@ -65,10 +66,7 @@ public class EntryPointGenerator : IIncrementalGenerator
             static (spc, source) => Execute(source.Left, source.Right!, spc));
     }
 
-    private static bool IsCandidateMethod(SyntaxNode node)
-    {
-        return node is MethodDeclarationSyntax m && m.AttributeLists.Count > 0;
-    }
+    private static bool IsCandidateMethod(SyntaxNode node) => node is MethodDeclarationSyntax { AttributeLists.Count: > 0 };
 
     private static MethodCandidate? GetMethodForGeneration(GeneratorSyntaxContext context)
     {
