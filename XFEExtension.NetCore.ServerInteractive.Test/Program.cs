@@ -381,7 +381,7 @@ internal class Program
     /// <summary>
     /// 测试服务器时间端点
     /// </summary>
-    [SMTest]
+    //[SMTest]
     public static async Task TimeTest()
     {
         var result = await s_xFEClientRequester.Request<string>("time");
@@ -449,7 +449,7 @@ internal class Program
     /// <summary>
     /// 测试Order模型序列化
     /// </summary>
-    [SMTest]
+    //[SMTest]
     public static string ConvertOrder()
     {
         var order = new Order
@@ -463,7 +463,7 @@ internal class Program
     /// <summary>
     /// 测试添加订单
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task<bool> AddOrder() => await TableRequester.Add<Order>(new()
     {
         Description = "测试订单的描述",
@@ -473,7 +473,7 @@ internal class Program
     /// <summary>
     /// 测试获取订单列表
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task GetOrder()
     {
         var result = await TableRequester.Get<Order>();

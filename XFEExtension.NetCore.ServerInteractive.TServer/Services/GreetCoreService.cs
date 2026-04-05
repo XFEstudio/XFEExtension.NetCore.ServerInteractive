@@ -1,5 +1,4 @@
-﻿using System.Net;
-using XFEExtension.NetCore.ServerInteractive.Attributes;
+﻿using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
 namespace XFEExtension.NetCore.ServerInteractive.TServer.Services;
@@ -13,11 +12,7 @@ public partial class GreetCoreService : ServerCoreStandardServiceBase
     public async Task GreetEntryPoint()
     {
         var name = Json?["name"]?.GetValue<string>();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            await CloseWithError("名称不能为空", HttpStatusCode.BadRequest);
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(name)) throw Error("名称不能为空");
         await Close(new { greeting = $"你好, {name}!" });
     }
 }
