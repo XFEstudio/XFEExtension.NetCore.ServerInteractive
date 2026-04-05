@@ -220,18 +220,18 @@ namespace {namespaceName}
     public partial class {className}{typeParameters}{constraintsSuffix}
     {{
         /// <summary>
-        /// 静态构造函数，用于初始化EntryPointList
+        /// 本类型的入口点路径列表（覆盖基类的空列表）
         /// </summary>
-        static {className}()
+        public new static List<string> EntryPointList {{ get; }} = new()
         {{");
 
             // 添加所有入口点到静态列表
             foreach (var method in methodInfos)
             {
-                sourceBuilder.AppendLine($"            EntryPointList.Add(\"{EscapeStringLiteral(method.Path)}\");");
+                sourceBuilder.AppendLine($"            \"{EscapeStringLiteral(method.Path)}\",");
             }
 
-            sourceBuilder.AppendLine($@"        }}
+            sourceBuilder.AppendLine($@"        }};
 
         private Dictionary<string, Action>? _generatedSyncEntryPoints;
         /// <inheritdoc/>
