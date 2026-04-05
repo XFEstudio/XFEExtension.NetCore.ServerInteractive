@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive\XFEExtension.NetCore.ServerInteractive.csproj" />
-    <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
