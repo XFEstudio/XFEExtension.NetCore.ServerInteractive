@@ -36,4 +36,24 @@ internal static class RouteMatchHelper
 
         return !patternSegments.Where((t, i) => t != "*" && t != routeSegments[i]).Any();
     }
+
+    /// <summary>
+    /// 计算路由模式的优先级，优先级规则如下
+    /// </summary>
+    /// <param name="pattern"></param>
+    /// <returns></returns>
+    public static int GetWildcardPatternPriority(string pattern)
+    {
+        var segments = pattern.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var literalSegmentCount = 0;
+        var wildcardSegmentCount = 0;
+        foreach (var segment in segments)
+        {
+            if (segment == "*")
+                wildcardSegmentCount++;
+            else
+                literalSegmentCount++;
+        }
+        return (literalSegmentCount * 1000) - (wildcardSegmentCount * 10) + pattern.Length;
+    }
 }

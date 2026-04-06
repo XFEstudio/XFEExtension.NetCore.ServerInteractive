@@ -188,27 +188,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 }
                 else
                 {
-                    // 尝试通配符匹配：在所有命中的候选中选择最具体的模式（字面量段越多越优先），避免结果依赖注册顺序
-                    static int GetWildcardPatternPriority(string pattern)
-                    {
-                        var segments = pattern.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                        var literalSegmentCount = 0;
-                        var wildcardSegmentCount = 0;
-                        foreach (var segment in segments)
-                        {
-                            if (segment == "*")
-                                wildcardSegmentCount++;
-                            else
-                                literalSegmentCount++;
-                        }
-                        return (literalSegmentCount * 1000) - (wildcardSegmentCount * 10) + pattern.Length;
-                    }
-
                     var bestPriority = int.MinValue;
                     foreach (var (pattern, factory) in WildcardCoreServiceList)
                     {
                         if (!RouteMatchHelper.MatchWildcardRoute(pattern, route)) continue;
-                        var currentPriority = GetWildcardPatternPriority(pattern);
+                        // 尝试通配符匹配：在所有命中的候选中选择最具体的模式（字面量段越多越优先），避免结果依赖注册顺序
+                        var currentPriority = RouteMatchHelper.GetWildcardPatternPriority(pattern);
                         if (currentPriority <= bestPriority) continue;
                         bestPriority = currentPriority;
                         matchedPattern = pattern;
