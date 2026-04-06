@@ -12,7 +12,7 @@ public class EntryPointVerifyService : ServerCoreVerifyServiceBase
     /// <inheritdoc/>
     public override bool VerifyRequest()
     {
-        Console.Write($"[DEBUG]({XFEServerCore.ServerCoreName})【{ClientIP}】接收到请求");
+        Console.Write($"[INFO]({XFEServerCore.ServerCoreName})【{ClientIP}】接收到请求");
         if (ServerBaseProfile.BannedIPAddressList.Contains(ClientIP))
         {
             Console.WriteLine("-校验失败");
