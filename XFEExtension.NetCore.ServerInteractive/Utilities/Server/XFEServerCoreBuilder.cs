@@ -2,6 +2,7 @@
 using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Options;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -17,6 +18,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     private readonly List<IServerCoreOriginalService> _serverCoreServiceList = [];
     private readonly List<Func<IServerCoreVerifyService>> _serverCoreVerifyServiceList = [];
     private readonly Dictionary<string, Func<IServerCoreStandardService>> _serverStandardCoreServiceDictionary = [];
+    private readonly List<(string Pattern, Func<IServerCoreStandardService> Factory)> _serverWildcardCoreServiceList = [];
 
     /// <summary>
     /// 创建XFE服务器核心构建器
@@ -102,15 +104,24 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         if (entryPointList is null || entryPointList.Count == 0)
             throw new InvalidOperationException($"类型 {typeof(T).Name} 的 EntryPointList 为空");
 
-        // 为每个入口点注册服务工厂
+        // 为每个入口点注册服务工厂（区分精确路由和通配符路由）
         foreach (var route in entryPointList)
         {
-            _serverStandardCoreServiceDictionary.Add(route, () =>
+            Func<IServerCoreStandardService> factory = () =>
             {
                 var inst = new T();
                 ApplyParameter(inst);
                 return inst;
-            });
+            };
+
+            if (RouteMatchHelper.IsWildcardRoute(route))
+            {
+                _serverWildcardCoreServiceList.Add((route, factory));
+            }
+            else
+            {
+                _serverStandardCoreServiceDictionary.Add(route, factory);
+            }
         }
         return this;
     }
@@ -128,6 +139,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         }
         _xFEServerCore.ServerCoreVerifyServiceList = _serverCoreVerifyServiceList;
         _xFEServerCore.StandardCoreServiceDictionary = _serverStandardCoreServiceDictionary;
+        _xFEServerCore.WildcardCoreServiceList = _serverWildcardCoreServiceList;
 
         if (xFEServerCoreOptions is not null)
         {
