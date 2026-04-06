@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
@@ -26,7 +27,7 @@ public abstract class XFEServerCoreServiceBase : IXFEStandardServerCoreServiceBa
     /// <inheritdoc/>
     public ServerCoreReturnArgs ReturnArgs { get; set; }
     /// <inheritdoc/>
-    public HttpListenerRequest Request { get; set; }
+    public CyberCommRequestEventArgs Args { get; set; }
     /// <inheritdoc/>
     public async Task Send(string message) => await ReturnArgs.Send(message);
 

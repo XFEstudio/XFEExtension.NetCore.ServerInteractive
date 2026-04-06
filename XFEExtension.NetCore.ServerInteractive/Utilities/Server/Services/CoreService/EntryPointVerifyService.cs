@@ -19,7 +19,7 @@ public class EntryPointVerifyService : ServerCoreVerifyServiceBase
             throw Error("您的IP已被封禁", HttpStatusCode.Forbidden);
         }
 
-        var method = Request.HttpMethod;
+        var method = Args.RequestMethod;
         var isAllowed = (XFEServerCore.AcceptGet && method == "GET") || (XFEServerCore.AcceptPost && method == "POST");
         if (!isAllowed)
         {

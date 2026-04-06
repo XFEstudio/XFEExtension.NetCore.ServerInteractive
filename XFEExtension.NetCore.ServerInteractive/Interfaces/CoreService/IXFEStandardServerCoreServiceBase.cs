@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
@@ -40,9 +41,9 @@ public interface IXFEStandardServerCoreServiceBase : IXFEServerCoreServiceBase
     ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <summary>
-    /// 当前请求的 HttpListenerRequest 对象
+    /// 本次异常服务器参数
     /// </summary>
-    HttpListenerRequest Request { get; set; }
+    CyberCommRequestEventArgs Args { get; set; }
 
     /// <summary>
     /// Sends a reply message asynchronously using the current context.
