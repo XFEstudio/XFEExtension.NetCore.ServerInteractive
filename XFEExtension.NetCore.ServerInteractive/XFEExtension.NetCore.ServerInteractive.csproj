@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.1-preview.1.26046.1</Version>
+    <Version>3.0.2-preview.1.26046.2</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      更新版本号及依赖，完善项目信息
+      升级版本并在包中包含SourceGenerator分析器
 
-      将项目版本号提升为预览版 3.0.1-preview.1.26046.1，调整 PackageProjectUrl 指向更具体的仓库地址，并将 System.Management 包依赖从预览版降级为稳定版 10.0.5。
+      将项目版本号升级至 3.0.2-preview.1.26046.2，并在 NuGet 包中以 analyzer 形式包含 XFEExtension.NetCore.ServerInteractive.SourceGenerator 的 Release 版 DLL（netstandard2.0），路径为 analyzers/dotnet/cs，且设置为不可见。
 
       ## 新增
 
@@ -64,6 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\bin\Release\netstandard2.0\XFEExtension.NetCore.ServerInteractive.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
