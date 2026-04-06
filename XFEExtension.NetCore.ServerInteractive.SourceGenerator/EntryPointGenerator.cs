@@ -62,14 +62,24 @@ public class EntryPointGenerator : IIncrementalGenerator
         helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0012",
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor InvalidWildcardUsageRule = new(
+        id: "XFE0013",
+        title: "EntryPoint通配符使用无效",
+        messageFormat: "入口点路径'{0}'中的通配符'*'必须作为完整的路径段使用（例如：v1/*/test），不能与其他字符混合（例如：v1/a*b）",
+        category: "XFEServerInteractive",
+        defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0013",
+        isEnabledByDefault: true);
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // 找到所有标记了EntryPointAttribute的方法
         var methodDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsCandidateMethod(s),
-                transform: static (ctx, _) => GetMethodForGeneration(ctx))
-            .Where(static m => m is not null);
+                transform: static (ctx, _) => GetMethodsForGeneration(ctx))
+            .Where(static m => m is { IsDefault: false, Length: > 0 })
+            .SelectMany(static (m, _) => m);
 
         // 按类分组
         var compilationAndMethods = context.CompilationProvider.Combine(methodDeclarations.Collect());
@@ -81,25 +91,21 @@ public class EntryPointGenerator : IIncrementalGenerator
 
     private static bool IsCandidateMethod(SyntaxNode node) => node is MethodDeclarationSyntax { AttributeLists.Count: > 0 };
 
-    private static MethodCandidate? GetMethodForGeneration(GeneratorSyntaxContext context)
+    private static ImmutableArray<MethodCandidate> GetMethodsForGeneration(GeneratorSyntaxContext context)
     {
         var methodDeclaration = (MethodDeclarationSyntax)context.Node;
         var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
 
         if (methodSymbol is null)
-            return null;
+            return default;
 
-        // 检查是否有EntryPointAttribute
-        var entryPointAttribute = methodSymbol.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.Name == "EntryPointAttribute");
+        // 获取所有EntryPointAttribute
+        var entryPointAttributes = methodSymbol.GetAttributes()
+            .Where(a => a.AttributeClass?.Name == "EntryPointAttribute")
+            .ToList();
 
-        if (entryPointAttribute is null)
-            return null;
-
-        // 获取Path参数
-        var path = entryPointAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
-        if (string.IsNullOrEmpty(path))
-            return null;
+        if (entryPointAttributes.Count == 0)
+            return default;
 
         // 检查返回类型：根据返回类型（而非async关键字）判断同步/异步
         // 注意：Task和Task<T>都是有效的异步返回类型（Task<T>可通过协变赋值给Func<Task>）
@@ -126,23 +132,34 @@ public class EntryPointGenerator : IIncrementalGenerator
             ? LocationInfo.From(classDeclaration.Identifier.GetLocation())
             : methodLocation;
 
-        return new MethodCandidate(
-            containingType.ContainingNamespace.ToDisplayString(),
-            containingType.Name,
-            methodSymbol.Name,
-            path!,
-            isAsync,
-            isContainingTypePartial,
-            methodSymbol.Parameters.Length,
-            hasValidReturnType,
-            returnType.ToDisplayString(),
-            methodLocation,
-            classLocation,
-            typeParameters,
-            typeConstraints);
+        var results = new List<MethodCandidate>();
+
+        foreach (var attr in entryPointAttributes)
+        {
+            var rawPath = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
+            // 空路径或 "*" 均视为全匹配通配符；非空路径去除首尾 '/' 以与运行时路由格式对齐
+            var path = string.IsNullOrEmpty(rawPath) ? "*" : rawPath!.Trim('/');
+
+            results.Add(new MethodCandidate(
+                containingType.ContainingNamespace.ToDisplayString(),
+                containingType.Name,
+                methodSymbol.Name,
+                path!,
+                isAsync,
+                isContainingTypePartial,
+                methodSymbol.Parameters.Length,
+                hasValidReturnType,
+                returnType.ToDisplayString(),
+                methodLocation,
+                classLocation,
+                typeParameters,
+                typeConstraints));
+        }
+
+        return results.Count == 0 ? default : ImmutableArray.CreateRange(results);
     }
 
-    private static void Execute(Compilation compilation, ImmutableArray<MethodCandidate?> methods, SourceProductionContext context)
+    private static void Execute(Compilation compilation, ImmutableArray<MethodCandidate> methods, SourceProductionContext context)
     {
         if (methods.IsDefaultOrEmpty)
             return;
@@ -152,8 +169,6 @@ public class EntryPointGenerator : IIncrementalGenerator
         // 校验并报告诊断信息
         foreach (var method in methods)
         {
-            if (method is null) continue;
-
             var isValid = true;
 
             // 校验：包含类型必须为partial
@@ -195,6 +210,24 @@ public class EntryPointGenerator : IIncrementalGenerator
                     method.MethodLocation.ToLocation(),
                     method.Path));
                 isValid = false;
+            }
+
+            // 校验：通配符 '*' 必须作为完整路径段使用
+            if (method.Path.Contains("*") && method.Path != "*")
+            {
+                var segments = method.Path.Split('/');
+                foreach (var segment in segments)
+                {
+                    if (segment.Contains("*") && segment != "*")
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            InvalidWildcardUsageRule,
+                            method.MethodLocation.ToLocation(),
+                            method.Path));
+                        isValid = false;
+                        break;
+                    }
+                }
             }
 
             if (isValid)

@@ -60,6 +60,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     internal Dictionary<string, Func<IServerCoreStandardService>> StandardCoreServiceDictionary = [];
     /// <summary>
+    /// 通配符路由服务工厂列表（模式 → 工厂）
+    /// </summary>
+    internal List<(string Pattern, Func<IServerCoreStandardService> Factory)> WildcardCoreServiceList = [];
+    /// <summary>
     /// 网络通讯服务器
     /// </summary>
     public CyberCommServer CyberCommServer { get; internal set; } = new();
@@ -175,8 +179,29 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 Console.Write($"({ServerCoreName})【{clientIP}】请求路由-{route}：");
                 var stopWatch = Stopwatch.StartNew();
 
-                // 在字典中查找对应的服务
-                if (StandardCoreServiceDictionary.TryGetValue(route, out var serviceFactory))
+                // 在字典中查找对应的服务（先精确匹配，再通配符匹配）
+                Func<IServerCoreStandardService>? serviceFactory = null;
+                string? matchedPattern = null;
+
+                if (StandardCoreServiceDictionary.TryGetValue(route, out serviceFactory))
+                {
+                    matchedPattern = route;
+                }
+                else
+                {
+                    // 尝试通配符匹配
+                    foreach (var (pattern, factory) in WildcardCoreServiceList)
+                    {
+                        if (RouteMatchHelper.MatchWildcardRoute(pattern, route))
+                        {
+                            matchedPattern = pattern;
+                            serviceFactory = factory;
+                            break;
+                        }
+                    }
+                }
+
+                if (serviceFactory is not null && matchedPattern is not null)
                 {
                     var serviceInstance = serviceFactory();
                     try
@@ -188,10 +213,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         serviceInstance.ReturnArgs = r;
                         serviceInstance.Initialize();
 
-                        // 根据路由调用对应的处理方法（同步与异步互斥，优先同步）
-                        if (serviceInstance.SyncEntryPoints.TryGetValue(route, out var syncHandler))
+                        // 根据匹配的模式调用对应的处理方法（同步与异步互斥，优先同步）
+                        if (serviceInstance.SyncEntryPoints.TryGetValue(matchedPattern, out var syncHandler))
                             syncHandler();
-                        else if (serviceInstance.AsyncEntryPoints.TryGetValue(route, out var asyncHandler))
+                        else if (serviceInstance.AsyncEntryPoints.TryGetValue(matchedPattern, out var asyncHandler))
                             await asyncHandler();
                         else
                         {
