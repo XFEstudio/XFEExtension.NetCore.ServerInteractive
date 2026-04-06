@@ -101,6 +101,23 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
+            else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
+            {
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
+                result.StatusCode = code;
+                if (code == HttpStatusCode.OK)
+                {
+                    var requestResult = instance.ProcessResponse?.Invoke(response);
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
+                    result.Message = "Success";
+                    result.Result = requestResult ?? new();
+                }
+                else
+                {
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+                    result.Message = response;
+                }
+            }
             else if (TryMatchWildcardStandardService(serviceName, out var wildcardFactory, out var matchedPattern))
             {
                 var xFEService = wildcardFactory!();
@@ -134,23 +151,6 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
-            else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
-            {
-                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
-                result.StatusCode = code;
-                if (code == HttpStatusCode.OK)
-                {
-                    var requestResult = instance.ProcessResponse?.Invoke(response);
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
-                    result.Message = "Success";
-                    result.Result = requestResult ?? new();
-                }
-                else
-                {
-                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
-                    result.Message = response;
-                }
-            }
             return result;
         }
         catch (Exception ex)
@@ -163,7 +163,7 @@ public abstract class XFEClientRequester : IRequesterBase
     }
 
     /// <summary>
-    /// 尝试通过通配符模式匹配标准请求服务
+    /// 尝试通过通配符模式匹配标准请求服务（选择最具体的匹配模式，与服务端行为一致）
     /// </summary>
     /// <param name="serviceName">请求路径</param>
     /// <param name="factory">匹配到的服务工厂</param>
@@ -171,17 +171,36 @@ public abstract class XFEClientRequester : IRequesterBase
     /// <returns>是否匹配成功</returns>
     private bool TryMatchWildcardStandardService(string serviceName, out Func<IStandardRequestService>? factory, out string? matchedPattern)
     {
-        foreach (var (pattern, serviceFactory) in WildcardStandardRequestServiceList)
+        // 在所有命中的候选中选择最具体的模式（字面量段越多越优先），避免结果依赖注册顺序
+        static int GetWildcardPatternPriority(string pattern)
         {
-            if (RouteMatchHelper.MatchWildcardRoute(pattern, serviceName))
+            var segments = pattern.Split('/');
+            var literalSegmentCount = 0;
+            var wildcardSegmentCount = 0;
+            foreach (var segment in segments)
             {
-                factory = serviceFactory;
-                matchedPattern = pattern;
-                return true;
+                if (segment == "*")
+                    wildcardSegmentCount++;
+                else
+                    literalSegmentCount++;
             }
+            return (literalSegmentCount * 1000) - (wildcardSegmentCount * 10) + pattern.Length;
         }
+
+        var bestPriority = int.MinValue;
         factory = null;
         matchedPattern = null;
-        return false;
+
+        foreach (var (pattern, serviceFactory) in WildcardStandardRequestServiceList)
+        {
+            if (!RouteMatchHelper.MatchWildcardRoute(pattern, serviceName)) continue;
+            var currentPriority = GetWildcardPatternPriority(pattern);
+            if (currentPriority <= bestPriority) continue;
+            bestPriority = currentPriority;
+            factory = serviceFactory;
+            matchedPattern = pattern;
+        }
+
+        return factory is not null;
     }
 }
