@@ -136,12 +136,9 @@ public class EntryPointGenerator : IIncrementalGenerator
 
         foreach (var attr in entryPointAttributes)
         {
-            var path = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
-            // 空路径或 "*" 均视为全匹配通配符
-            if (string.IsNullOrEmpty(path))
-                path = "*";
-            else
-                path = path.Trim('/');
+            var rawPath = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
+            // 空路径或 "*" 均视为全匹配通配符；非空路径去除首尾 '/' 以与运行时路由格式对齐
+            var path = string.IsNullOrEmpty(rawPath) ? "*" : rawPath!.Trim('/');
 
             results.Add(new MethodCandidate(
                 containingType.ContainingNamespace.ToDisplayString(),
