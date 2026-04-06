@@ -41,9 +41,15 @@ public interface IXFEStandardServerCoreServiceBase : IXFEServerCoreServiceBase
     ServerCoreReturnArgs ReturnArgs { get; set; }
 
     /// <summary>
-    /// 本次异常服务器参数
+    /// 当前请求的事件参数
     /// </summary>
     CyberCommRequestEventArgs Args { get; set; }
+
+    /// <summary>
+    /// 当前请求对象。
+    /// </summary>
+    [Obsolete("Use Args.Request instead. This compatibility shim will be removed in a future release.")]
+    HttpListenerRequest? Request => Args?.Request;
 
     /// <summary>
     /// Sends a reply message asynchronously using the current context.
