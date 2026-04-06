@@ -5,10 +5,11 @@ namespace XFEExtension.NetCore.ServerInteractive.TServer.Services;
 
 public partial class TestCoreService : ServerCoreStandardServiceBase
 {
-    [EntryPoint("test")]
-    public async Task TestEntryPoint()
-    {
-        Console.Write($"收到测试请求");
-        await Close("完成");
-    }
+    [EntryPoint("v1/test/*")]
+    public async Task TestEntryPoint() => await Close($"""
+                                                       Hello from {XFEServerCore.ServerCoreName}：
+                                                           Your route is {Route};
+                                                           Your IP is {ClientIP};
+                                                           Your headers are {string.Join(',', Args.Request.Headers)}
+                                                       """);
 }

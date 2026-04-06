@@ -44,7 +44,7 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                     errorMessage += $"：{currentException.Message}";
                     currentException = currentException.InnerException;
                 }
-                errorInfo = "服务器内部异常";
+                errorInfo = errorMessage.Contains("请求的路由未注册") ? "路由未找到" : "服务器内部异常";
                 Console.WriteLine();
                 Console.WriteLine($"[WARN]【{errorInfo}】{errorMessage}");
                 if (e.ServerException?.InnerException?.StackTrace is not null)

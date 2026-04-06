@@ -31,9 +31,6 @@ internal static class RouteMatchHelper
         var patternSegments = pattern.Split('/');
         var routeSegments = route.Split('/');
 
-        if (patternSegments.Length != routeSegments.Length)
-            return false;
-
         return !patternSegments.Where((t, i) => t != "*" && t != routeSegments[i]).Any();
     }
 
