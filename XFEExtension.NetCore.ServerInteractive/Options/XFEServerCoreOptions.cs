@@ -24,6 +24,14 @@ public class XFEServerCoreOptions
     /// </summary>
     public bool AcceptNonStandardJson { get; set; } = true;
     /// <summary>
+    /// 是否接收GET请求
+    /// </summary>
+    public bool AcceptGet { get; set; } = false;
+    /// <summary>
+    /// 是否接收POST请求
+    /// </summary>
+    public bool AcceptPost { get; set; } = true;
+    /// <summary>
     /// 获取IP地址的函数，默认为从请求事件参数中获取客户端IP地址
     /// </summary>
     public Func<CyberCommRequestEventArgs, string> GetIPFunction { get; set; } = args => args.ClientIP;
