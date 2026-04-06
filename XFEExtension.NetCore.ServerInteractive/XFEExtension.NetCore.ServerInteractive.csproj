@@ -65,4 +65,8 @@
     <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\bin\$(Configuration)\netstandard2.0\XFEExtension.NetCore.ServerInteractive.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
 </Project>
