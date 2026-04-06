@@ -10,7 +10,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 public class ClientRequestResult<T> : IRequestResult<T>
 {
     /// <inheritdoc/>
-    public T Result { get; set; }
+    public T Result { get; set; } = default!;
     /// <inheritdoc/>
     public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
     /// <inheritdoc/>

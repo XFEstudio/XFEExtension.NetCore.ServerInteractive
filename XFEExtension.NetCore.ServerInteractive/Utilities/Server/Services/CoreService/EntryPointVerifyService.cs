@@ -19,7 +19,7 @@ public class EntryPointVerifyService : ServerCoreVerifyServiceBase
             throw Error("您的IP已被封禁", HttpStatusCode.Forbidden);
         }
 
-        if (Request.HttpMethod != "POST")
+        if (!XFEServerCore.AcceptNonStandardJson && Request.HttpMethod != "POST")
         {
             Console.WriteLine("-校验失败");
             throw Error("请求方法必须为POST", HttpStatusCode.MethodNotAllowed);
