@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.2-preview.1.26046.4</Version>
+    <Version>3.0.2-preview.1.26046.5</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
