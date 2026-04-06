@@ -77,12 +77,23 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         ArgumentException.ThrowIfNullOrWhiteSpace(route, nameof(route));
         route = route.Trim('/');
 
-        _serverStandardCoreServiceDictionary.Add(route, () =>
+        Func<IServerCoreStandardService> factory = () =>
         {
             var inst = new T();
             ApplyParameter(inst);
             return inst;
-        });
+        };
+
+        if (RouteMatchHelper.IsWildcardRoute(route))
+        {
+            if (_serverWildcardCoreServiceList.Any(entry => entry.Pattern == route))
+                throw new InvalidOperationException($"通配符路由 '{route}' 已重复注册（服务类型：{typeof(T).Name}）");
+            _serverWildcardCoreServiceList.Add((route, factory));
+        }
+        else
+        {
+            _serverStandardCoreServiceDictionary.Add(route, factory);
+        }
         return this;
     }
 
@@ -116,6 +127,8 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
 
             if (RouteMatchHelper.IsWildcardRoute(route))
             {
+                if (_serverWildcardCoreServiceList.Any(entry => entry.Pattern == route))
+                    throw new InvalidOperationException($"通配符路由 '{route}' 已重复注册（服务类型：{typeof(T).Name}）");
                 _serverWildcardCoreServiceList.Add((route, factory));
             }
             else

@@ -140,6 +140,8 @@ public class EntryPointGenerator : IIncrementalGenerator
             // 空路径或 "*" 均视为全匹配通配符
             if (string.IsNullOrEmpty(path))
                 path = "*";
+            else
+                path = path.Trim('/');
 
             results.Add(new MethodCandidate(
                 containingType.ContainingNamespace.ToDisplayString(),
