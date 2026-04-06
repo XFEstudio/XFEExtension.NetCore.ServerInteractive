@@ -33,6 +33,9 @@ var server = XFEServerBuilder.CreateBuilder() // 创建服务器构建器
                                        .AddService<TimeCoreService>()
                                        .Build(options =>
                                        {
+                                           options.AcceptGet = true;
+                                           options.AcceptPost = true;
+                                           options.AcceptNonStandardJson = true;
                                            options.MainEntryPoint = "api";
                                            options.BindIP("http://localhost:3305/")
                                                   .BindIP("https://localhost:3306/");
