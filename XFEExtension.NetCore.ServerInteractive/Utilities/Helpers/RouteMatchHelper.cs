@@ -15,7 +15,7 @@ internal static class RouteMatchHelper
     /// <summary>
     /// 将路由模式与实际路由进行通配符匹配
     /// <para>支持的通配符：</para>
-    /// <para>- <c>*</c>：匹配任意路径</para>
+    /// <para>- <c>*</c>：匹配任意路径（空路径在源生成器中已被规范化为 <c>*</c>）</para>
     /// <para>- <c>v1/*</c>：匹配 v1/ 后跟一个路径段</para>
     /// <para>- <c>v1/*/test</c>：匹配 v1/ 后跟任意一个段再跟 /test</para>
     /// </summary>

@@ -136,7 +136,7 @@ public class EntryPointGenerator : IIncrementalGenerator
 
         foreach (var attr in entryPointAttributes)
         {
-            var path = attr.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? "*";
+            var path = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
             // 空路径或 "*" 均视为全匹配通配符
             if (string.IsNullOrEmpty(path))
                 path = "*";
@@ -145,7 +145,7 @@ public class EntryPointGenerator : IIncrementalGenerator
                 containingType.ContainingNamespace.ToDisplayString(),
                 containingType.Name,
                 methodSymbol.Name,
-                path,
+                path!,
                 isAsync,
                 isContainingTypePartial,
                 methodSymbol.Parameters.Length,
