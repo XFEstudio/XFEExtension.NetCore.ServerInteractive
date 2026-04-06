@@ -3,6 +3,7 @@ using XFEExtension.NetCore.ServerInteractive.Implements;
 using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Options;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
@@ -15,6 +16,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
     private readonly Dictionary<string, Func<IRequestService>> _requestServiceDictionary = [];
     private readonly Dictionary<string, Func<IStandardRequestService>> _standardRequestServiceDictionary = [];
+    private readonly List<(string Pattern, Func<IStandardRequestService> Factory)> _wildcardStandardRequestServiceList = [];
     private readonly Dictionary<string, StandardClientInstanceRequest> _standardClientInstanceRequestDictionary = [];
     /// <summary>
     /// 创建构建器
@@ -63,15 +65,29 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         if (routeKeys.Count == 0)
             throw new InvalidOperationException($"类型 {typeof(T).Name} 的 RequestPoints/ResponsePoints/RequestRouteMap 为空，请确保已使用[Request]或[Response]标记方法");
 
-        // 为每个路径/名称注册服务工厂
+        // 为每个路径/名称注册服务工厂（通配符路径注册到通配符列表，其余注册到标准字典）
         foreach (var key in routeKeys)
         {
-            _standardRequestServiceDictionary.Add(key, () =>
+            if (RouteMatchHelper.IsWildcardRoute(key))
             {
-                var inst = new T();
-                ApplyParameter(inst);
-                return inst;
-            });
+                if (_wildcardStandardRequestServiceList.Any(w => w.Pattern == key))
+                    throw new InvalidOperationException($"通配符路由 '{key}' 重复注册");
+                _wildcardStandardRequestServiceList.Add((key, () =>
+                {
+                    var inst = new T();
+                    ApplyParameter(inst);
+                    return inst;
+                }));
+            }
+            else
+            {
+                _standardRequestServiceDictionary.Add(key, () =>
+                {
+                    var inst = new T();
+                    ApplyParameter(inst);
+                    return inst;
+                });
+            }
         }
         return this;
     }
@@ -112,6 +128,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
         _xFEClientRequester.DeviceInfo = options.DeviceInfo;
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.StandardRequestServiceDictionary = _standardRequestServiceDictionary;
+        _xFEClientRequester.WildcardStandardRequestServiceList = _wildcardStandardRequestServiceList;
         _xFEClientRequester.StandardClientInstanceRequestDictionary = _standardClientInstanceRequestDictionary;
         return _xFEClientRequester;
     }

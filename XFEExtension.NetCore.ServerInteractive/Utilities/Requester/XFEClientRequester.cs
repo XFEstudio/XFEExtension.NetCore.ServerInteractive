@@ -20,6 +20,7 @@ public abstract class XFEClientRequester : IRequesterBase
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
     internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
+    internal List<(string Pattern, Func<IStandardRequestService> Factory)> WildcardStandardRequestServiceList = [];
     internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
@@ -100,6 +101,39 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
+            else if (TryMatchWildcardStandardService(serviceName, out var wildcardFactory, out var matchedPattern))
+            {
+                var xFEService = wildcardFactory!();
+                xFEService.XFEClientRequester = this;
+                xFEService.DeviceInfo = DeviceInfo;
+                xFEService.Parameters = parameters;
+                // 通配符匹配：Route设为实际请求路径，以便服务方法中可通过Route属性查看具体路径
+                xFEService.Route = serviceName;
+                if (!xFEService.RequestPoints.TryGetValue(matchedPattern!, out var requestHandler))
+                    throw new XFERequesterException($"未找到'{serviceName}'（通配符模式'{matchedPattern}'）对应的请求处理方法（[Request]标记的方法）");
+                var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", requestHandler(), _jsonSerializerOptions);
+                result.StatusCode = code;
+                if (code == HttpStatusCode.OK)
+                {
+                    xFEService.Response = response;
+                    xFEService.UnescapedResponse = Regex.Unescape(response);
+                    if (xFEService.ResponsePoints.TryGetValue(matchedPattern!, out var responseHandler))
+                    {
+                        result.Result = responseHandler();
+                    }
+                    else
+                    {
+                        result.Result = response;
+                    }
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl("Success", code));
+                    result.Message = "Success";
+                }
+                else
+                {
+                    MessageReceived?.Invoke(this, new ServerInteractiveEventArgsImpl(response, code));
+                    result.Message = response;
+                }
+            }
             else if (StandardClientInstanceRequestDictionary.TryGetValue(serviceName, out var instance))
             {
                 var (response, code) = await InteractiveHelper.GetServerResponse(RequestAddress + $"/{serviceName}", instance.ConstructBody(Session, DeviceInfo, parameters), _jsonSerializerOptions);
@@ -126,5 +160,28 @@ public abstract class XFEClientRequester : IRequesterBase
             result.StatusCode = HttpStatusCode.InternalServerError;
             return result;
         }
+    }
+
+    /// <summary>
+    /// 尝试通过通配符模式匹配标准请求服务
+    /// </summary>
+    /// <param name="serviceName">请求路径</param>
+    /// <param name="factory">匹配到的服务工厂</param>
+    /// <param name="matchedPattern">匹配到的通配符模式</param>
+    /// <returns>是否匹配成功</returns>
+    private bool TryMatchWildcardStandardService(string serviceName, out Func<IStandardRequestService>? factory, out string? matchedPattern)
+    {
+        foreach (var (pattern, serviceFactory) in WildcardStandardRequestServiceList)
+        {
+            if (RouteMatchHelper.MatchWildcardRoute(pattern, serviceName))
+            {
+                factory = serviceFactory;
+                matchedPattern = pattern;
+                return true;
+            }
+        }
+        factory = null;
+        matchedPattern = null;
+        return false;
     }
 }
