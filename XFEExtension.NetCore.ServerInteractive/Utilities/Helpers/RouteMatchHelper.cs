@@ -34,14 +34,6 @@ internal static class RouteMatchHelper
         if (patternSegments.Length != routeSegments.Length)
             return false;
 
-        for (var i = 0; i < patternSegments.Length; i++)
-        {
-            if (patternSegments[i] == "*")
-                continue;
-            if (patternSegments[i] != routeSegments[i])
-                return false;
-        }
-
-        return true;
+        return !patternSegments.Where((t, i) => t != "*" && t != routeSegments[i]).Any();
     }
 }

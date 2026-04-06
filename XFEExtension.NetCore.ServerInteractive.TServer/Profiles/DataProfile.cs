@@ -6,12 +6,12 @@ namespace XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
 public partial class DataProfile : XFEProfile
 {
     [ProfileProperty]
-    [ProfilePropertyAddGet("Current.personTable.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current.personTable")]
-    private ProfileList<Person> personTable = [];
+    [ProfilePropertyAddGet("Current._personTable.CurrentProfile = Current")]
+    [ProfilePropertyAddGet("return Current._personTable")]
+    private ProfileList<Person> _personTable = [];
 
     [ProfileProperty]
-    [ProfilePropertyAddGet("Current.orderTable.CurrentProfile = Current")]
-    [ProfilePropertyAddGet("return Current.orderTable")]
-    private ProfileList<Order> orderTable = [];
+    [ProfilePropertyAddGet("Current._orderTable.CurrentProfile = Current")]
+    [ProfilePropertyAddGet("return Current._orderTable")]
+    private ProfileList<Order> _orderTable = [];
 }

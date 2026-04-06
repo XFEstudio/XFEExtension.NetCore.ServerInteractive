@@ -1,6 +1,5 @@
 ﻿using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
-using XFEExtension.NetCore.ServerInteractive.TServer;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.TServer.Profiles;
 using XFEExtension.NetCore.ServerInteractive.TServer.Services;

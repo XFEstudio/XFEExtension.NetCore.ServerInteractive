@@ -74,7 +74,7 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
     /// <returns>XFE服务器核心构建器</returns>
     public XFEServerCoreBuilder AddServiceWithRoute<T>(string route) where T : IServerCoreStandardService, new()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(route, nameof(route));
+        ArgumentException.ThrowIfNullOrWhiteSpace(route);
         route = route.Trim('/');
 
         Func<IServerCoreStandardService> factory = () =>

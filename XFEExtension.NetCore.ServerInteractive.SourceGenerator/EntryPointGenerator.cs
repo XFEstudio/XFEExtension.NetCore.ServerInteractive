@@ -132,31 +132,9 @@ public class EntryPointGenerator : IIncrementalGenerator
             ? LocationInfo.From(classDeclaration.Identifier.GetLocation())
             : methodLocation;
 
-        var results = new List<MethodCandidate>();
+        var results = (from attr in entryPointAttributes select attr.ConstructorArguments.FirstOrDefault().Value?.ToString() into rawPath select string.IsNullOrEmpty(rawPath) ? "*" : rawPath!.Trim('/') into path select new MethodCandidate(containingType.ContainingNamespace.ToDisplayString(), containingType.Name, methodSymbol.Name, path, isAsync, isContainingTypePartial, methodSymbol.Parameters.Length, hasValidReturnType, returnType.ToDisplayString(), methodLocation, classLocation, typeParameters, typeConstraints)).ToList();
 
-        foreach (var attr in entryPointAttributes)
-        {
-            var rawPath = attr.ConstructorArguments.FirstOrDefault().Value?.ToString();
-            // 空路径或 "*" 均视为全匹配通配符；非空路径去除首尾 '/' 以与运行时路由格式对齐
-            var path = string.IsNullOrEmpty(rawPath) ? "*" : rawPath!.Trim('/');
-
-            results.Add(new MethodCandidate(
-                containingType.ContainingNamespace.ToDisplayString(),
-                containingType.Name,
-                methodSymbol.Name,
-                path!,
-                isAsync,
-                isContainingTypePartial,
-                methodSymbol.Parameters.Length,
-                hasValidReturnType,
-                returnType.ToDisplayString(),
-                methodLocation,
-                classLocation,
-                typeParameters,
-                typeConstraints));
-        }
-
-        return results.Count == 0 ? default : ImmutableArray.CreateRange(results);
+        return results.Count == 0 ? default : [..results];
     }
 
     private static void Execute(Compilation compilation, ImmutableArray<MethodCandidate> methods, SourceProductionContext context)
@@ -216,17 +194,13 @@ public class EntryPointGenerator : IIncrementalGenerator
             if (method.Path.Contains("*") && method.Path != "*")
             {
                 var segments = method.Path.Split('/');
-                foreach (var segment in segments)
+                if (segments.Any(segment => segment.Contains("*") && segment != "*"))
                 {
-                    if (segment.Contains("*") && segment != "*")
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(
-                            InvalidWildcardUsageRule,
-                            method.MethodLocation.ToLocation(),
-                            method.Path));
-                        isValid = false;
-                        break;
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        InvalidWildcardUsageRule,
+                        method.MethodLocation.ToLocation(),
+                        method.Path));
+                    isValid = false;
                 }
             }
 
@@ -255,17 +229,14 @@ public class EntryPointGenerator : IIncrementalGenerator
             {
                 if (!pathToMethods.TryGetValue(method.Path, out var list))
                 {
-                    list = new List<MethodCandidate>();
+                    list = [];
                     pathToMethods[method.Path] = list;
                 }
                 list.Add(method);
             }
 
-            foreach (var kvp in pathToMethods)
+            foreach (var kvp in pathToMethods.Where(kvp => kvp.Value.Count > 1))
             {
-                if (kvp.Value.Count <= 1)
-                    continue;
-
                 hasDuplicateError = true;
                 foreach (var dup in kvp.Value)
                 {
@@ -300,13 +271,11 @@ namespace {namespaceName}
         /// </summary>
         public override List<string> EntryPointList {{ get; }} = new()
         {{");
-
             // 添加所有入口点到静态列表
             foreach (var method in methodInfos)
             {
                 sourceBuilder.AppendLine($"            \"{EscapeStringLiteral(method.Path)}\",");
             }
-
             sourceBuilder.AppendLine($@"        }};
 
         private Dictionary<string, Action>? _generatedSyncEntryPoints;
@@ -315,13 +284,11 @@ namespace {namespaceName}
         {{
             get => _generatedSyncEntryPoints ??= new Dictionary<string, Action>()
             {{");
-
             // 添加同步入口点
             foreach (var method in methodInfos.Where(m => !m.IsAsync))
             {
                 sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Path)}\", {method.MethodName} }},");
             }
-
             sourceBuilder.AppendLine($@"            }};
         }}
 
@@ -352,6 +319,6 @@ namespace {namespaceName}
     /// </summary>
     private static string EscapeStringLiteral(string value)
     {
-        return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        return value.Replace("\\", @"\\").Replace("\"", "\\\"");
     }
 }

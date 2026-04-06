@@ -30,7 +30,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// <summary>
     /// 是否接收GET请求
     /// </summary>
-    public bool AcceptGet { get; set; } = false;
+    public bool AcceptGet { get; set; }
     /// <summary>
     /// 是否接收POST请求
     /// </summary>
@@ -180,10 +180,9 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 var stopWatch = Stopwatch.StartNew();
 
                 // 在字典中查找对应的服务（先精确匹配，再通配符匹配）
-                Func<IServerCoreStandardService>? serviceFactory = null;
                 string? matchedPattern = null;
 
-                if (StandardCoreServiceDictionary.TryGetValue(route, out serviceFactory))
+                if (StandardCoreServiceDictionary.TryGetValue(route, out var serviceFactory))
                 {
                     matchedPattern = route;
                 }
@@ -192,12 +191,10 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     // 尝试通配符匹配
                     foreach (var (pattern, factory) in WildcardCoreServiceList)
                     {
-                        if (RouteMatchHelper.MatchWildcardRoute(pattern, route))
-                        {
-                            matchedPattern = pattern;
-                            serviceFactory = factory;
-                            break;
-                        }
+                        if (!RouteMatchHelper.MatchWildcardRoute(pattern, route)) continue;
+                        matchedPattern = pattern;
+                        serviceFactory = factory;
+                        break;
                     }
                 }
 
