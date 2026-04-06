@@ -28,6 +28,14 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     /// </summary>
     public bool AcceptNonStandardJson { get; set; } = true;
     /// <summary>
+    /// 是否接收GET请求
+    /// </summary>
+    public bool AcceptGet { get; set; } = false;
+    /// <summary>
+    /// 是否接收POST请求
+    /// </summary>
+    public bool AcceptPost { get; set; } = true;
+    /// <summary>
     /// 服务器核心错误委托
     /// </summary>
     public XFEEventHandler<XFEServerCore, ServerCoreErrorEventArgs>? ServerCoreError { get; set; }
@@ -62,112 +70,77 @@ public abstract class XFEServerCore : ServerCoreServiceBase
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
-        var r = new ServerCoreReturnArgs
-        {
-            Args = e
-        };
-        var clientIP = e.ClientIP;
-        try { clientIP = GetIPFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
-        r.ClientIP = clientIP;
         try
         {
-            foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList.Select(serverCoreVerifyFactory => serverCoreVerifyFactory()))
+            var r = new ServerCoreReturnArgs
             {
-                serverCoreVerifyService.ReturnArgs = r;
-                serverCoreVerifyService.Request = e.Request;
-                if (!serverCoreVerifyService.VerifyRequest() || !await serverCoreVerifyService.VerifyRequestAsync())
-                    return;
+                Args = e
+            };
+            var clientIP = e.ClientIP;
+            try { clientIP = GetIPFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
+            r.ClientIP = clientIP;
+            try
+            {
+                foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList.Select(serverCoreVerifyFactory => serverCoreVerifyFactory()))
+                {
+                    serverCoreVerifyService.ReturnArgs = r;
+                    serverCoreVerifyService.Request = e.Request;
+                    if (!serverCoreVerifyService.VerifyRequest() || !await serverCoreVerifyService.VerifyRequestAsync())
+                        return;
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            ServerCoreError?.Invoke(this, new()
-            {
-                StatusCode = r.StatusCode,
-                Handled = r.Handled,
-                ReturnArgs = r,
-                ServerException = new ProcessStandardRequestException("请求校验失败", ex)
-            });
-            return;
-        }
-
-        // 从URL路径中提取路由信息
-        QueryableJsonNode? queryableJsonNode = null;
-        try
-        {
-            // 尝试解析请求体为JSON（可选）
-            if (e.RequestBody is not null)
-            {
-                queryableJsonNode = e.RequestBody;
-            }
-        }
-        catch (Exception ex)
-        {
-            if (!AcceptNonStandardJson)
+            catch (Exception ex)
             {
                 ServerCoreError?.Invoke(this, new()
                 {
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = r.StatusCode,
+                    Handled = r.Handled,
                     ReturnArgs = r,
-                    ServerException = new ProcessStandardRequestException("无法转换为QueryableJsonNode", ex)
-                });
-                return;
-            }
-        }
-
-        try
-        {
-            // 从URL中提取路由：www.xxx.com/[mainEntryPoint?][/subEntryPoint?]*
-            var url = e.Request.Url;
-            if (url is null)
-            {
-                ServerCoreError?.Invoke(this, new()
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    ReturnArgs = r,
-                    ServerException = new ProcessStandardRequestException("请求URL为空")
+                    ServerException = new ProcessStandardRequestException("请求校验失败", ex)
                 });
                 return;
             }
 
-            var segments = url.Segments.Skip(1).Select(s => s.TrimEnd('/')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
-
-            // 如果MainEntryPoint不为空，则需要匹配主入口点
-            string route;
-            if (!string.IsNullOrEmpty(MainEntryPoint))
+            // 从URL路径中提取路由信息
+            QueryableJsonNode? queryableJsonNode = null;
+            try
             {
-                if (segments.Length == 0 || segments[0] != MainEntryPoint)
+                // 尝试解析请求体为JSON（可选）
+                if (e.RequestBody is not null)
+                {
+                    queryableJsonNode = e.RequestBody;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!AcceptNonStandardJson)
                 {
                     ServerCoreError?.Invoke(this, new()
                     {
                         StatusCode = HttpStatusCode.BadRequest,
                         ReturnArgs = r,
-                        ServerException = new ProcessStandardRequestException($"请求路径不匹配主入口点: {MainEntryPoint}")
+                        ServerException = new ProcessStandardRequestException("无法转换为QueryableJsonNode", ex)
                     });
                     return;
                 }
-                // 跳过主入口点，获取次级路由
-                route = string.Join("/", segments.Skip(1));
-            }
-            else
-            {
-                // 直接使用所有segments作为路由
-                route = string.Join("/", segments);
             }
 
-            if (route.IsNullOrEmpty())
+            try
             {
-                ServerCoreError?.Invoke(this, new()
+                // 从URL中提取路由：www.xxx.com/[mainEntryPoint?][/subEntryPoint?]*
+                var url = e.Request.Url;
+                if (url is null)
                 {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    ReturnArgs = r,
-                    ServerException = new ProcessStandardRequestException("请求路由为空")
-                });
-                return;
-            }
+                    ServerCoreError?.Invoke(this, new()
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ReturnArgs = r,
+                        ServerException = new ProcessStandardRequestException("请求URL为空")
+                    });
+                    return;
+                }
 
-            Console.Write($"({ServerCoreName})【{clientIP}】请求路由-{route}：");
-            var stopWatch = Stopwatch.StartNew();
+                var segments = url.Segments.Skip(1).Select(s => s.TrimEnd('/')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
             // 在字典中查找对应的服务（先精确匹配，再通配符匹配）
             Func<IServerCoreStandardService>? serviceFactory = null;
@@ -212,42 +185,99 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     {
                         ServerCoreError?.Invoke(this, new()
                         {
-                            StatusCode = HttpStatusCode.NotFound,
+                            StatusCode = HttpStatusCode.BadRequest,
                             ReturnArgs = r,
-                            ServerException = new ExecutionUnregisteredException($"服务已注册但路由未找到对应处理方法-{route}")
+                            ServerException = new ProcessStandardRequestException($"请求路径不匹配主入口点: {MainEntryPoint}")
                         });
+                        return;
                     }
+                    // 跳过主入口点，获取次级路由
+                    route = string.Join("/", segments.Skip(1));
                 }
-                catch (Exception ex)
+                else
+                {
+                    // 直接使用所有segments作为路由
+                    route = string.Join("/", segments);
+                }
+
+                if (route.IsNullOrEmpty())
                 {
                     ServerCoreError?.Invoke(this, new()
                     {
-                        StatusCode = r.StatusCode,
-                        Handled = r.Handled,
+                        StatusCode = HttpStatusCode.BadRequest,
                         ReturnArgs = r,
-                        ServerException = new XFEServerCoreRequestInnerException($"请求异常-{route}", ex)
+                        ServerException = new ProcessStandardRequestException("请求路由为空")
                     });
+                    return;
                 }
-                stopWatch.Stop();
-                Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
-                return;
-            }
 
-            ServerCoreError?.Invoke(this, new()
+                Console.Write($"({ServerCoreName})【{clientIP}】请求路由-{route}：");
+                var stopWatch = Stopwatch.StartNew();
+
+                // 在字典中查找对应的服务
+                if (StandardCoreServiceDictionary.TryGetValue(route, out var serviceFactory))
+                {
+                    var serviceInstance = serviceFactory();
+                    try
+                    {
+                        serviceInstance.XFEServerCore = this;
+                        serviceInstance.Route = route;
+                        serviceInstance.Json = queryableJsonNode;
+                        serviceInstance.Request = e.Request;
+                        serviceInstance.ReturnArgs = r;
+                        serviceInstance.Initialize();
+
+                        // 根据路由调用对应的处理方法（同步与异步互斥，优先同步）
+                        if (serviceInstance.SyncEntryPoints.TryGetValue(route, out var syncHandler))
+                            syncHandler();
+                        else if (serviceInstance.AsyncEntryPoints.TryGetValue(route, out var asyncHandler))
+                            await asyncHandler();
+                        else
+                        {
+                            ServerCoreError?.Invoke(this, new()
+                            {
+                                StatusCode = HttpStatusCode.NotFound,
+                                ReturnArgs = r,
+                                ServerException = new ExecutionUnregisteredException($"服务已注册但路由未找到对应处理方法-{route}")
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ServerCoreError?.Invoke(this, new()
+                        {
+                            StatusCode = r.StatusCode,
+                            Handled = r.Handled,
+                            ReturnArgs = r,
+                            ServerException = new XFEServerCoreRequestInnerException($"请求异常-{route}", ex)
+                        });
+                    }
+                    stopWatch.Stop();
+                    Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
+                    return;
+                }
+
+                ServerCoreError?.Invoke(this, new()
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    ReturnArgs = r,
+                    ServerException = new ExecutionUnregisteredException($"请求的路由未注册-{route}")
+                });
+            }
+            catch (Exception ex)
             {
-                StatusCode = HttpStatusCode.NotFound,
-                ReturnArgs = r,
-                ServerException = new ExecutionUnregisteredException($"请求的路由未注册-{route}")
-            });
+                ServerCoreError?.Invoke(this, new()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ReturnArgs = r,
+                    ServerException = new ProcessStandardRequestException("处理标准请求时发生异常", ex)
+                });
+            }
         }
         catch (Exception ex)
         {
-            ServerCoreError?.Invoke(this, new()
-            {
-                StatusCode = HttpStatusCode.InternalServerError,
-                ReturnArgs = r,
-                ServerException = new ProcessStandardRequestException("处理标准请求时发生异常", ex)
-            });
+            Console.WriteLine($"[ERROR]处理请求时发生未捕获的异常：{ex.Message}");
+            Console.WriteLine($"[TRACE] {ex.StackTrace}");
         }
     }
 
