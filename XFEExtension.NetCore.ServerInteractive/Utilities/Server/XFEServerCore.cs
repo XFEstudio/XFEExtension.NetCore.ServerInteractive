@@ -84,7 +84,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 foreach (var serverCoreVerifyService in ServerCoreVerifyServiceList.Select(serverCoreVerifyFactory => serverCoreVerifyFactory()))
                 {
                     serverCoreVerifyService.ReturnArgs = r;
-                    serverCoreVerifyService.Request = e.Request;
+                    serverCoreVerifyService.Args = e;
                     if (!serverCoreVerifyService.VerifyRequest() || !await serverCoreVerifyService.VerifyRequestAsync())
                         return;
                 }
@@ -224,7 +224,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                         serviceInstance.XFEServerCore = this;
                         serviceInstance.Route = route;
                         serviceInstance.Json = queryableJsonNode;
-                        serviceInstance.Request = e.Request;
+                        serviceInstance.Args = e;
                         serviceInstance.ReturnArgs = r;
                         serviceInstance.Initialize();
 
