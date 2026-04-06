@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.2-preview.1.26046.5</Version>
+    <Version>3.0.2-preview.1.26046.8</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,16 +21,15 @@
     <PackageReleaseNotes>
       ## 调整
 
-      EntryPointGenerator与路由相关代码优化重构
+      Wildcard Route Matching and Registration:
 
-      - 用 LINQ 优化 EntryPointGenerator 生成逻辑，提升可读性
-      - 路由通配符校验与去重逻辑重构，减少冗余
-      - ProfileList 字段统一加下划线前缀，规范命名
-      - RouteMatchHelper 路由匹配改为 LINQ 实现
-      - XFEServerCore 路由查找与属性声明优化
-      - 移除无用 using，参数校验代码更简洁
-      - 主要为风格和一致性优化，部分提升性能与灵活性
+      Added support for registering and matching wildcard routes on the client side, ensuring the most specific pattern is chosen for requests, and preventing ambiguous aliasing to wildcard routes. This includes changes in both the builder (XFEClientRequesterBuilder) and the requester (XFEClientRequester). [1] [2] [3] [4] [5] [6]
+      Request Context Modernization:
 
+      Replaced the use of HttpListenerRequest with the more general CyberCommRequestEventArgs in core service interfaces and implementations, providing a compatibility shim for legacy access to the request object. [1] [2] [3] [4] [5] [6] [7]
+      Server Configuration Enhancements:
+
+      Enabled support for GET, POST, and non-standard JSON requests in the server's API entry point configuration.
       ## 新增
 
       无
