@@ -10,7 +10,7 @@ internal static class RouteMatchHelper
     /// </summary>
     /// <param name="pattern">路由模式</param>
     /// <returns>是否包含通配符</returns>
-    public static bool IsWildcardRoute(string pattern) => pattern.Contains('*');
+    public static bool IsWildcardRoute(string pattern) => pattern.Split('/').Any(segment => segment == "*");
 
     /// <summary>
     /// 将路由模式与实际路由进行通配符匹配

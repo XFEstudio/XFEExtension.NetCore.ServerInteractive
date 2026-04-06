@@ -70,12 +70,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
 
     private async void CyberCommServer_RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
+        var r = new ServerCoreReturnArgs
+        {
+            Args = e
+        };
         try
         {
-            var r = new ServerCoreReturnArgs
-            {
-                Args = e
-            };
             var clientIP = e.ClientIP;
             try { clientIP = GetIPFunction(e); } catch (Exception ex) { Console.WriteLine($"[WARN]获取IP地址失败：{ex.Message}"); }
             r.ClientIP = clientIP;
@@ -188,13 +188,31 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                 }
                 else
                 {
-                    // 尝试通配符匹配
+                    // 尝试通配符匹配：在所有命中的候选中选择最具体的模式（字面量段越多越优先），避免结果依赖注册顺序
+                    static int GetWildcardPatternPriority(string pattern)
+                    {
+                        var segments = pattern.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                        var literalSegmentCount = 0;
+                        var wildcardSegmentCount = 0;
+                        foreach (var segment in segments)
+                        {
+                            if (segment == "*")
+                                wildcardSegmentCount++;
+                            else
+                                literalSegmentCount++;
+                        }
+                        return (literalSegmentCount * 1000) - (wildcardSegmentCount * 10) + pattern.Length;
+                    }
+
+                    var bestPriority = int.MinValue;
                     foreach (var (pattern, factory) in WildcardCoreServiceList)
                     {
                         if (!RouteMatchHelper.MatchWildcardRoute(pattern, route)) continue;
+                        var currentPriority = GetWildcardPatternPriority(pattern);
+                        if (currentPriority <= bestPriority) continue;
+                        bestPriority = currentPriority;
                         matchedPattern = pattern;
                         serviceFactory = factory;
-                        break;
                     }
                 }
 
@@ -261,6 +279,12 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         {
             Console.WriteLine($"[ERROR]处理请求时发生未捕获的异常：{ex.Message}");
             Console.WriteLine($"[TRACE] {ex.StackTrace}");
+            ServerCoreError?.Invoke(this, new()
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                ReturnArgs = r,
+                ServerException = new ProcessStandardRequestException("处理请求时发生未捕获的异常", ex)
+            });
         }
     }
 
