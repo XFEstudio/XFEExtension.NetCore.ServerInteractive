@@ -3,7 +3,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Attributes;
 /// <summary>
 /// 次级入口点特性，用于标记IServerCoreStandardService中的处理方法
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public class EntryPointAttribute : Attribute
 {
     /// <summary>

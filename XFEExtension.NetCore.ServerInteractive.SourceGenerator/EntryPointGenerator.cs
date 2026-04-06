@@ -62,14 +62,24 @@ public class EntryPointGenerator : IIncrementalGenerator
         helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0012",
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor InvalidWildcardUsageRule = new(
+        id: "XFE0013",
+        title: "EntryPoint通配符使用无效",
+        messageFormat: "入口点路径'{0}'中的通配符'*'必须作为完整的路径段使用（例如：v1/*/test），不能与其他字符混合（例如：v1/a*b）",
+        category: "XFEServerInteractive",
+        defaultSeverity: DiagnosticSeverity.Error,
+        helpLinkUri: "https://docs.xfegzs.com/View/Errors%2FServerInteractive%2FXFE0013",
+        isEnabledByDefault: true);
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // 找到所有标记了EntryPointAttribute的方法
         var methodDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsCandidateMethod(s),
-                transform: static (ctx, _) => GetMethodForGeneration(ctx))
-            .Where(static m => m is not null);
+                transform: static (ctx, _) => GetMethodsForGeneration(ctx))
+            .Where(static m => m is { IsDefault: false, Length: > 0 })
+            .SelectMany(static (m, _) => m);
 
         // 按类分组
         var compilationAndMethods = context.CompilationProvider.Combine(methodDeclarations.Collect());
@@ -81,25 +91,21 @@ public class EntryPointGenerator : IIncrementalGenerator
 
     private static bool IsCandidateMethod(SyntaxNode node) => node is MethodDeclarationSyntax { AttributeLists.Count: > 0 };
 
-    private static MethodCandidate? GetMethodForGeneration(GeneratorSyntaxContext context)
+    private static ImmutableArray<MethodCandidate> GetMethodsForGeneration(GeneratorSyntaxContext context)
     {
         var methodDeclaration = (MethodDeclarationSyntax)context.Node;
         var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
 
         if (methodSymbol is null)
-            return null;
+            return default;
 
-        // 检查是否有EntryPointAttribute
-        var entryPointAttribute = methodSymbol.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.Name == "EntryPointAttribute");
+        // 获取所有EntryPointAttribute
+        var entryPointAttributes = methodSymbol.GetAttributes()
+            .Where(a => a.AttributeClass?.Name == "EntryPointAttribute")
+            .ToList();
 
-        if (entryPointAttribute is null)
-            return null;
-
-        // 获取Path参数
-        var path = entryPointAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
-        if (string.IsNullOrEmpty(path))
-            return null;
+        if (entryPointAttributes.Count == 0)
+            return default;
 
         // 检查返回类型：根据返回类型（而非async关键字）判断同步/异步
         // 注意：Task和Task<T>都是有效的异步返回类型（Task<T>可通过协变赋值给Func<Task>）
@@ -126,23 +132,12 @@ public class EntryPointGenerator : IIncrementalGenerator
             ? LocationInfo.From(classDeclaration.Identifier.GetLocation())
             : methodLocation;
 
-        return new MethodCandidate(
-            containingType.ContainingNamespace.ToDisplayString(),
-            containingType.Name,
-            methodSymbol.Name,
-            path!,
-            isAsync,
-            isContainingTypePartial,
-            methodSymbol.Parameters.Length,
-            hasValidReturnType,
-            returnType.ToDisplayString(),
-            methodLocation,
-            classLocation,
-            typeParameters,
-            typeConstraints);
+        var results = (from attr in entryPointAttributes select attr.ConstructorArguments.FirstOrDefault().Value?.ToString() into rawPath select string.IsNullOrEmpty(rawPath) ? "*" : rawPath!.Trim('/') into path select new MethodCandidate(containingType.ContainingNamespace.ToDisplayString(), containingType.Name, methodSymbol.Name, path, isAsync, isContainingTypePartial, methodSymbol.Parameters.Length, hasValidReturnType, returnType.ToDisplayString(), methodLocation, classLocation, typeParameters, typeConstraints)).ToList();
+
+        return results.Count == 0 ? default : [..results];
     }
 
-    private static void Execute(Compilation compilation, ImmutableArray<MethodCandidate?> methods, SourceProductionContext context)
+    private static void Execute(Compilation compilation, ImmutableArray<MethodCandidate> methods, SourceProductionContext context)
     {
         if (methods.IsDefaultOrEmpty)
             return;
@@ -152,8 +147,6 @@ public class EntryPointGenerator : IIncrementalGenerator
         // 校验并报告诊断信息
         foreach (var method in methods)
         {
-            if (method is null) continue;
-
             var isValid = true;
 
             // 校验：包含类型必须为partial
@@ -197,6 +190,20 @@ public class EntryPointGenerator : IIncrementalGenerator
                 isValid = false;
             }
 
+            // 校验：通配符 '*' 必须作为完整路径段使用
+            if (method.Path.Contains("*") && method.Path != "*")
+            {
+                var segments = method.Path.Split('/');
+                if (segments.Any(segment => segment.Contains("*") && segment != "*"))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        InvalidWildcardUsageRule,
+                        method.MethodLocation.ToLocation(),
+                        method.Path));
+                    isValid = false;
+                }
+            }
+
             if (isValid)
             {
                 validMethods.Add(method);
@@ -222,17 +229,14 @@ public class EntryPointGenerator : IIncrementalGenerator
             {
                 if (!pathToMethods.TryGetValue(method.Path, out var list))
                 {
-                    list = new List<MethodCandidate>();
+                    list = [];
                     pathToMethods[method.Path] = list;
                 }
                 list.Add(method);
             }
 
-            foreach (var kvp in pathToMethods)
+            foreach (var kvp in pathToMethods.Where(kvp => kvp.Value.Count > 1))
             {
-                if (kvp.Value.Count <= 1)
-                    continue;
-
                 hasDuplicateError = true;
                 foreach (var dup in kvp.Value)
                 {
@@ -267,13 +271,11 @@ namespace {namespaceName}
         /// </summary>
         public override List<string> EntryPointList {{ get; }} = new()
         {{");
-
             // 添加所有入口点到静态列表
             foreach (var method in methodInfos)
             {
                 sourceBuilder.AppendLine($"            \"{EscapeStringLiteral(method.Path)}\",");
             }
-
             sourceBuilder.AppendLine($@"        }};
 
         private Dictionary<string, Action>? _generatedSyncEntryPoints;
@@ -282,13 +284,11 @@ namespace {namespaceName}
         {{
             get => _generatedSyncEntryPoints ??= new Dictionary<string, Action>()
             {{");
-
             // 添加同步入口点
             foreach (var method in methodInfos.Where(m => !m.IsAsync))
             {
                 sourceBuilder.AppendLine($"                {{ \"{EscapeStringLiteral(method.Path)}\", {method.MethodName} }},");
             }
-
             sourceBuilder.AppendLine($@"            }};
         }}
 
@@ -319,6 +319,6 @@ namespace {namespaceName}
     /// </summary>
     private static string EscapeStringLiteral(string value)
     {
-        return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        return value.Replace("\\", @"\\").Replace("\"", "\\\"");
     }
 }
