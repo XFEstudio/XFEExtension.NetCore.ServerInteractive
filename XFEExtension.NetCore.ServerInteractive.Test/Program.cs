@@ -63,10 +63,30 @@ internal class Program
 
     #region 基础测试
 
+    [SMTest]
+    public static async Task TestGET()
+    {
+        using var client = new HttpClient
+        {
+            BaseAddress = new Uri("http://localhost:3305/api/")
+        };
+        var response = await client.GetAsync("test");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"请求失败：{response.StatusCode}，响应内容：{errorContent}");
+        }
+    }
+
     /// <summary>
     /// 测试基本的test端点请求
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task Test()
     {
         var result = await s_xFEClientRequester.Request<string>("test");
@@ -84,7 +104,7 @@ internal class Program
     /// <summary>
     /// 测试连接检查端点
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task Check()
     {
         try
@@ -160,7 +180,7 @@ internal class Program
     /// <summary>
     /// 测试重新登录功能
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task ReLogin()
     {
         var result = await s_xFEClientRequester.Request<UserFaceInfo>("relogin");
@@ -184,7 +204,7 @@ internal class Program
     /// <summary>
     /// 测试Echo服务：发送消息并验证原样返回
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task EchoTest()
     {
         var result = await s_xFEClientRequester.Request<string>("echo", "Hello, XFE!");
@@ -201,7 +221,7 @@ internal class Program
     /// <summary>
     /// 测试Echo服务：发送空消息
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task EchoEmptyTest()
     {
         var result = await s_xFEClientRequester.Request<string>("echo", string.Empty);
@@ -218,7 +238,7 @@ internal class Program
     /// <summary>
     /// 测试Echo服务：发送中文消息
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task EchoChineseTest()
     {
         var result = await s_xFEClientRequester.Request<string>("echo", "你好，世界！");
@@ -239,7 +259,7 @@ internal class Program
     /// <summary>
     /// 测试加法运算
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task MathAddTest()
     {
         var result = await s_xFEClientRequester.Request<string>("math/add", 3.0, 5.0);
@@ -256,7 +276,7 @@ internal class Program
     /// <summary>
     /// 测试乘法运算
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task MathMultiplyTest()
     {
         var result = await s_xFEClientRequester.Request<string>("math/multiply", 4.0, 7.0);
@@ -273,7 +293,7 @@ internal class Program
     /// <summary>
     /// 测试加法运算：负数
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task MathAddNegativeTest()
     {
         var result = await s_xFEClientRequester.Request<string>("math/add", -10.0, 3.0);
@@ -290,7 +310,7 @@ internal class Program
     /// <summary>
     /// 测试乘法运算：零
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task MathMultiplyZeroTest()
     {
         var result = await s_xFEClientRequester.Request<string>("math/multiply", 42.0, 0.0);
@@ -307,7 +327,7 @@ internal class Program
     /// <summary>
     /// 测试加法运算：小数
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task MathAddDecimalTest()
     {
         var result = await s_xFEClientRequester.Request<string>("math/add", 1.5, 2.3);
@@ -328,7 +348,7 @@ internal class Program
     /// <summary>
     /// 测试服务器状态端点
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task StatusTest()
     {
         var result = await s_xFEClientRequester.Request<string>("status");
@@ -349,7 +369,7 @@ internal class Program
     /// <summary>
     /// 测试问候服务：正常名称
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task GreetTest()
     {
         var result = await s_xFEClientRequester.Request<string>("greet", "XFEstudio");
@@ -366,7 +386,7 @@ internal class Program
     /// <summary>
     /// 测试问候服务：空名称（应返回错误）
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task GreetEmptyNameTest()
     {
         var result = await s_xFEClientRequester.Request<string>("greet");
@@ -381,7 +401,7 @@ internal class Program
     /// <summary>
     /// 测试服务器时间端点
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task TimeTest()
     {
         var result = await s_xFEClientRequester.Request<string>("time");
@@ -402,7 +422,7 @@ internal class Program
     /// <summary>
     /// 压力测试：并行发送10000个请求
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task TestBench()
     {
         await Parallel.ForEachAsync(Enumerable.Range(0, 10000), async (_, _) =>
@@ -427,7 +447,7 @@ internal class Program
     /// <summary>
     /// 测试获取服务器日志
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task GetLog()
     {
         var result = await s_xFEClientRequester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
@@ -449,7 +469,7 @@ internal class Program
     /// <summary>
     /// 测试Order模型序列化
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static string ConvertOrder()
     {
         var order = new Order
@@ -463,7 +483,7 @@ internal class Program
     /// <summary>
     /// 测试添加订单
     /// </summary>
-    [SMTest]
+   [SMTest]
     public static async Task<bool> AddOrder() => await TableRequester.Add<Order>(new()
     {
         Description = "测试订单的描述",
@@ -486,7 +506,7 @@ internal class Program
     /// <summary>
     /// 测试修改订单
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task ChangeOrder()
     {
         var result = await TableRequester.Get<Order>();
@@ -500,7 +520,7 @@ internal class Program
     /// <summary>
     /// 测试获取修改后的订单列表
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task GetOrder2()
     {
         var result = await TableRequester.Get<Order>();
