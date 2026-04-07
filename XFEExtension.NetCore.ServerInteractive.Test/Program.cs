@@ -64,13 +64,13 @@ internal class Program
     #region 基础测试
 
     [SMTest]
-    public static async Task TestGET()
+    public static async Task TestPOST()
     {
         using var client = new HttpClient
         {
             BaseAddress = new Uri("http://localhost:3305/api/")
         };
-        var response = await client.GetAsync("v1/test/myTest/test2");
+        var response = await client.PostAsync("v1/test/myTest/test2/test5/test6",new StringContent("test"));
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,13 +21,7 @@
     <PackageReleaseNotes>
       ## 调整
 
-      路由匹配优化与错误提示增强，版本升级至3.0.2
-
-      - TestCoreService 路由支持通配符，返回内容更丰富，便于调试
-      - Program.cs 批量注释 SMTest，调整测试路由与服务端一致
-      - RouteMatchHelper 移除长度限制，提升通配符路由灵活性
-      - ServerCoreExceptionProcessService 针对未注册路由返回更友好错误信息
-      - 项目版本号升级至 3.1.0，标志重要功能完善
+      更新框架引用
 
       ## 新增
 
@@ -63,11 +57,7 @@
     <PackageReference Include="XFEExtension.NetCore" Version="4.2.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
-    <PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.2.*" />
   </ItemGroup>
 
   <ItemGroup>
