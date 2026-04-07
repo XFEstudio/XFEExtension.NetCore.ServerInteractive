@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.3</Version>
+    <Version>3.0.4</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      更新框架引用
+      升级版本至3.0.4，添加SourceGenerator分析器引用
+
+      将项目版本号从3.0.3提升至3.0.4，并新增对XFEExtension.NetCore.ServerInteractive.SourceGenerator项目的Analyzer引用，便于在构建时进行源代码分析和生成。此更改不会将其作为程序集包含，仅用于分析器用途。
 
       ## 新增
 
@@ -58,6 +60,10 @@
     <PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
     <PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XFEExtension.NetCore.ServerInteractive.SourceGenerator\XFEExtension.NetCore.ServerInteractive.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
