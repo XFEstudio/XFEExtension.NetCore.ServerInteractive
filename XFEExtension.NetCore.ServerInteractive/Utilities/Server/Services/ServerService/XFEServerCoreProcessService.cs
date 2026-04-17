@@ -8,6 +8,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.Serve
 public class XFEServerCoreProcessService : ServerCoreProcessServiceBase
 {
     /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException"></exception>
     public override async Task ProcessServerCore()
     {
         while (true)

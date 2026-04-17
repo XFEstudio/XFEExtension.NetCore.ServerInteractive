@@ -29,6 +29,10 @@ public class XFEStandardServerCoreOptions<T> where T : class
     /// </summary>
     public Func<IEnumerable<User>>? GetUserFunction { get; set; }
     /// <summary>
+    /// 添加用户函数
+    /// </summary>
+    public Action<User>? AddUserFunction { get; set; }
+    /// <summary>
     /// 获取加密用户登录模型函数
     /// </summary>
     public Func<IEnumerable<EncryptedUserLoginModel>>? GetEncryptedUserLoginModelFunction { get; set; }
