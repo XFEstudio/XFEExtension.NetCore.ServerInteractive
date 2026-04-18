@@ -1,3 +1,4 @@
+using XFEExtension.NetCore.ServerInteractive.Interfaces;
 using XFEExtension.NetCore.ServerInteractive.Models.UserModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 
@@ -31,7 +32,7 @@ public class XFEStandardServerCoreOptions<T> where T : class
     /// <summary>
     /// 添加用户函数
     /// </summary>
-    public Action<User>? AddUserFunction { get; set; }
+    public Action<IUserInfo>? AddUserFunction { get; set; }
     /// <summary>
     /// 获取加密用户登录模型函数
     /// </summary>
