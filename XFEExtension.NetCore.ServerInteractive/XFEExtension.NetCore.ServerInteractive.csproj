@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.6</Version>
+    <Version>3.0.7</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,8 +21,8 @@
     <PackageReleaseNotes>
       ## 调整
 
-      修复AddUserFunction泛型问题
-      版本更新至3.0.6
+      现在Requester的Result结果为可为null值
+      更新版本至3.0.7
       
       ## 新增
 

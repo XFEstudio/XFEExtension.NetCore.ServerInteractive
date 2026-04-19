@@ -9,5 +9,5 @@ public interface IRequestResult<T> : IRequestResultBase
     /// <summary>
     /// 结果
     /// </summary>
-    new T Result { get; set; }
+    new T? Result { get; set; }
 }
