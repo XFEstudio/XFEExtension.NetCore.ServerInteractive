@@ -151,6 +151,10 @@ public abstract class XFEClientRequester : IRequesterBase
                     result.Message = response;
                 }
             }
+            else
+            {
+                throw new InvalidOperationException($"未找到包含指定请求名称：{serviceName} 对应的请求处理服务");
+            }
             return result;
         }
         catch (Exception ex)

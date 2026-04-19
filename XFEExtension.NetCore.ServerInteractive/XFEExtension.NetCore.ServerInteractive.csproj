@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.7</Version>
+    <Version>3.0.8</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,11 @@
     <PackageReleaseNotes>
       ## 调整
 
-      现在Requester的Result结果为可为null值
-      更新版本至3.0.7
-      
+      增强异常处理并升级版本号至3.0.8
+
+      在 XFEClientRequester.cs 中，未找到指定请求名称的请求处理服务时，现会抛出带详细信息的 InvalidOperationException，提升了异常处理的明确性。
+      同步将项目版本号由 3.0.7 升级至 3.0.8。
+
       ## 新增
 
       无
