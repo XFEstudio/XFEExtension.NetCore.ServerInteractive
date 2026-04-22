@@ -242,7 +242,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
                     Console.WriteLine($"\t[耗时 {InteractiveHelper.GetStopWatchTime(stopWatch)}]");
                     return;
                 }
-
+                r.Handled = true;
                 ServerCoreError?.Invoke(this, new()
                 {
                     StatusCode = HttpStatusCode.NotFound,
@@ -252,6 +252,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
             }
             catch (Exception ex)
             {
+                r.Handled = false;
                 ServerCoreError?.Invoke(this, new()
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -262,6 +263,7 @@ public abstract class XFEServerCore : ServerCoreServiceBase
         }
         catch (Exception ex)
         {
+            r.Handled = false;
             Console.WriteLine($"[ERROR]处理请求时发生未捕获的异常：{ex.Message}");
             Console.WriteLine($"[TRACE] {ex.StackTrace}");
             ServerCoreError?.Invoke(this, new()

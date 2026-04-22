@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.0.8</Version>
+    <Version>3.0.9-preview.1.1</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,10 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      增强异常处理并升级版本号至3.0.8
+      重命名 AddRequest 参数并完善请求处理标记
 
-      在 XFEClientRequester.cs 中，未找到指定请求名称的请求处理服务时，现会抛出带详细信息的 InvalidOperationException，提升了异常处理的明确性。
-      同步将项目版本号由 3.0.7 升级至 3.0.8。
+      对 XFEClientRequesterBuilder 的 AddRequest 方法参数由 serviceName 改为 route，并同步更新注释及实现，提升语义准确性。在 XFEServerCore 中，标准请求处理流程增加 r.Handled 标记，便于后续判断请求处理状态。同时将项目版本号提升至 3.0.9-preview.1.1。
 
       ## 新增
 

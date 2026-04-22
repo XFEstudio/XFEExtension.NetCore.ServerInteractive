@@ -99,23 +99,23 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <summary>
     /// 添加实例请求
     /// </summary>
-    /// <param name="serviceName">服务名称</param>
+    /// <param name="route">路径</param>
     /// <param name="xFEClientInstanceRequest">请求实例</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest(string serviceName, StandardClientInstanceRequest xFEClientInstanceRequest)
+    public XFEClientRequesterBuilder AddRequest(string route, StandardClientInstanceRequest xFEClientInstanceRequest)
     {
-        _standardClientInstanceRequestDictionary.Add(serviceName, xFEClientInstanceRequest);
+        _standardClientInstanceRequestDictionary.Add(route, xFEClientInstanceRequest);
         return this;
     }
 
     /// <summary>
     /// 添加实例请求
     /// </summary>
-    /// <param name="serviceName">请求服务名称</param>
+    /// <param name="route">路径</param>
     /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> deviceInfo, <seealso cref="object"/>[] parameters)</param>
     /// <param name="processResponse">处理响应方法<seealso cref="object"/> (<seealso cref="string"/> response)</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest(string serviceName, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(serviceName, new StandardClientInstanceRequest
+    public XFEClientRequesterBuilder AddRequest(string route, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(route, new StandardClientInstanceRequest
     {
         ConstructBody = constructBody,
         ProcessResponse = processResponse
