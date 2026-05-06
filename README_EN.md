@@ -198,7 +198,7 @@ public partial class DynamicService : ServerCoreStandardServiceBase
 ### Using the XFE Standard Server Core
 
 The `UseXFEStandardServerCore<T>()` extension method provides a complete standardized server core with built-in:
-- User login (server route `user/login`, client can call using alias `login`), auto re-login (route `user/relogin`, alias `relogin`)
+- User login (server route `user/login`, client can call using alias `login`), auto relogin (route `user/relogin`, alias `relogin`)
 - Data table CRUD management (`table/get/{tableName}`, `table/add/{tableName}`, `table/change/{tableName}`, `table/remove/{tableName}`)
 - IP banning (`ip/banned/get`, `ip/banned/add`, `ip/banned/remove`), daily counting
 - Connection check (`check_connect`), server logging (route `log/get`, alias `get_log`; route `log/clear`, alias `clear_log`)
@@ -779,7 +779,7 @@ The incremental generators check code at compile time and report diagnostics:
 | `XFE0012` | `[EntryPoint]` path is registered more than once in the same class | Server side |
 | `XFE0013` | Invalid wildcard usage in `[EntryPoint]` (`*` must be a complete path segment) | Server side |
 
-All diagnostics have corresponding online documentation at: `https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE{code}`
+All diagnostics have corresponding online documentation at: `https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE{code}` (e.g., `https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE0003`)
 
 ---
 
