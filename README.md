@@ -182,7 +182,7 @@ public partial class DynamicService : ServerCoreStandardServiceBase
         await Close($"您请求的路由是：{Route}，您的IP是：{ClientIP}");
     }
 
-    // 匹配 v1/test/* 下的所有路径，例如 v1/test/a, v1/test/b/c（仅一段）
+    // 匹配 v1/test/* 下的路径（* 仅匹配单个路径段），例如 v1/test/a, v1/test/hello
     [EntryPoint("v1/test/*")]
     public async Task TestAny()
     {
@@ -198,9 +198,10 @@ public partial class DynamicService : ServerCoreStandardServiceBase
 ### 使用XFE标准服务器核心
 
 `UseXFEStandardServerCore<T>()` 扩展方法提供了一套完整的标准化服务器核心，内置：
-- 用户登录（`login`）、自动重登（`relogin`）服务
-- 数据表 CRUD 管理（`table/get/*`、`table/add/*`、`table/change/*`、`table/remove/*`）
-- IP 封禁、每日计数、连接检查、服务器日志等
+- 用户登录（服务端路由 `user/login`，客户端可通过别名 `login` 调用）、自动重登（路由 `user/relogin`，别名 `relogin`）
+- 数据表 CRUD 管理（`table/get/{表名}`、`table/add/{表名}`、`table/change/{表名}`、`table/remove/{表名}`）
+- IP 封禁（`ip/banned/get`、`ip/banned/add`、`ip/banned/remove`）、每日计数
+- 连接检查（`check_connect`）、服务器日志（路由 `log/get`，别名 `get_log`；路由 `log/clear`，别名 `clear_log`）
 
 ```csharp
 var serverCore = XFEServerCoreBuilder.CreateBuilder()
@@ -226,7 +227,7 @@ var serverCore = XFEServerCoreBuilder.CreateBuilder()
     .AddService<MyCustomService>()   // 追加自定义业务服务
     .Build(options =>
     {
-        options.MainEntryPoint = "api";     // 所有路由前缀，例如请求路径为 /api/login
+        options.MainEntryPoint = "api";     // 所有路由前缀，例如登录请求的完整路径为 /api/user/login
         options.AcceptPost = true;
         options.AcceptGet = true;
         options.BindIP("http://localhost:3300/")
@@ -580,6 +581,8 @@ var checkResult = await requester.Request<DateTime>("check_connect");
 var logResult = await requester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
 
 // IP 封禁管理
+// 说明：AddBannedIPRequest() 注册的调用名称为 get_bannedIPList / add_bannedIP / remove_bannedIP
+// 对应服务端实际路由为 ip/banned/get / ip/banned/add / ip/banned/remove
 var bannedIPs = await requester.Request<List<IPAddressInfo>>("get_bannedIPList");
 await requester.Request<string>("add_bannedIP", "192.168.1.100", "恶意请求");
 await requester.Request<bool>("remove_bannedIP", "192.168.1.100");
@@ -588,9 +591,10 @@ await requester.Request<bool>("remove_bannedIP", "192.168.1.100");
 `UseXFEStandardRequest<T>()` 等价于：
 
 ```csharp
-.AddLoginRequest<T>()        // 注册 login、relogin 请求
+.AddLoginRequest<T>()        // 注册 login（→ user/login）、relogin（→ user/relogin）请求
 .AddBannedIPRequest()        // 注册 get_bannedIPList、add_bannedIP、remove_bannedIP 请求
-.AddLogRequest()             // 注册 get_log 请求
+                             //   对应服务端路由：ip/banned/get、ip/banned/add、ip/banned/remove
+.AddLogRequest()             // 注册 get_log（→ log/get）、clear_log（→ log/clear）请求
 .AddCheckConnectRequest()    // 注册 check_connect 请求
 ```
 
@@ -628,14 +632,16 @@ await tableRequester.Change(order);
 await tableRequester.Remove<Order>(order.Id);
 ```
 
-表名默认从类型名自动推断（首字母小写），也可手动指定：
+表名默认从类型名自动推断：类型名首字母小写即为请求表名（`TableNameInRequest`），例如 `Order` → `order`。  
+这是 `TableRequester` 与服务端通信时实际使用的名称，与 `AddTable` 时指定的 `tableShowName`（显示名称，如 `"订单"`）不同。
 
 ```csharp
-// 默认：Order → 表名 order
+// 默认：Order 类型 → 请求表名自动推断为 "order"（类型名首字母小写）
 await tableRequester.Get<Order>();
 
-// 手动指定表名
-await tableRequester.Get<Order>("订单");  // 使用服务端注册时指定的 tableShowName
+// 手动指定请求表名（需与服务端 TableNameInRequest 一致，即类型名首字母小写）
+// 注意：这里填写的是请求路径中使用的表名，不是 AddTable 时的 tableShowName
+await tableRequester.Get<Order>("order", pageCount: 10, page: 1);
 ```
 
 数据模型需实现 `IIdModel` 接口（包含 `string Id` 属性）：
