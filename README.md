@@ -1,72 +1,79 @@
 # XFEExtension.NetCore.ServerInteractive
 
-## 描述
+[![NuGet](https://img.shields.io/nuget/v/XFEExtension.NetCore.ServerInteractive.svg)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/XFEExtension.NetCore.ServerInteractive.svg)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 
-ServerInteractive 是一个 C# 的 DLL 库，基于 `XFEExtension.NetCore` 提供的 CyberComm 网络架构，让使用者可以快速构建服务器端和客户端网络框架。支持基于路由的请求分发、增量代码生成（Source Generator）、用户登录体系、数据表管理、IP 封禁等开箱即用的标准功能。
+> 🌐 [中文文档 (Chinese)](README_CN.md)
 
----
+## Description
 
-## 目录
-
-- [快速开始](#快速开始)
-- [服务器端](#服务器端)
-  - [搭建服务器](#搭建服务器)
-  - [定义标准核心服务（路由处理）](#定义标准核心服务路由处理)
-  - [通配符路由](#通配符路由)
-  - [使用XFE标准服务器核心](#使用xfe标准服务器核心)
-  - [手动组合服务](#手动组合服务)
-  - [原始服务与校验服务](#原始服务与校验服务)
-  - [服务器核心配置选项](#服务器核心配置选项)
-  - [服务方法中响应客户端](#服务方法中响应客户端)
-- [客户端](#客户端)
-  - [搭建请求器](#搭建请求器)
-  - [内联请求注册](#内联请求注册)
-  - [定义标准请求服务（Source Generator）](#定义标准请求服务source-generator)
-  - [使用XFE标准请求](#使用xfe标准请求)
-  - [TableRequester（数据表请求器）](#tablerequester数据表请求器)
-- [增量生成器（Source Generator）](#增量生成器source-generator)
-  - [服务端：EntryPoint 生成器](#服务端entrypoint-生成器)
-  - [客户端：ClientRequest 生成器](#客户端clientrequest-生成器)
-  - [诊断规则](#诊断规则)
-- [常见错误与解决方案](#常见错误与解决方案)
+ServerInteractive is a C# DLL library built on the CyberComm network architecture provided by `XFEExtension.NetCore`. It enables developers to rapidly build server-side and client-side network frameworks. It supports route-based request dispatch, incremental code generation (Source Generator), user login system, data table management, IP banning, and other out-of-the-box standard features.
 
 ---
 
-## 快速开始
+## Table of Contents
 
-> 使用前请在项目中引用 `XFEExtension.NetCore.ServerInteractive` NuGet 包。
+- [Quick Start](#quick-start)
+- [Server Side](#server-side)
+  - [Setting Up the Server](#setting-up-the-server)
+  - [Defining Standard Core Services (Route Handling)](#defining-standard-core-services-route-handling)
+  - [Wildcard Routes](#wildcard-routes)
+  - [Using the XFE Standard Server Core](#using-the-xfe-standard-server-core)
+  - [Manual Service Composition](#manual-service-composition)
+  - [Original Services and Verify Services](#original-services-and-verify-services)
+  - [Server Core Configuration Options](#server-core-configuration-options)
+  - [Responding to Clients in Service Methods](#responding-to-clients-in-service-methods)
+- [Client Side](#client-side)
+  - [Setting Up a Requester](#setting-up-a-requester)
+  - [Inline Request Registration](#inline-request-registration)
+  - [Defining Standard Request Services (Source Generator)](#defining-standard-request-services-source-generator)
+  - [Using XFE Standard Requests](#using-xfe-standard-requests)
+  - [TableRequester (Data Table Requester)](#tablerequester-data-table-requester)
+- [Source Generator](#source-generator)
+  - [Server Side: EntryPoint Generator](#server-side-entrypoint-generator)
+  - [Client Side: ClientRequest Generator](#client-side-clientrequest-generator)
+  - [Diagnostic Rules](#diagnostic-rules)
+- [Common Errors and Solutions](#common-errors-and-solutions)
 
-**最简单的服务器示例**（一个 echo 服务，绑定本地 3300 端口）：
+---
 
-**服务定义（EchoService.cs）**
+## Quick Start
+
+> Before using, add the `XFEExtension.NetCore.ServerInteractive` NuGet package to your project.
+
+**Simplest server example** (an echo service bound to local port 3300):
+
+**Service definition (EchoService.cs)**
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Attributes;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 
-// 类必须为 partial，以便 Source Generator 自动生成路由字典
+// The class must be partial so the Source Generator can automatically generate the route dictionary
 public partial class EchoService : ServerCoreStandardServiceBase
 {
-    [EntryPoint("echo")]         // 路由路径：/echo
+    [EntryPoint("echo")]         // Route path: /echo
     public async Task Echo()
     {
         var message = Json?["message"]?.GetValue<string>() ?? string.Empty;
-        await Close(message);    // 回复客户端并结束请求
+        await Close(message);    // Reply to the client and end the request
     }
 }
 ```
 
-**程序入口（Program.cs）**
+**Program entry point (Program.cs)**
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
 var server = XFEServerBuilder.CreateBuilder()
-    .UseXFEServer()                               // 注册日志、异常处理、核心处理器
+    .UseXFEServer()                               // Register logger, exception handler, and core processor
     .AddServerCore(
         XFEServerCoreBuilder.CreateBuilder()
-            .AddService<EchoService>()            // 注册 EchoService（路由从 [EntryPoint] 自动获取）
+            .AddService<EchoService>()            // Register EchoService (routes are automatically obtained from [EntryPoint])
             .Build(options =>
             {
                 options.BindIP("http://localhost:3300/");
@@ -78,46 +85,46 @@ await server.Start();
 
 ---
 
-## 服务器端
+## Server Side
 
-### 搭建服务器
+### Setting Up the Server
 
-使用 `XFEServerBuilder` 来组装服务器。
-
-```csharp
-var server = XFEServerBuilder.CreateBuilder()
-    .UseXFEServer()                   // 使用XFE标准服务器（包含日志初始化、异常处理、核心处理器）
-    .AddServerCore(serverCore)        // 添加一个 XFEServerCore 核心服务器实例
-    .Build();                         // 构建 XFEServer 实例
-
-await server.Start();                 // 启动所有初始化服务、同步/异步服务及核心服务
-```
-
-`UseXFEServer()` 等价于：
-
-```csharp
-.AddInitializer<ServerLogInitializer>()      // 日志初始化器
-.AddService<ServerExceptionProcessService>() // 全局异常处理
-.AddCoreProcessor<XFEServerCoreProcessService>() // 核心请求处理器
-```
-
-你也可以只注册自定义服务而不使用标准套件：
+Use `XFEServerBuilder` to assemble the server.
 
 ```csharp
 var server = XFEServerBuilder.CreateBuilder()
-    .AddInitializer<MyInitializerService>()  // 自定义初始化服务（服务器启动前执行一次）
-    .AddService<MyService>()                 // 自定义同步服务（服务器启动时执行）
-    .AddAsyncService<MyAsyncService>()       // 自定义异步服务（服务器启动时异步执行）
-    .AddCoreProcessor<MyCoreProcessor>()     // 必须添加一个核心处理器
+    .UseXFEServer()                   // Use XFE standard server (includes log initialization, exception handling, core processor)
+    .AddServerCore(serverCore)        // Add an XFEServerCore instance
+    .Build();                         // Build the XFEServer instance
+
+await server.Start();                 // Start all initializers, sync/async services, and core services
+```
+
+`UseXFEServer()` is equivalent to:
+
+```csharp
+.AddInitializer<ServerLogInitializer>()      // Log initializer
+.AddService<ServerExceptionProcessService>() // Global exception handler
+.AddCoreProcessor<XFEServerCoreProcessService>() // Core request processor
+```
+
+You can also register only custom services without using the standard suite:
+
+```csharp
+var server = XFEServerBuilder.CreateBuilder()
+    .AddInitializer<MyInitializerService>()  // Custom initializer service (runs once before the server starts)
+    .AddService<MyService>()                 // Custom synchronous service (runs when the server starts)
+    .AddAsyncService<MyAsyncService>()       // Custom asynchronous service (runs asynchronously when the server starts)
+    .AddCoreProcessor<MyCoreProcessor>()     // A core processor must be added
     .Build();
 ```
 
 ---
 
-### 定义标准核心服务（路由处理）
+### Defining Standard Core Services (Route Handling)
 
-继承 `ServerCoreStandardServiceBase` 并使用 `[EntryPoint("路由路径")]` 标记方法。  
-类必须声明为 `partial`，Source Generator 才能自动生成路由字典。
+Inherit `ServerCoreStandardServiceBase` and mark methods with `[EntryPoint("route path")]`.  
+The class must be declared as `partial` for the Source Generator to automatically generate the route dictionary.
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Attributes;
@@ -130,7 +137,7 @@ public partial class MathService : ServerCoreStandardServiceBase
     {
         var a = Json?["a"]?.GetValue<double>() ?? 0;
         var b = Json?["b"]?.GetValue<double>() ?? 0;
-        await Close(a + b);     // 返回结果并关闭请求
+        await Close(a + b);     // Return result and close the request
     }
 
     [EntryPoint("math/subtract")]
@@ -138,51 +145,51 @@ public partial class MathService : ServerCoreStandardServiceBase
     {
         var a = Json?["a"]?.GetValue<double>() ?? 0;
         var b = Json?["b"]?.GetValue<double>() ?? 0;
-        OK();                   // 标记已处理
-        // 同步方法同样支持，返回类型为 void
+        OK();                   // Mark as handled
+        // Synchronous methods are also supported; the return type is void
     }
 }
 ```
 
-在 `XFEServerCoreBuilder` 中注册：
+Register in `XFEServerCoreBuilder`:
 
 ```csharp
 XFEServerCoreBuilder.CreateBuilder()
-    .AddService<MathService>()   // 从 [EntryPoint] 自动获取路由路径并注册
+    .AddService<MathService>()   // Automatically reads route paths from [EntryPoint] and registers
     .Build(options => { options.BindIP("http://localhost:3300/"); });
 ```
 
-**可在服务方法中访问的常用属性：**
+**Commonly accessible properties in service methods:**
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `Route` | `string` | 当前请求的路由路径 |
-| `ClientIP` | `string` | 客户端 IP 地址 |
-| `Json` | `QueryableJsonNode?` | 解析后的请求体 JSON 节点 |
-| `Args` | `CyberCommRequestEventArgs` | 原始请求事件参数（含 Headers、Request 等） |
-| `XFEServerCore` | `XFEServerCore` | 所属的服务器核心实例 |
-| `Handled` | `bool` | 是否已处理请求 |
-| `IsStandardError` | `bool` | 是否为标准错误响应 |
+| Property | Type | Description |
+|----------|------|-------------|
+| `Route` | `string` | The route path of the current request |
+| `ClientIP` | `string` | The client's IP address |
+| `Json` | `QueryableJsonNode?` | The parsed JSON node of the request body |
+| `Args` | `CyberCommRequestEventArgs` | The raw request event args (includes Headers, Request, etc.) |
+| `XFEServerCore` | `XFEServerCore` | The server core instance this service belongs to |
+| `Handled` | `bool` | Whether the request has been handled |
+| `IsStandardError` | `bool` | Whether this is a standard error response |
 
 ---
 
-### 通配符路由
+### Wildcard Routes
 
-路由段中使用独立的 `*` 可以匹配任意单段路径，支持多级通配符。  
-框架会优先匹配字面量段更多的模式（最具体优先原则），与注册顺序无关。
+An independent `*` in a route segment can match any single path segment, and multi-level wildcards are supported.  
+The framework prioritizes patterns with more literal segments (most-specific-first principle), regardless of registration order.
 
 ```csharp
 public partial class DynamicService : ServerCoreStandardServiceBase
 {
-    // 匹配 v1/任意值/info，例如 v1/users/info、v1/orders/info
+    // Matches v1/anything/info, e.g., v1/users/info or v1/orders/info
     [EntryPoint("v1/*/info")]
     public async Task DynamicInfo()
     {
-        // Route 属性包含实际请求路径，如 v1/users/info
-        await Close($"您请求的路由是：{Route}，您的IP是：{ClientIP}");
+        // The Route property contains the actual request path, e.g., v1/users/info
+        await Close($"Your route is: {Route}, your IP is: {ClientIP}");
     }
 
-    // 匹配 v1/test/* 下的路径（* 仅匹配单个路径段），例如 v1/test/a, v1/test/hello
+    // Matches paths under v1/test/* (* only matches a single path segment), e.g., v1/test/a, v1/test/hello
     [EntryPoint("v1/test/*")]
     public async Task TestAny()
     {
@@ -191,43 +198,43 @@ public partial class DynamicService : ServerCoreStandardServiceBase
 }
 ```
 
-> **注意：** 通配符 `*` 必须是完整的路径段，不能与其他字符混合（如 `a*b` 是非法的）。
+> **Note:** The wildcard `*` must be a complete path segment and cannot be mixed with other characters (e.g., `a*b` is invalid).
 
 ---
 
-### 使用XFE标准服务器核心
+### Using the XFE Standard Server Core
 
-`UseXFEStandardServerCore<T>()` 扩展方法提供了一套完整的标准化服务器核心，内置：
-- 用户登录（服务端路由 `user/login`，客户端可通过别名 `login` 调用）、自动重登（路由 `user/relogin`，别名 `relogin`）
-- 数据表 CRUD 管理（`table/get/{表名}`、`table/add/{表名}`、`table/change/{表名}`、`table/remove/{表名}`）
-- IP 封禁（`ip/banned/get`、`ip/banned/add`、`ip/banned/remove`）、每日计数
-- 连接检查（`check_connect`）、服务器日志（路由 `log/get`，别名 `get_log`；路由 `log/clear`，别名 `clear_log`）
+The `UseXFEStandardServerCore<T>()` extension method provides a complete standardized server core with built-in:
+- User login (server route `user/login`, client can call using alias `login`), auto relogin (route `user/relogin`, alias `relogin`)
+- Data table CRUD management (`table/get/{tableName}`, `table/add/{tableName}`, `table/change/{tableName}`, `table/remove/{tableName}`)
+- IP banning (`ip/banned/get`, `ip/banned/add`, `ip/banned/remove`), daily counting
+- Connection check (`check_connect`), server logging (route `log/get`, alias `get_log`; route `log/clear`, alias `clear_log`)
 
 ```csharp
 var serverCore = XFEServerCoreBuilder.CreateBuilder()
     .UseXFEStandardServerCore<IUserFaceInfo>(options =>
     {
-        // 提供用户数据源
+        // Provide user data source
         options.GetUserFunction = () => UserProfile.UserTable;
         options.AddUserFunction = user => UserProfile.UserTable.Add((User)user);
         options.GetEncryptedUserLoginModelFunction = () => UserProfile.EncryptedUserLoginModelTable;
         options.AddEncryptedUserLoginModelFunction = UserProfile.EncryptedUserLoginModelTable.Add;
         options.RemoveEncryptedUserLoginModelFunction = model => UserProfile.EncryptedUserLoginModelTable.Remove(model);
-        options.GetLoginKeepDays = () => 7;  // 登录 Session 保持天数
+        options.GetLoginKeepDays = () => 7;  // Number of days to keep the login session
 
-        // 登录成功后将 User 对象转换为返回给客户端的接口类型
+        // Convert the User object to the interface type returned to the client after a successful login
         options.LoginResultConvertFunction = user => (IUserFaceInfo)user;
 
-        // 配置数据表管理器
+        // Configure the data table manager
         options.DataTableManagerBuilder = XFEDataTableManagerBuilder.CreateBuilder()
-            // 参数：显示名称, 添加权限, 删除权限, 修改权限, 查询权限
-            .AddTable<Order, DataProfile>("订单", addPermissionLevel: 1, removePermissionLevel: 2, changePermissionLevel: 1, getPermissionLevel: 1)
-            .AddTable<User, UserProfile>("用户", addPermissionLevel: 2, removePermissionLevel: 2, changePermissionLevel: 2, getPermissionLevel: 1);
+            // Parameters: display name, add permission, remove permission, change permission, get permission
+            .AddTable<Order, DataProfile>("Orders", addPermissionLevel: 1, removePermissionLevel: 2, changePermissionLevel: 1, getPermissionLevel: 1)
+            .AddTable<User, UserProfile>("Users", addPermissionLevel: 2, removePermissionLevel: 2, changePermissionLevel: 2, getPermissionLevel: 1);
     })
-    .AddService<MyCustomService>()   // 追加自定义业务服务
+    .AddService<MyCustomService>()   // Append custom business services
     .Build(options =>
     {
-        options.MainEntryPoint = "api";     // 所有路由前缀，例如登录请求的完整路径为 /api/user/login
+        options.MainEntryPoint = "api";     // Route prefix; the full path for a login request would be /api/user/login
         options.AcceptPost = true;
         options.AcceptGet = true;
         options.BindIP("http://localhost:3300/")
@@ -235,7 +242,7 @@ var serverCore = XFEServerCoreBuilder.CreateBuilder()
     });
 ```
 
-完整服务器示例（配合 TServer 参考实现）：
+Complete server example (with TServer reference implementation):
 
 ```csharp
 var server = XFEServerBuilder.CreateBuilder()
@@ -252,9 +259,9 @@ var server = XFEServerBuilder.CreateBuilder()
                 options.GetLoginKeepDays = () => 7;
                 options.LoginResultConvertFunction = user => (IUserFaceInfo)user;
                 options.DataTableManagerBuilder = XFEDataTableManagerBuilder.CreateBuilder()
-                    .AddTable<Order, DataProfile>("订单", 1, 2, 1, 1)
-                    .AddTable<Person, DataProfile>("人物", 1, 2, 1, 1)
-                    .AddTable<User, UserProfile>("用户", 2, 2, 2, 1);
+                    .AddTable<Order, DataProfile>("Orders", 1, 2, 1, 1)
+                    .AddTable<Person, DataProfile>("Persons", 1, 2, 1, 1)
+                    .AddTable<User, UserProfile>("Users", 2, 2, 2, 1);
             })
             .AddService<TestCoreService>()
             .AddService<EchoCoreService>()
@@ -273,32 +280,32 @@ await server.Start();
 
 ---
 
-### 手动组合服务
+### Manual Service Composition
 
-如果不需要标准套件，可以单独按需添加各个服务：
+If you don't need the standard suite, you can add individual services as needed:
 
 ```csharp
 XFEServerCoreBuilder.CreateBuilder()
-    // 注册标准服务（路由从 [EntryPoint] 自动获取）
+    // Register a standard service (routes are automatically read from [EntryPoint])
     .AddService<MyRouteService>()
-    // 显式指定路由注册（适用于动态路由或不使用 Source Generator 的场景）
+    // Explicitly specify a route (useful for dynamic routes or when not using a Source Generator)
     .AddServiceWithRoute<MyDynamicService>("dynamic/*/process")
-    // 原始服务（监听服务器启动事件和所有原始请求）
+    // Original service (listens for server start events and all raw requests)
     .AddOriginalService<MyRawRequestHandler>()
-    // 校验服务（在路由分发前对每个请求进行验证，返回 false 可拦截请求）
+    // Verify service (validates each request before route dispatch; returning false intercepts the request)
     .AddVerifyService<MyAuthVerifyService>()
-    // 添加用户基础参数（供登录相关服务使用）
+    // Add user base parameters (used by login-related services)
     .AddUserParameterBase(getUserFn, addUserFn, getEncryptedModelFn, addEncryptedModelFn, removeEncryptedModelFn, getKeepDaysFn, convertFn)
-    // 添加数据表管理器
+    // Add a data table manager
     .AddDataTableManager(tableManagerBuilder, getUserFn, getEncryptedModelFn)
-    // 添加各内置服务
-    .AddEntryPointVerify()          // 入口点校验服务
-    .AddDailyCounterService()       // 每日请求统计
-    .AddXFEErrorProcessService()    // 异常处理服务
-    .AddConnectService()            // 连接检查服务（check_connect 路由）
-    .AddStandardLoginService<IUserFaceInfo>()  // 标准登录服务（login、relogin 路由）
-    .AddServerLogService()          // 服务器日志查询（get_log 路由）
-    .AddIPBannerService()           // IP 封禁服务（get_bannedIPList、add_bannedIP、remove_bannedIP 路由）
+    // Add individual built-in services
+    .AddEntryPointVerify()          // Entry point validation service
+    .AddDailyCounterService()       // Daily request statistics
+    .AddXFEErrorProcessService()    // Exception handling service
+    .AddConnectService()            // Connection check service (check_connect route)
+    .AddStandardLoginService<IUserFaceInfo>()  // Standard login service (login, relogin routes)
+    .AddServerLogService()          // Server log query (get_log route)
+    .AddIPBannerService()           // IP banning service (get_bannedIPList, add_bannedIP, remove_bannedIP routes)
     .Build(options =>
     {
         options.BindIP("http://localhost:3300/");
@@ -307,9 +314,9 @@ XFEServerCoreBuilder.CreateBuilder()
 
 ---
 
-### 原始服务与校验服务
+### Original Services and Verify Services
 
-**原始服务（`IServerCoreOriginalService`）**：继承 `ServerCoreOriginalServiceBase`，可以监听服务器启动事件和每一个原始请求（在路由分发之前）。
+**Original Service (`IServerCoreOriginalService`)**: Inherit `ServerCoreOriginalServiceBase` to listen for server start events and every raw request (before route dispatch).
 
 ```csharp
 using XFEExtension.NetCore.CyberComm;
@@ -319,17 +326,17 @@ public class MyRawService : ServerCoreOriginalServiceBase
 {
     public override void ServerStarted(object? sender, EventArgs e)
     {
-        Console.WriteLine("服务器已启动！");
+        Console.WriteLine("Server has started!");
     }
 
     public override void RequestReceived(object? sender, CyberCommRequestEventArgs e)
     {
-        Console.WriteLine($"收到原始请求：{e.Request.Url}");
+        Console.WriteLine($"Raw request received: {e.Request.Url}");
     }
 }
 ```
 
-**校验服务（`IServerCoreVerifyService`）**：继承 `ServerCoreVerifyServiceBase`，每个请求在路由分发前都会执行校验。返回 `false` 或 `Task<false>` 会中断后续处理。
+**Verify Service (`IServerCoreVerifyService`)**: Inherit `ServerCoreVerifyServiceBase`. Every request is validated before route dispatch. Returning `false` from `VerifyRequest` or returning a `Task<bool>` that resolves to `false` from `VerifyRequestAsync` interrupts further processing.
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
@@ -338,14 +345,14 @@ public class MyAuthService : ServerCoreVerifyServiceBase
 {
     public override bool VerifyRequest()
     {
-        // 同步校验，返回 false 则拦截请求
+        // Synchronous validation; returning false intercepts the request
         var token = Args.Request.Headers["X-Token"];
         return !string.IsNullOrEmpty(token);
     }
 
     public override async Task<bool> VerifyRequestAsync()
     {
-        // 异步校验，默认返回 true（不拦截）
+        // Asynchronous validation; returns true by default (does not intercept)
         return true;
     }
 }
@@ -353,26 +360,26 @@ public class MyAuthService : ServerCoreVerifyServiceBase
 
 ---
 
-### 服务器核心配置选项
+### Server Core Configuration Options
 
-`XFEServerCoreBuilder.Build(options => { ... })` 接受 `XFEServerCoreOptions`：
+`XFEServerCoreBuilder.Build(options => { ... })` accepts `XFEServerCoreOptions`:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `BindingIPAddress` | `List<string>` | `[]` | 服务器绑定的 URL 列表 |
-| `ServerCoreName` | `string` | 自动生成 | 服务器核心名称（日志显示用） |
-| `MainEntryPoint` | `string` | `""` | 主入口前缀（空则直接从次级路由匹配） |
-| `AcceptGet` | `bool` | `false` | 是否接受 GET 请求 |
-| `AcceptPost` | `bool` | `true` | 是否接受 POST 请求 |
-| `AutoUnescapeJson` | `bool` | `true` | 是否自动对 JSON 进行反转义 |
-| `AcceptNonStandardJson` | `bool` | `true` | 是否接受非标准 JSON 请求体 |
-| `GetIPFunction` | `Func<CyberCommRequestEventArgs, string>` | 从 `ClientIP` 获取 | 自定义 IP 获取函数（如代理场景） |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `BindingIPAddress` | `List<string>` | `[]` | List of URLs to bind the server to |
+| `ServerCoreName` | `string` | Auto-generated | Server core name (used in logs) |
+| `MainEntryPoint` | `string` | `""` | Main entry prefix (empty means matching starts from sub-routes directly) |
+| `AcceptGet` | `bool` | `false` | Whether to accept GET requests |
+| `AcceptPost` | `bool` | `true` | Whether to accept POST requests |
+| `AutoUnescapeJson` | `bool` | `true` | Whether to automatically unescape JSON |
+| `AcceptNonStandardJson` | `bool` | `true` | Whether to accept non-standard JSON request bodies |
+| `GetIPFunction` | `Func<CyberCommRequestEventArgs, string>` | Reads from `ClientIP` | Custom IP retrieval function (e.g., for proxy scenarios) |
 
 ```csharp
 .Build(options =>
 {
-    options.ServerCoreName = "主服务器";
-    options.MainEntryPoint = "api";    // 请求路径格式：/api/{子路由}
+    options.ServerCoreName = "MainServer";
+    options.MainEntryPoint = "api";    // Request path format: /api/{sub-route}
     options.AcceptGet = true;
     options.AcceptPost = true;
     options.GetIPFunction = args => args.Request.Headers["X-Forwarded-For"] ?? args.ClientIP;
@@ -383,34 +390,34 @@ public class MyAuthService : ServerCoreVerifyServiceBase
 
 ---
 
-### 服务方法中响应客户端
+### Responding to Clients in Service Methods
 
-在 `ServerCoreStandardServiceBase` 子类中，可以使用以下方法响应：
+In subclasses of `ServerCoreStandardServiceBase`, the following methods are available for responding:
 
 ```csharp
-// 发送数据（不关闭连接）
-await Send("消息文本");
-await Send(new { code = 0, data = "ok" }); // 自动序列化为 JSON
+// Send data (without closing the connection)
+await Send("message text");
+await Send(new { code = 0, data = "ok" }); // Automatically serialized to JSON
 
-// 发送数据并关闭请求（最常用）
-await Close("响应内容");
+// Send data and close the request (most common)
+await Close("response content");
 await Close(new { result = 42 });
 
-// 标记请求已处理（适用于同步方法，不发送响应体）
+// Mark the request as handled (for synchronous methods, sends no response body)
 OK();
 
-// 返回错误信息
-Error("参数缺失", HttpStatusCode.BadRequest);
-await CloseWithError("未授权", HttpStatusCode.Unauthorized);
+// Return an error message (throw to send the error and stop further processing)
+throw Error("Missing parameters", HttpStatusCode.BadRequest);
+await CloseWithError("Unauthorized", HttpStatusCode.Unauthorized);
 ```
 
 ---
 
-## 客户端
+## Client Side
 
-### 搭建请求器
+### Setting Up a Requester
 
-使用 `XFEClientRequesterBuilder` 构建 `XFEClientRequester`：
+Use `XFEClientRequesterBuilder` to build an `XFEClientRequester`:
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
@@ -423,45 +430,45 @@ var requester = XFEClientRequesterBuilder.CreateBuilder()
     }, response => response)
     .Build(options =>
     {
-        options.RequestAddress = "http://localhost:3300";  // 服务器地址
-        options.Session = string.Empty;                    // 用户 Session（登录后更新）
-        options.DeviceInfo = DeviceHelper.GetUniqueHardwareId(); // 设备唯一标识
+        options.RequestAddress = "http://localhost:3300";  // Server address
+        options.Session = string.Empty;                    // User session (updated after login)
+        options.DeviceInfo = DeviceHelper.GetUniqueHardwareId(); // Unique device identifier
     });
 
-// 发起请求
+// Make a request
 var result = await requester.Request<string>("echo", "Hello, World!");
 if (result.StatusCode == HttpStatusCode.OK)
-    Console.WriteLine(result.Result);  // 输出：Hello, World!
+    Console.WriteLine(result.Result);  // Output: Hello, World!
 else
-    Console.WriteLine($"失败：{result.StatusCode} {result.Message}");
+    Console.WriteLine($"Failed: {result.StatusCode} {result.Message}");
 ```
 
-`XFEClientRequesterOptions` 属性：
+`XFEClientRequesterOptions` properties:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `RequestAddress` | `string` | `"http://localhost:3300/"` | 服务器请求地址 |
-| `Session` | `string` | `""` | 当前用户 Session |
-| `DeviceInfo` | `string` | 硬件唯一 ID | 设备信息 |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `RequestAddress` | `string` | `"http://localhost:3300/"` | Server request address |
+| `Session` | `string` | `""` | Current user session |
+| `DeviceInfo` | `string` | Unique hardware ID | Device information |
 
 ---
 
-### 内联请求注册
+### Inline Request Registration
 
-`AddRequest(route, constructBody, processResponse)` 适合简单的一次性请求：
+`AddRequest(route, constructBody, processResponse)` is suitable for simple one-off requests:
 
 ```csharp
 var requester = XFEClientRequesterBuilder.CreateBuilder()
-    // 无参请求
+    // Request with no parameters
     .AddRequest("status", (_, _, _) => new { execute = "status" }, response => response)
-    // 带参数请求
+    // Request with parameters
     .AddRequest("math/add", (_, _, parameters) => new
     {
         execute = "math/add",
         a = parameters.Length > 0 ? parameters[0] : 0,
         b = parameters.Length > 1 ? parameters[1] : 0
     }, response => response)
-    // 带 session 和 deviceInfo 的登录请求示例
+    // Login request example with session and deviceInfo
     .AddRequest("login", (session, deviceInfo, parameters) => new
     {
         execute = "login",
@@ -475,15 +482,15 @@ var requester = XFEClientRequesterBuilder.CreateBuilder()
     });
 ```
 
-- `constructBody`：`(string session, string deviceInfo, object[] parameters) => object`，返回请求体对象（自动 JSON 序列化）。
-- `processResponse`：`(string response) => object`，解析响应字符串，可为 `null`（不处理）。
+- `constructBody`: `(string session, string deviceInfo, object[] parameters) => object` — returns the request body object (automatically JSON-serialized).
+- `processResponse`: `(string response) => object` — parses the response string; can be `null` (no processing).
 
 ---
 
-### 定义标准请求服务（Source Generator）
+### Defining Standard Request Services (Source Generator)
 
-继承 `StandardRequestServiceBase` 并使用 `[Request]`/`[Response]` 特性。  
-类必须声明为 `partial`。
+Inherit `StandardRequestServiceBase` and use the `[Request]`/`[Response]` attributes.  
+The class must be declared as `partial`.
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Attributes;
@@ -491,7 +498,7 @@ using XFEExtension.NetCore.ServerInteractive.Implements.Requester;
 
 public partial class MathRequestService : StandardRequestServiceBase
 {
-    // [Request] 标记构造请求体的方法，Path 为路由路径，Name 为可选的调用别名
+    // [Request] marks the method that constructs the request body; Path is the route path, Name is an optional call alias
     [Request("math/add", Name = "add")]
     public object BuildAddRequest() => new
     {
@@ -500,7 +507,7 @@ public partial class MathRequestService : StandardRequestServiceBase
         b = Parameters.Length > 1 ? Parameters[1] : 0
     };
 
-    // [Response] 标记解析响应的方法，Path 和 Name 与 [Request] 对应
+    // [Response] marks the method that parses the response; Path and Name correspond to those in [Request]
     [Response("math/add", Name = "add")]
     public object ParseAddResponse() => double.Parse(UnescapedResponse);
 
@@ -517,92 +524,92 @@ public partial class MathRequestService : StandardRequestServiceBase
 }
 ```
 
-在 `[Request]`/`[Response]` 方法中可访问的属性：
+Properties accessible in `[Request]`/`[Response]` methods:
 
-| 属性 | 说明 |
-|------|------|
-| `Parameters` | 调用 `Request(name, params object[] parameters)` 时传入的参数数组 |
-| `Session` | 当前用户 Session |
-| `DeviceInfo` | 设备信息 |
-| `Response` | 原始响应字符串 |
-| `UnescapedResponse` | 反转义后的响应字符串 |
-| `Route` | 实际请求路由路径 |
+| Property | Description |
+|----------|-------------|
+| `Parameters` | The parameter array passed when calling `Request(name, params object[] parameters)` |
+| `Session` | The current user session |
+| `DeviceInfo` | Device information |
+| `Response` | The raw response string |
+| `UnescapedResponse` | The unescaped response string |
+| `Route` | The actual request route path |
 
-注册到请求器：
+Register with the requester:
 
 ```csharp
 var requester = XFEClientRequesterBuilder.CreateBuilder()
-    .AddRequest<MathRequestService>()   // 从 [Request]/[Response] 自动获取路由并注册
+    .AddRequest<MathRequestService>()   // Automatically reads routes from [Request]/[Response] and registers
     .Build(options =>
     {
         options.RequestAddress = "http://localhost:3300";
     });
 
-// 通过路由路径调用
+// Call using the route path
 var result1 = await requester.Request<double>("math/add", 3.0, 5.0);
-// 通过 Name 别名调用（等价）
+// Call using the Name alias (equivalent)
 var result2 = await requester.Request<double>("add", 3.0, 5.0);
 ```
 
 ---
 
-### 使用XFE标准请求
+### Using XFE Standard Requests
 
-`UseXFEStandardRequest<T>()` 扩展方法一键注册所有标准服务请求（登录、重登、IP 封禁、日志、连接检查）：
+The `UseXFEStandardRequest<T>()` extension method registers all standard service requests in one call (login, re-login, IP banning, logging, connection check):
 
 ```csharp
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 var requester = XFEClientRequesterBuilder.CreateBuilder()
-    .UseXFEStandardRequest<UserFaceInfo>()   // T 为登录返回的用户信息接口实现类
+    .UseXFEStandardRequest<UserFaceInfo>()   // T is the implementing class of the user info interface returned on login
     .Build(options =>
     {
         options.RequestAddress = "http://localhost:3300";
     });
 
-// 登录
+// Login
 var loginResult = await requester.Request<UserLoginResult<UserFaceInfo>>("login", "Admin", "123456");
 if (loginResult.StatusCode == HttpStatusCode.OK)
 {
     Console.WriteLine($"Session: {loginResult.Result.Session}");
-    Console.WriteLine($"过期时间: {loginResult.Result.ExpireDate}");
-    Console.WriteLine($"昵称: {loginResult.Result.UserInfo.NickName}");
-    requester.Session = loginResult.Result.Session;  // 保存 Session 供后续请求使用
+    Console.WriteLine($"Expiry: {loginResult.Result.ExpireDate}");
+    Console.WriteLine($"Nickname: {loginResult.Result.UserInfo.NickName}");
+    requester.Session = loginResult.Result.Session;  // Save session for subsequent requests
 }
 
-// 重新登录（使用 Session + 设备信息自动验证）
+// Re-login (automatically verified using Session + device info)
 var reloginResult = await requester.Request<UserFaceInfo>("relogin");
 
-// 检查连接
+// Check connection
 var checkResult = await requester.Request<DateTime>("check_connect");
 
-// 获取日志
+// Get logs
 var logResult = await requester.Request<string>("get_log", DateTime.MinValue, DateTime.MaxValue);
 
-// IP 封禁管理
-// 说明：AddBannedIPRequest() 注册的调用名称为 get_bannedIPList / add_bannedIP / remove_bannedIP
-// 对应服务端实际路由为 ip/banned/get / ip/banned/add / ip/banned/remove
+// IP ban management
+// Note: AddBannedIPRequest() registers call names get_bannedIPList / add_bannedIP / remove_bannedIP
+// which correspond to server routes ip/banned/get / ip/banned/add / ip/banned/remove
 var bannedIPs = await requester.Request<List<IPAddressInfo>>("get_bannedIPList");
-await requester.Request<string>("add_bannedIP", "192.168.1.100", "恶意请求");
+await requester.Request<string>("add_bannedIP", "192.168.1.100", "Malicious request");
 await requester.Request<bool>("remove_bannedIP", "192.168.1.100");
 ```
 
-`UseXFEStandardRequest<T>()` 等价于：
+`UseXFEStandardRequest<T>()` is equivalent to:
 
 ```csharp
-.AddLoginRequest<T>()        // 注册 login（→ user/login）、relogin（→ user/relogin）请求
-.AddBannedIPRequest()        // 注册 get_bannedIPList、add_bannedIP、remove_bannedIP 请求
-                             //   对应服务端路由：ip/banned/get、ip/banned/add、ip/banned/remove
-.AddLogRequest()             // 注册 get_log（→ log/get）、clear_log（→ log/clear）请求
-.AddCheckConnectRequest()    // 注册 check_connect 请求
+.AddLoginRequest<T>()        // Register login (→ user/login) and relogin (→ user/relogin) requests
+.AddBannedIPRequest()        // Register get_bannedIPList, add_bannedIP, remove_bannedIP requests
+                             //   corresponding to server routes: ip/banned/get, ip/banned/add, ip/banned/remove
+.AddLogRequest()             // Register get_log (→ log/get) and clear_log (→ log/clear) requests
+.AddCheckConnectRequest()    // Register check_connect request
 ```
 
 ---
 
-### TableRequester（数据表请求器）
+### TableRequester (Data Table Requester)
 
-`TableRequester` 专门用于与服务端数据表管理器进行 CRUD 交互：
+`TableRequester` is specifically designed for CRUD interactions with the server-side data table manager:
 
 ```csharp
 var tableRequester = new TableRequester
@@ -612,39 +619,39 @@ var tableRequester = new TableRequester
     DeviceInfo = DeviceHelper.GetUniqueHardwareId()
 };
 
-// 获取所有订单（无分页）
+// Get all orders (no pagination)
 var result = await tableRequester.Get<Order>();
 foreach (var order in result.DataList)
     Console.WriteLine($"ID:{order.Id}\tName:{order.Name}");
 
-// 分页获取（每页 10 条，第 1 页）
+// Paginated get (10 per page, page 1)
 var paged = await tableRequester.Get<Order>(pageCount: 10, page: 1);
 
-// 添加数据
-bool success = await tableRequester.Add(new Order { Name = "新订单", Description = "描述" });
+// Add data
+bool success = await tableRequester.Add(new Order { Name = "New Order", Description = "Description" });
 
-// 修改数据（通过 Id 匹配）
+// Change data (matched by Id)
 var order = result.DataList[0];
-order.Name = "修改后的名称";
+order.Name = "Updated Name";
 await tableRequester.Change(order);
 
-// 删除数据
+// Remove data
 await tableRequester.Remove<Order>(order.Id);
 ```
 
-表名默认从类型名自动推断：类型名首字母小写即为请求表名（`TableNameInRequest`），例如 `Order` → `order`。  
-这是 `TableRequester` 与服务端通信时实际使用的名称，与 `AddTable` 时指定的 `tableShowName`（显示名称，如 `"订单"`）不同。
+The table name is inferred from the type name by default: the type name with its first letter lowercased is used as the request table name (`TableNameInRequest`). For example, `Order` → `order`.  
+This is the name actually used by `TableRequester` when communicating with the server, which differs from the `tableShowName` (display name, e.g., `"Orders"`) specified in `AddTable`.
 
 ```csharp
-// 默认：Order 类型 → 请求表名自动推断为 "order"（类型名首字母小写）
+// Default: Order type → request table name is automatically inferred as "order" (type name with first letter lowercased)
 await tableRequester.Get<Order>();
 
-// 手动指定请求表名（需与服务端 TableNameInRequest 一致，即类型名首字母小写）
-// 注意：这里填写的是请求路径中使用的表名，不是 AddTable 时的 tableShowName
+// Manually specify the request table name (must match the server-side TableNameInRequest, i.e., the type name with first letter lowercased)
+// Note: This is the table name used in the request path, not the tableShowName specified in AddTable
 await tableRequester.Get<Order>("order", pageCount: 10, page: 1);
 ```
 
-数据模型需实现 `IIdModel` 接口（包含 `string Id` 属性）：
+Data models must implement the `IIdModel` interface (which includes a `string Id` property):
 
 ```csharp
 public class Order : IIdModel
@@ -657,23 +664,23 @@ public class Order : IIdModel
 
 ---
 
-## 增量生成器（Source Generator）
+## Source Generator
 
-本库提供了两个增量生成器，在编译期自动为服务类和请求类生成路由字典，无需手动维护。
+This library provides two incremental source generators that automatically generate route dictionaries for service classes and request classes at compile time, eliminating the need for manual maintenance.
 
-### 服务端：EntryPoint 生成器
+### Server Side: EntryPoint Generator
 
-自动为继承 `ServerCoreStandardServiceBase` 的 `partial` 类生成 `SyncEntryPoints` 和 `AsyncEntryPoints` 字典。
+Automatically generates `SyncEntryPoints` and `AsyncEntryPoints` dictionaries for `partial` classes that inherit `ServerCoreStandardServiceBase`.
 
-**使用要求：**
-- 类必须声明为 `partial`
-- 方法返回类型必须为 `void`（同步）或 `Task`/`Task<T>`（异步）
-- 方法不能有参数
-- 路由路径不能包含引号（`"`）或反斜杠（`\`）
-- 通配符 `*` 必须是独立的路径段（不能与其他字符混合）
-- 同一个类中同一个路径只能有一个处理方法
+**Requirements:**
+- The class must be declared as `partial`
+- Method return types must be `void` (synchronous) or `Task` (asynchronous)
+- Methods must not have parameters
+- Route paths must not contain quotes (`"`) or backslashes (`\`)
+- The wildcard `*` must be a complete path segment (cannot be mixed with other characters)
+- A single class cannot have more than one handler for the same route path
 
-**示例：**
+**Example:**
 
 ```csharp
 public partial class ApiService : ServerCoreStandardServiceBase
@@ -690,20 +697,20 @@ public partial class ApiService : ServerCoreStandardServiceBase
         // ...
     }
 
-    // 通配符路由：匹配 resource/任意/details
+    // Wildcard route: matches resource/anything/details
     [EntryPoint("resource/*/details")]
     public async Task ResourceDetails()
     {
-        // Route 包含实际匹配的路径
+        // Route contains the actual matched path
         await Close($"Resource detail for {Route}");
     }
 }
 ```
 
-生成器自动生成（无需手写）：
+The generator automatically produces (no manual writing required):
 
 ```csharp
-// ApiService.EntryPoints.g.cs（自动生成，仅展示）
+// ApiService.EntryPoints.g.cs (auto-generated, shown for illustration only)
 public override Dictionary<string, Action> SyncEntryPoints => new()
 {
     { "user/update", UpdateUser },
@@ -718,22 +725,22 @@ public override Dictionary<string, Func<Task>> AsyncEntryPoints => new()
 
 ---
 
-### 客户端：ClientRequest 生成器
+### Client Side: ClientRequest Generator
 
-自动为继承 `StandardRequestServiceBase` 的 `partial` 类生成 `RequestPoints`、`ResponsePoints` 和 `RequestRouteMap` 字典。
+Automatically generates `RequestPoints`, `ResponsePoints`, and `RequestRouteMap` dictionaries for `partial` classes that inherit `StandardRequestServiceBase`.
 
-**使用要求：**
-- 类必须声明为 `partial`
-- 方法返回类型必须为 `object`
-- 方法不能有参数
-- 同一个类中同一路径或名称（在 Request 或 Response 中）不能重复
+**Requirements:**
+- The class must be declared as `partial`
+- Method return types must be `object`
+- Methods must not have parameters
+- The same path or name (within `[Request]` or `[Response]`) cannot be registered more than once within a single class
 
-**示例：**
+**Example:**
 
 ```csharp
 public partial class UserRequestService<T> : StandardRequestServiceBase where T : IUserFaceInfo
 {
-    // Path 为路由路径，Name 为可选的请求别名（调用时可用 Path 或 Name）
+    // Path is the route path; Name is an optional request alias (you can call using either Path or Name)
     [Request("login", Name = "login")]
     public object LoginRequest() => new
     {
@@ -761,49 +768,49 @@ public partial class UserRequestService<T> : StandardRequestServiceBase where T 
 
 ---
 
-### 诊断规则
+### Diagnostic Rules
 
-增量生成器会在编译期检查代码并报告诊断信息：
+The incremental generators check code at compile time and report diagnostics:
 
-| 代码 | 说明 | 适用范围 |
-|------|------|----------|
-| `XFE0003` | 包含 `[EntryPoint]` 方法的类必须为 `partial` | 服务端 |
-| `XFE0004` | `[EntryPoint]` 方法不能有参数 | 服务端 |
-| `XFE0005` | `[EntryPoint]` 方法返回类型必须为 `void` 或 `Task` | 服务端 |
-| `XFE0006` | `[EntryPoint]` 路径包含无效字符（引号或反斜杠） | 服务端 |
-| `XFE0007` | 包含 `[Request]`/`[Response]` 方法的类必须为 `partial` | 客户端 |
-| `XFE0008` | `[Request]`/`[Response]` 方法不能有参数 | 客户端 |
-| `XFE0009` | `[Request]`/`[Response]` 方法返回类型必须为 `object` | 客户端 |
-| `XFE0010` | `[Request]`/`[Response]` 路径包含无效字符 | 客户端 |
-| `XFE0011` | `[Request]`/`[Response]` 路径或名称重复注册 | 客户端 |
-| `XFE0012` | `[EntryPoint]` 路径在同一类中重复注册 | 服务端 |
-| `XFE0013` | `[EntryPoint]` 通配符使用无效（`*` 必须是完整路径段） | 服务端 |
+| Code | Description | Scope |
+|------|-------------|-------|
+| `XFE0003` | Classes containing `[EntryPoint]` methods must be `partial` | Server side |
+| `XFE0004` | `[EntryPoint]` methods must not have parameters | Server side |
+| `XFE0005` | `[EntryPoint]` method return type must be `void` or `Task` | Server side |
+| `XFE0006` | `[EntryPoint]` path contains invalid characters (quotes or backslashes) | Server side |
+| `XFE0007` | Classes containing `[Request]`/`[Response]` methods must be `partial` | Client side |
+| `XFE0008` | `[Request]`/`[Response]` methods must not have parameters | Client side |
+| `XFE0009` | `[Request]`/`[Response]` method return type must be `object` | Client side |
+| `XFE0010` | `[Request]`/`[Response]` path contains invalid characters | Client side |
+| `XFE0011` | `[Request]`/`[Response]` path or name is registered more than once | Client side |
+| `XFE0012` | `[EntryPoint]` path is registered more than once in the same class | Server side |
+| `XFE0013` | Invalid wildcard usage in `[EntryPoint]` (`*` must be a complete path segment) | Server side |
 
-所有诊断均有对应的在线文档：`https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE{代码}`
+All diagnostics have corresponding online documentation at: `https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE{code}` (e.g., `https://docs.xfegzs.com/View/Errors/ServerInteractive/XFE0003`)
 
 ---
 
-## 常见错误与解决方案
+## Common Errors and Solutions
 
-**Q：服务没有收到请求，控制台没有任何输出**
-- 确认 `XFEServerCoreBuilder.Build(options => { options.BindIP("..."); })` 中绑定了正确的地址
-- 如果设置了 `MainEntryPoint`，请求路径需要包含该前缀，例如设置 `api` 后请求 `/api/echo`
+**Q: The service is not receiving requests and there is no console output**
+- Confirm that the correct address is bound in `XFEServerCoreBuilder.Build(options => { options.BindIP("..."); })`
+- If `MainEntryPoint` is set, request paths must include that prefix — for example, if `api` is set, request `/api/echo`
 
-**Q：`InvalidOperationException: 类型 MyService 的 EntryPointList 为空`**
-- 确认 `MyService` 继承了 `ServerCoreStandardServiceBase`
-- 确认类声明了 `partial` 关键字
-- 确认方法上有 `[EntryPoint("路径")]` 特性且路径不为空
+**Q: `InvalidOperationException: EntryPointList for type MyService is empty`**
+- Confirm that `MyService` inherits `ServerCoreStandardServiceBase`
+- Confirm that the class is declared with the `partial` keyword
+- Confirm that the method has a `[EntryPoint("path")]` attribute with a non-empty path
 
-**Q：`XFEServerBuilderException: 未添加核心处理器`**
-- 在 `XFEServerBuilder.Build()` 前必须调用 `AddCoreProcessor<T>()`，或使用 `UseXFEServer()` 扩展方法
+**Q: `XFEServerBuilderException: No core processor has been added`**
+- Before calling `XFEServerBuilder.Build()`, you must call `AddCoreProcessor<T>()`, or use the `UseXFEServer()` extension method
 
-**Q：路由匹配到了不期望的服务**
-- 框架按"最具体优先"原则：字面量段越多的路由模式优先级越高，与注册顺序无关
-- 精确路由（无通配符）总是优先于通配符路由
+**Q: A route is matching an unexpected service**
+- The framework uses the "most-specific-first" principle: route patterns with more literal segments have higher priority, regardless of registration order
+- Exact routes (without wildcards) always take priority over wildcard routes
 
-**Q：`[Request]`/`[Response]` 方法的返回类型报错**
-- 方法必须声明返回类型为 `object`（不能是 `string`、`int` 等具体类型）
+**Q: The return type of a `[Request]`/`[Response]` method is causing an error**
+- The method must declare `object` as its return type (it cannot be `string`, `int`, or any other specific type)
 
-**Q：客户端请求总是返回 500**
-- 检查 `options.RequestAddress` 末尾是否有多余的斜杠（框架会自动拼接路由：`RequestAddress + "/" + route`）
-- 确认服务端路由与请求名称完全一致（区分大小写）
+**Q: Client requests always return 500**
+- Ensure `options.RequestAddress` does **not** have a trailing slash — the requester builds URLs as `RequestAddress + "/" + route`, so a trailing slash would create a double slash (e.g., use `"http://localhost:3300"` not `"http://localhost:3300/"`)
+- Confirm that the server-side route exactly matches the request name (case-sensitive)
