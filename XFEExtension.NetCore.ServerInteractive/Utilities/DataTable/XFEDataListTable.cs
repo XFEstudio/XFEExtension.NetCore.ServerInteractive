@@ -17,7 +17,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.DataTable;
 /// XFE数据表格
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
+public class XFEDataListTable<T> : IXFEDataTable where T : IIdModel
 {
     /// <inheritdoc/>
     public Func<IEnumerable<EncryptedUserLoginModel>> GetEncryptedUserLoginModelFunction { get; set; } = () => [];
@@ -61,7 +61,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
     /// <summary>
     /// 创建列表并手动设置Get Set方法等
     /// </summary>
-    public XFEDataTable() => TableNameInRequest = $"{TableName[0]}".ToLower() + TableName[1..];
+    public XFEDataListTable() => TableNameInRequest = $"{TableName[0]}".ToLower() + TableName[1..];
 
     /// <summary>
     /// 根据指定type自动设置Get Set方法
@@ -70,7 +70,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
     /// <remarks>
     /// 对于自动设置Get Set方法的Table，请确保配置文件使用XFEProfile创建ProfileList，属性名称为XXXTable
     /// </remarks>
-    public XFEDataTable(Type type)
+    public XFEDataListTable(Type type)
     {
         TableNameInRequest = $"{TableName[0]}".ToLower() + TableName[1..];
         var property = type.GetProperty($"{typeof(T).Name}Table", BindingFlags.Public | BindingFlags.Static);
@@ -132,7 +132,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
             switch (execute)
             {
                 case "get":
-                    Console.Write($"【{r.Args.ClientIP}】获取{TableShowName}列表请求");
+                    Console.Write($"获取{TableShowName}列表请求");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<T> tableList = [.. GetTableFunction()];
                     var pageCount = requestJsonNode["pageCount"]?.GetValue<int>() ?? -1;
@@ -157,7 +157,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
                     }
                     break;
                 case "add":
-                    Console.Write($"【{r.Args.ClientIP}】添加{TableShowName}请求");
+                    Console.Write($"添加{TableShowName}请求");
                     var item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]?.ToString() ?? string.Empty), JsonSerializerOptions);
                     if (item is null)
                     {
@@ -177,7 +177,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
                     r.Args.Close();
                     break;
                 case "remove":
-                    Console.Write($"【{r.Args.ClientIP}】删除{TableShowName}请求");
+                    Console.Write($"删除{TableShowName}请求");
                     var id = requestJsonNode["id"]?.ToString();
                     Console.Write($"：{id}");
                     UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, RemovePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
@@ -190,7 +190,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
                     r.Args.Close();
                     break;
                 case "change":
-                    Console.Write($"【{r.Args.ClientIP}】更改{TableShowName}请求");
+                    Console.Write($"更改{TableShowName}请求");
                     item = JsonSerializer.Deserialize<T>(Convert.FromBase64String(requestJsonNode["data"]?.ToString() ?? string.Empty), JsonSerializerOptions);
                     if (item is null)
                     {
@@ -208,7 +208,7 @@ public class XFEDataTable<T> : IXFEDataTable where T : IIdModel
                     r.Args.Close();
                     break;
                 default:
-                    Console.WriteLine($"[ERROR]【{r.Args.ClientIP}】意料之外的方法：{execute}");
+                    Console.WriteLine($"[ERROR] 意料之外的方法：{execute}");
                     await r.Args.ReplyAndClose($"意料之外的方法：{execute}", HttpStatusCode.BadRequest);
                     break;
             }
