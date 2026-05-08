@@ -1,11 +1,11 @@
 # XFEExtension.NetCore.ServerInteractive
 
-[![NuGet](https://img.shields.io/nuget/v/XFEExtension.NetCore.ServerInteractive.svg)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/XFEExtension.NetCore.ServerInteractive.svg)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
+[![NuGet](https://img.shields.io/nuget/v/XFEExtension.NetCore.ServerInteractive?label=NuGet&logo=NuGet)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/XFEExtension.NetCore.ServerInteractive?label=Downloads&logo=NuGet)](https://www.nuget.org/packages/XFEExtension.NetCore.ServerInteractive/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
-[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download)
 
-> 🌐 [中文文档 (Chinese)](README_CN.md)
+> 🌐 English | [简体中文](https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive/blob/master/README_CN.md)
 
 ## Description
 
