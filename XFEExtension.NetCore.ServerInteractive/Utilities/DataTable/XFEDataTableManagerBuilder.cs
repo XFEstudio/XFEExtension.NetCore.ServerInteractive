@@ -69,6 +69,42 @@ public abstract class XFEDataTableManagerBuilder
     });
 
     /// <summary>
+    /// 添加字典数据表
+    /// </summary>
+    /// <typeparam name="TValue">数据类型</typeparam>
+    /// <param name="xFEDataTable">字典数据表</param>
+    /// <returns></returns>
+    public XFEDataTableManagerBuilder AddTable<TValue>(XFEDataDictionaryTable<TValue> xFEDataTable) where TValue : IIdModel
+    {
+        _dataTableList.Add(xFEDataTable);
+        ExecuteList.AddRange([$"get_{xFEDataTable.TableNameInRequest}", $"add_{xFEDataTable.TableNameInRequest}", $"change_{xFEDataTable.TableNameInRequest}", $"remove_{xFEDataTable.TableNameInRequest}"]);
+        return this;
+    }
+
+    /// <summary>
+    /// 添加字典数据表
+    /// </summary>
+    /// <typeparam name="TValue">数据类型</typeparam>
+    /// <typeparam name="TP">配置文件类型</typeparam>
+    /// <param name="tableShowName">表格数据的显示名称（如：订单、用户等）</param>
+    /// <param name="addPermissionLevel">增加数据所需的最小权限</param>
+    /// <param name="removePermissionLevel">删除数据所需的最小权限</param>
+    /// <param name="changePermissionLevel">更改数据所需的最小权限</param>
+    /// <param name="getPermissionLevel">获取数据所需的最小权限</param>
+    /// <param name="jsonSerializerOptions">JSON转换器</param>
+    /// <returns></returns>
+    public XFEDataTableManagerBuilder AddDictionaryTable<TValue, TP>(string tableShowName, int addPermissionLevel, int removePermissionLevel, int changePermissionLevel, int getPermissionLevel, JsonSerializerOptions? jsonSerializerOptions = null) where TValue : IIdModel where TP : XFEProfile => AddTable(new XFEDataDictionaryTable<TValue>(typeof(TP))
+    {
+        TableShowName = tableShowName,
+        AddPermissionLevel = addPermissionLevel,
+        RemovePermissionLevel = removePermissionLevel,
+        ChangePermissionLevel = changePermissionLevel,
+        GetPermissionLevel = getPermissionLevel,
+        UserJsonSerializerOptions = _userJsonSerializerOptions,
+        JsonSerializerOptions = jsonSerializerOptions
+    });
+
+    /// <summary>
     /// 构建数据表管理器
     /// </summary>
     /// <param name="getEncryptedUserLoginModelFunction"></param>
