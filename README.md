@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download)
 
-> 🌐 English | [简体中文](https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive/blob/master/README_CN.md)
+> 📖 English | [简体中文](https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive/blob/master/README.zh-CN.md)
 
 ## Description
 

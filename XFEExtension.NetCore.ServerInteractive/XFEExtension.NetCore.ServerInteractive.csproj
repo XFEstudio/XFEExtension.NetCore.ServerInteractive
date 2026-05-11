@@ -22,7 +22,7 @@
       ## 调整
 
       更新md文档
-      
+
       ## 新增
 
       无
@@ -50,16 +50,16 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\README_CN.md">
+    <None Include="..\README.zh-CN.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="10.0.5" />
+    <PackageReference Include="System.Management" Version="10.0.7" />
     <PackageReference Include="XFEExtension.NetCore" Version="4.2.*" />
-    <PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="2.0.*" />
+    <PackageReference Include="XFEExtension.NetCore.AutoConfig" Version="3.0.*" />
     <PackageReference Include="XFEExtension.NetCore.AutoImplement" Version="1.1.*" />
     <PackageReference Include="XFEExtension.NetCore.XFEConsole" Version="2.2.*" />
   </ItemGroup>
