@@ -46,9 +46,9 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
                 }
                 errorInfo = errorMessage.Contains("请求的路由未注册") ? "路由未找到" : "服务器内部异常";
                 Console.WriteLine();
-                Console.WriteLine($"[WARN]【{errorInfo}】{errorMessage}");
+                Console.WriteLine($"[WARN]({sender.ServerCoreName})【{errorInfo}】{errorMessage}");
                 if (e.ServerException?.InnerException?.StackTrace is not null)
-                    Console.WriteLine($"[TRACE]{e.ServerException?.InnerException?.StackTrace}");
+                    Console.WriteLine($"[TRACE]({sender.ServerCoreName}){e.ServerException?.InnerException?.StackTrace}");
             }
 
             try

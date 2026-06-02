@@ -5,7 +5,6 @@ using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.TServer.Models;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
-using XFEExtension.NetCore.XUnit.Attributes;
 
 namespace XFEExtension.NetCore.ServerInteractive.Test;
 
@@ -49,7 +48,7 @@ internal class Program
         }, response => response)
         .Build(options =>
         {
-            options.RequestAddress = "http://localhost:3305/api";
+            options.RequestAddress = "http://localhost:3302/backend";
         });
 
     private static readonly TableRequester TableRequester = new();
@@ -63,7 +62,7 @@ internal class Program
 
     #region 基础测试
 
-    [SMTest]
+    // [SMTest]
     public static async Task TestPOST()
     {
         using var client = new HttpClient
@@ -493,7 +492,7 @@ internal class Program
     /// <summary>
     /// 测试获取订单列表
     /// </summary>
-    //[SMTest]
+    [SMTest]
     public static async Task GetOrder()
     {
         var result = await TableRequester.Get<Order>();
