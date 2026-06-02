@@ -4,16 +4,17 @@ using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Options;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
+using XFEExtension.NetCore.StringExtension;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 /// <summary>
-/// XFE客户端请求器构建器
+/// 客户端请求器构建器
 /// </summary>
 [CreateImpl]
-public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientRequesterBuilder>
+public abstract class ClientRequesterBuilder : XFEBuilderBase<ClientRequesterBuilder>
 {
-    private readonly XFEClientRequester _xFEClientRequester = new XFEClientRequesterImpl();
+    private readonly ClientRequester _xFEClientRequester = new ClientRequesterImpl();
     private readonly Dictionary<string, Func<IRequestService>> _requestServiceDictionary = [];
     private readonly Dictionary<string, Func<IStandardRequestService>> _standardRequestServiceDictionary = [];
     private readonly List<(string Pattern, Func<IStandardRequestService> Factory)> _wildcardStandardRequestServiceList = [];
@@ -22,9 +23,9 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// 创建构建器
     /// </summary>
     /// <returns></returns>
-    public static XFEClientRequesterBuilder CreateBuilder()
+    public static ClientRequesterBuilder CreateBuilder()
     {
-        var builder = new XFEClientRequesterBuilderImpl();
+        var builder = new ClientRequesterBuilderImpl();
         builder.AddParameter("XFEClientRequester", builder._xFEClientRequester);
         return builder;
     }
@@ -35,7 +36,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <param name="serviceName">请求名称</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddOriginRequest<T>(string serviceName) where T : IRequestService, new()
+    public ClientRequesterBuilder AddOriginRequest<T>(string serviceName) where T : IRequestService, new()
     {
         _requestServiceDictionary.Add(serviceName, () =>
         {
@@ -51,7 +52,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// </summary>
     /// <typeparam name="T">请求服务泛型</typeparam>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest<T>() where T : IStandardRequestService, new()
+    public ClientRequesterBuilder AddRequest<T>() where T : IStandardRequestService, new()
     {
         var probeService = new T();
         ApplyParameter(probeService);
@@ -78,7 +79,8 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
                     var inst = new T();
                     ApplyParameter(inst);
                     return inst;
-                }));
+                }
+                ));
             }
             else
             {
@@ -102,7 +104,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <param name="route">路径</param>
     /// <param name="xFEClientInstanceRequest">请求实例</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest(string route, StandardClientInstanceRequest xFEClientInstanceRequest)
+    public ClientRequesterBuilder AddRequest(string route, StandardClientInstanceRequest xFEClientInstanceRequest)
     {
         _standardClientInstanceRequestDictionary.Add(route, xFEClientInstanceRequest);
         return this;
@@ -115,21 +117,42 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// <param name="constructBody">构造请求体方法<seealso cref="object"/> (<seealso cref="string"/> session, <seealso cref="string"/> deviceInfo, <seealso cref="object"/>[] parameters)</param>
     /// <param name="processResponse">处理响应方法<seealso cref="object"/> (<seealso cref="string"/> response)</param>
     /// <returns></returns>
-    public XFEClientRequesterBuilder AddRequest(string route, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(route, new StandardClientInstanceRequest
+    public ClientRequesterBuilder AddRequest(string route, Func<string, string, object[], object> constructBody, Func<string, object>? processResponse = null) => AddRequest(route, new StandardClientInstanceRequest
     {
         ConstructBody = constructBody,
         ProcessResponse = processResponse
     });
 
     /// <summary>
+    /// 使用表格请求器
+    /// </summary>
+    /// <param name="tableRequester"></param>
+    /// <returns></returns>
+    public ClientRequesterBuilder UseTableRequester(TableRequester? tableRequester = null)
+    {
+        tableRequester ??= new();
+        _xFEClientRequester.TableRequester = tableRequester;
+        return this;
+    }
+
+    /// <summary>
     /// 构建XFE客户端请求器
     /// </summary>
     /// <returns>XFE客户端请求器</returns>
-    public XFEClientRequester Build(XFEClientRequesterOptions options)
+    public ClientRequester Build(XFEClientRequesterOptions options)
     {
         _xFEClientRequester.RequestAddress = options.RequestAddress;
         _xFEClientRequester.Session = options.Session;
         _xFEClientRequester.DeviceInfo = options.DeviceInfo;
+        if (_xFEClientRequester.TableRequester is not null)
+        {
+            if (_xFEClientRequester.TableRequester.RequestAddress.NullOrEmpty)
+                _xFEClientRequester.TableRequester.RequestAddress = options.RequestAddress;
+            if (_xFEClientRequester.TableRequester.DeviceInfo.NullOrEmpty)
+                _xFEClientRequester.TableRequester.DeviceInfo = options.DeviceInfo;
+            if (_xFEClientRequester.TableRequester.Session.NullOrEmpty)
+                _xFEClientRequester.TableRequester.Session = options.Session;
+        }
         _xFEClientRequester.RequestServiceDictionary = _requestServiceDictionary;
         _xFEClientRequester.StandardRequestServiceDictionary = _standardRequestServiceDictionary;
         _xFEClientRequester.WildcardStandardRequestServiceList = _wildcardStandardRequestServiceList;
@@ -141,7 +164,7 @@ public abstract class XFEClientRequesterBuilder : XFEBuilderBase<XFEClientReques
     /// 构建XFE客户端请求器
     /// </summary>
     /// <returns>XFE客户端请求器</returns>
-    public XFEClientRequester Build(Action<XFEClientRequesterOptions> optionsBuilder)
+    public ClientRequester Build(Action<XFEClientRequesterOptions> optionsBuilder)
     {
         var options = new XFEClientRequesterOptions();
         optionsBuilder(options);

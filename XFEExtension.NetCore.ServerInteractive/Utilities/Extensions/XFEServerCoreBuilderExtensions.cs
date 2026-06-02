@@ -26,8 +26,6 @@ public static class XFEServerCoreBuilderExtensions
         {
             xFEServerCoreBuilder.AddParameter("TableManager", xFEDataTableManagerBuilder.Build(getUserFunction, getEncryptedUserLoginModelFunction));
 
-            // Register the service for each table operation route
-            // XFEDataTableManagerService uses dynamic routing, so we use AddServiceWithRoute
             foreach (var execute in xFEDataTableManagerBuilder.ExecuteList)
             {
                 var parts = execute.Split('_', 2);
@@ -134,47 +132,22 @@ public static class XFEServerCoreBuilderExtensions
         public XFEServerCoreBuilder UseXFEStandardServerCore<T>(XFEStandardServerCoreOptions<T>? options) where T : class
         {
             if (options is null) return xFEServerCoreBuilder;
-
-            // start with base builder
             var builder = xFEServerCoreBuilder;
-
-            // If user-related functions are provided, add user parameters and login services
             var hasUserFunctions = options.GetUserFunction is not null && options.AddUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null && options.AddEncryptedUserLoginModelFunction is not null && options.RemoveEncryptedUserLoginModelFunction is not null && options.LoginResultConvertFunction is not null;
-
             if (hasUserFunctions)
-            {
                 builder = builder.AddUserParameterBase(options.GetUserFunction!, options.AddUserFunction!, options.GetEncryptedUserLoginModelFunction!, options.AddEncryptedUserLoginModelFunction!, options.RemoveEncryptedUserLoginModelFunction!, options.GetLoginKeepDays, options.LoginResultConvertFunction!);
-            }
-
-            // DataTableManager requires both user functions and a builder
             if (options.DataTableManagerBuilder is not null && options.GetUserFunction is not null && options.GetEncryptedUserLoginModelFunction is not null)
-            {
                 builder = builder.AddDataTableManager(options.DataTableManagerBuilder, options.GetUserFunction, options.GetEncryptedUserLoginModelFunction);
-            }
-
-            // Common services that don't strictly require user functions
             if (options.UseEntryPointVerifyService)
-            {
                 builder = builder.AddEntryPointVerify();
-            }
             if (options.UseDailyCounterService)
-            {
                 builder = builder.AddDailyCounterService();
-            }
             if (options.UseXFEErrorProcessService)
-            {
                 builder = builder.AddXFEErrorProcessService();
-            }
             if (options.UseConnectService)
-            {
                 builder = builder.AddConnectService();
-            }
-            // Add services that depend on user functions if available
             if (hasUserFunctions)
-            {
                 builder = builder.AddStandardLoginService<T>().AddServerLogService().AddIPBannerService();
-            }
-
             return builder;
         }
 

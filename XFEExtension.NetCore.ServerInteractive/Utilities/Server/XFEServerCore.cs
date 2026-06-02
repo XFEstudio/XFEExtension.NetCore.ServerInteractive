@@ -72,7 +72,8 @@ public abstract class XFEServerCore : ServerCoreServiceBase
     {
         var r = new ServerCoreReturnArgs
         {
-            Args = e
+            Args = e,
+            ServerCore = this
         };
         try
         {

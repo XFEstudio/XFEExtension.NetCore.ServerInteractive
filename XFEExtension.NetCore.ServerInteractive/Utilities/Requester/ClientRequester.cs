@@ -12,10 +12,10 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.JsonConverter;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 
 /// <summary>
-/// XFE客户端请求器
+/// 客户端请求器
 /// </summary>
 [CreateImpl]
-public abstract class XFEClientRequester : IRequesterBase
+public abstract class ClientRequester : IRequesterBase
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new();
     internal Dictionary<string, Func<IRequestService>> RequestServiceDictionary = [];
@@ -28,13 +28,17 @@ public abstract class XFEClientRequester : IRequesterBase
     public string Session { get; set; } = string.Empty;
     /// <inheritdoc/>
     public string DeviceInfo { get; set; } = string.Empty;
+    /// <summary>
+    /// 表格请求器（如需使用表格相关功能，请通过构建器添加WithTableRequester实例并赋值此属性）
+    /// </summary>
+    public TableRequester? TableRequester { get; set; }
     /// <inheritdoc/>
     public event XFEEventHandler<object?, ServerInteractiveEventArgs>? MessageReceived;
 
     /// <summary>
     /// XFE客户端请求器
     /// </summary>
-    protected XFEClientRequester()
+    protected ClientRequester()
     {
         _jsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
     }

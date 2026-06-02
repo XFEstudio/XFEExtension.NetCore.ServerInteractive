@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using XFEExtension.NetCore.DelegateExtension;
+using XFEExtension.NetCore.ServerInteractive.Interfaces.Requester;
 using XFEExtension.NetCore.ServerInteractive.Models;
 using XFEExtension.NetCore.ServerInteractive.Models.RequesterModels;
 using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
@@ -12,7 +13,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Requester;
 /// <summary>
 /// 表格请求器
 /// </summary>
-public class TableRequester
+public class TableRequester : IRequesterBase
 {
     /// <summary>
     /// 请求地址

@@ -10,7 +10,7 @@ namespace XFEExtension.NetCore.ServerInteractive.Test;
 
 internal class Program
 {
-    private static readonly XFEClientRequester s_xFEClientRequester = XFEClientRequesterBuilder.CreateBuilder()
+    private static readonly ClientRequester s_xFEClientRequester = ClientRequesterBuilder.CreateBuilder()
         .UseXFEStandardRequest<UserFaceInfo>()
         .AddRequest("test", (_, _, _) => new
         {

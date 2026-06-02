@@ -10,5 +10,5 @@ public interface IRequestServiceBase
     /// <summary>
     /// XFE客户端请求器
     /// </summary>
-    XFEClientRequester XFEClientRequester { get; set; }
+    ClientRequester XFEClientRequester { get; set; }
 }

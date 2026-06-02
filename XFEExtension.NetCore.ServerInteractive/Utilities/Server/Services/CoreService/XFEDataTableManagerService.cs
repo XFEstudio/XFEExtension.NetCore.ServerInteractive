@@ -14,12 +14,7 @@ public class XFEDataTableManagerService : ServerCoreStandardServiceBase
     public XFEDataTableManager TableManager { get; set; }
 
     /// <inheritdoc/>
-    public override void Initialize()
-    {
-        // Dynamically populate the async entry point for the current route
-        // This works because a new service instance is created for each request
-        AsyncEntryPoints[Route] = HandleOperation;
-    }
+    public override void Initialize() => AsyncEntryPoints[Route] = HandleOperation;
 
     /// <summary>
     /// 处理数据表格操作（由XFEServerCore通过字典调用）

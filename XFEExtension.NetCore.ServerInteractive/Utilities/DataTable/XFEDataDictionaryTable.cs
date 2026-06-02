@@ -199,14 +199,14 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
                     r.Args.Close();
                     break;
                 default:
-                    Console.WriteLine($"[ERROR] 意料之外的方法：{execute}");
-                    await r.Args.ReplyAndClose($"意料之外的方法：{execute}", HttpStatusCode.BadRequest);
+                    Console.WriteLine($"[ERROR] 试图查询不存在的表格：{execute}");
+                    await r.Args.ReplyAndClose($"试图查询不存在的表格：{execute}", HttpStatusCode.BadRequest);
                     break;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN]【{r.Args.ClientIP}】{ex.Message}");
+            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){ex.Message}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
             await r.Args.ReplyAndClose(ex.Message, statusCode);
         }

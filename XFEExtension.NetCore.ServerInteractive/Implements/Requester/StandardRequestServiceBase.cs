@@ -26,7 +26,7 @@ public abstract class StandardRequestServiceBase : IStandardRequestService
     /// <inheritdoc/>
     public object[] Parameters { get; set; } = [];
     /// <inheritdoc/>
-    public XFEClientRequester XFEClientRequester { get; set; }
+    public ClientRequester XFEClientRequester { get; set; }
 
     /// <inheritdoc/>
     public virtual Dictionary<string, Func<object>> RequestPoints { get; } = new();

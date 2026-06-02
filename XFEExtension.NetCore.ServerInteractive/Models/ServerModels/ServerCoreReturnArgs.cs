@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using XFEExtension.NetCore.CyberComm;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Server;
 
 namespace XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
 
@@ -33,6 +34,10 @@ public class ServerCoreReturnArgs : Exception
     /// 本次异常服务器参数
     /// </summary>
     public required CyberCommRequestEventArgs Args { get; set; }
+    /// <summary>
+    /// 服务器核心实例（如果需要在异常处理中访问服务器核心的相关信息或方法，可以通过此属性访问）
+    /// </summary>
+    public required XFEServerCore ServerCore { get; set; }
 
     /// <summary>
     /// Sends a reply message asynchronously using the current context.

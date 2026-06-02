@@ -8,22 +8,22 @@ using XFEExtension.NetCore.ServerInteractive.Utilities.Requester.Services;
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Extensions;
 
 /// <summary>
-/// XFE客户端请求器构建器扩展
+/// 客户端请求器构建器扩展
 /// </summary>
-public static class XFEClientRequesterBuilderExtensions
+public static class ClientRequesterBuilderExtensions
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new();
 
-    static XFEClientRequesterBuilderExtensions() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+    static ClientRequesterBuilderExtensions() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
     /// <param name="xFEClientRequesterBuilder"></param>
-    extension(XFEClientRequesterBuilder xFEClientRequesterBuilder)
+    extension(ClientRequesterBuilder xFEClientRequesterBuilder)
     {
         /// <summary>
         /// 添加连接检查请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddCheckConnectRequest() => xFEClientRequesterBuilder.AddRequest("check_connect", static (_, _, _) => new
+        public ClientRequesterBuilder AddCheckConnectRequest() => xFEClientRequesterBuilder.AddRequest("check_connect", static (_, _, _) => new
         {
             execute = "check_connect"
         }, response => DateTime.Parse(response));
@@ -32,13 +32,13 @@ public static class XFEClientRequesterBuilderExtensions
         /// 添加日志请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest<LogRequestService>();
+        public ClientRequesterBuilder AddLogRequest() => xFEClientRequesterBuilder.AddRequest<LogRequestService>();
 
         /// <summary>
         /// 添加IP封禁请求
         /// </summary>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddBannedIPRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIPList", static (session, deviceInfo, _) => new
+        public ClientRequesterBuilder AddBannedIPRequest() => xFEClientRequesterBuilder.AddRequest("get_bannedIPList", static (session, deviceInfo, _) => new
         {
             execute = "get_bannedIPList",
             session,
@@ -63,14 +63,14 @@ public static class XFEClientRequesterBuilderExtensions
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEClientRequesterBuilder AddLoginRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddRequest<UserRequestService<T>>();
+        public ClientRequesterBuilder AddLoginRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddRequest<UserRequestService<T>>();
 
         /// <summary>
         /// 使用XFE标准服务器服务请求
         /// </summary>
         /// <typeparam name="T">登录返回用户接口类型</typeparam>
         /// <returns></returns>
-        public XFEClientRequesterBuilder UseXFEStandardRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddLoginRequest<T>()
+        public ClientRequesterBuilder UseXFEStandardRequest<T>() where T : IUserFaceInfo => xFEClientRequesterBuilder.AddLoginRequest<T>()
             .AddBannedIPRequest()
             .AddLogRequest()
             .AddCheckConnectRequest();
