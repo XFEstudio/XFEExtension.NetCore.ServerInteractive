@@ -206,7 +206,7 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){ex.Message}");
+            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){ExceptionHelper.GetExceptionMessage(ex)}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
             await r.Args.ReplyAndClose(ex.Message, statusCode);
         }

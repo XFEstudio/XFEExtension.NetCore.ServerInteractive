@@ -1,6 +1,7 @@
-﻿using XFEExtension.NetCore.CyberComm;
+using XFEExtension.NetCore.CyberComm;
 using XFEExtension.NetCore.ServerInteractive.Implements.CoreService;
 using XFEExtension.NetCore.ServerInteractive.Models.ServerModels;
+using XFEExtension.NetCore.ServerInteractive.Utilities.Helpers;
 
 namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreService;
 
@@ -24,8 +25,12 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
         try
         {
             if (e.Handled || e.ReturnArgs is null) return;
-            var currentException = e.ServerException?.InnerException;
-            var errorMessage = e.ServerException?.Message ?? "服务器内部异常";
+            var errorMessage = ExceptionHelper.GetExceptionMessage(e.ServerException);
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                errorMessage = "服务器内部异常";
+            }
+
             var errorInfo = string.Empty;
             if (e.ServerException?.InnerException is ServerCoreReturnArgs returnArgs)
                 errorInfo = returnArgs.ReturnMessage;
@@ -35,15 +40,6 @@ public class ServerCoreExceptionProcessService : ServerCoreOriginalServiceBase
             }
             else
             {
-                for (var i = 0; i < 5; i++)
-                {
-                    if (currentException is null)
-                    {
-                        break;
-                    }
-                    errorMessage += $"：{currentException.Message}";
-                    currentException = currentException.InnerException;
-                }
                 errorInfo = errorMessage.Contains("请求的路由未注册") ? "路由未找到" : "服务器内部异常";
                 Console.WriteLine();
                 Console.WriteLine($"[WARN]({sender.ServerCoreName})【{errorInfo}】{errorMessage}");

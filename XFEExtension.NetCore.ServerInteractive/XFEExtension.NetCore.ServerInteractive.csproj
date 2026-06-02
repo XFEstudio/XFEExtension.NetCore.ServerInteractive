@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.1.0-preview.1.1</Version>
+    <Version>3.1.0-preview.1.2</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,7 +21,8 @@
     <PackageReleaseNotes>
       ## 调整
 
-      更新md文档
+      调整部分类型名称
+      优化输出显示
 
       ## 新增
 
