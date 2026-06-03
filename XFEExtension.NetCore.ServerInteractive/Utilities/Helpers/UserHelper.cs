@@ -212,7 +212,10 @@ public static class UserHelper
     {
         var result = ValidateUserPermission(sessionId, deviceInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
+        {
+            Console.Write(OutPutResult(result));
             throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
+        }
     }
 
     /// <summary>
