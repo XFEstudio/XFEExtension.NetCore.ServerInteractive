@@ -36,7 +36,7 @@ public abstract class XFEDataTableManager
         }
         else
         {
-            Console.WriteLine($"[ERROR]({r.ServerCore.ServerCoreName})【{r.Args.ClientIP}】试图查询不存在的表格：{split[1]}");
+            Console.WriteLine($"[ERROR]({r.ServerCore.ServerCoreName})【{r.ClientIP}】试图查询不存在的表格：{split[1]}");
             await r.Args.ReplyAndClose($"试图查询不存在的表格：{execute}", HttpStatusCode.BadRequest);
         }
     }

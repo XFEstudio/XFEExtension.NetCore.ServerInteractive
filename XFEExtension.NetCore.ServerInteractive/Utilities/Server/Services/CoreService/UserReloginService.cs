@@ -21,18 +21,32 @@ public partial class UserReloginService<T> : ServerCoreUserLoginServiceBase<T> w
     {
         Console.Write("校验登录请求：");
         var session = Regex.Unescape(Json?["session"]?.ToString() ?? string.Empty);
-        Console.Write(session[..10]);
+        Console.Write(session.Length <= 10 ? session : session[..10]);
         var deviceInfo = Json?["deviceInfo"]?.ToString();
         if (session.IsNullOrWhiteSpace()) throw Error("Session值不能为空");
         if (deviceInfo.IsNullOrWhiteSpace()) throw Error("电脑信息不能为空");
         var split = session.Split('|');
+        if (split.Length != 2 || split[0].IsNullOrWhiteSpace() || split[1].IsNullOrWhiteSpace()) throw Error("Session格式不正确", HttpStatusCode.Forbidden);
         if (GetEncryptedUserLoginModelFunction().FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel) throw Error("Session值不正确或已过期", HttpStatusCode.Forbidden);
         if (encryptedUserLoginModel.UserLoginModel.DeviceInfo != deviceInfo) throw Error("电脑信息不匹配");
-        var userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
+        UserLoginModel userLoginModel;
+        try
+        {
+            userLoginModel = UserHelper.Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[AUTH] 重登Session解密失败：uid={split[0]}, error={ex.Message}");
+            throw Error("Session值不正确或已过期", HttpStatusCode.Forbidden);
+        }
         if (userLoginModel.Uid.IsNullOrWhiteSpace() || userLoginModel.Uid != encryptedUserLoginModel.UserLoginModel.Uid)
             throw Error("登录用户ID不匹配");
         var user = UserHelper.GetUser(userLoginModel.Uid, GetUserFunction()) ?? throw Error("用户ID未注册", HttpStatusCode.Forbidden);
-        if (userLoginModel.LastIPAddress != ReturnArgs.Args.ClientIP || userLoginModel.LastIPAddress != encryptedUserLoginModel.UserLoginModel.LastIPAddress) throw Error("IP地址不匹配");
+        if (!UserHelper.IsSameIPAddress(userLoginModel.LastIPAddress, ReturnArgs.ClientIP) || !UserHelper.IsSameIPAddress(userLoginModel.LastIPAddress, encryptedUserLoginModel.UserLoginModel.LastIPAddress))
+        {
+            Console.WriteLine($"[AUTH] 重登IP地址不匹配：uid={split[0]}, session={userLoginModel.LastIPAddress}, stored={encryptedUserLoginModel.UserLoginModel.LastIPAddress}, actual={ReturnArgs.ClientIP}");
+            throw Error("IP地址不匹配");
+        }
         if (userLoginModel.EndDateTime < DateTime.Now || userLoginModel.EndDateTime != encryptedUserLoginModel.UserLoginModel.EndDateTime) throw Error("登录已过期");
         if (userLoginModel.DeviceInfo != encryptedUserLoginModel.UserLoginModel.DeviceInfo) throw Error("电脑信息不匹配");
         await Close(JsonSerializer.Serialize(LoginResultConvertFunction(user), JsonSerializerOptions));

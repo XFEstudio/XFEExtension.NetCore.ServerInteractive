@@ -22,16 +22,41 @@ public abstract class ClientRequester : IRequesterBase
     internal Dictionary<string, Func<IStandardRequestService>> StandardRequestServiceDictionary = [];
     internal List<(string Pattern, Func<IStandardRequestService> Factory)> WildcardStandardRequestServiceList = [];
     internal Dictionary<string, StandardClientInstanceRequest> StandardClientInstanceRequestDictionary = [];
+    private string _session = string.Empty;
+    private TableRequester? _tableRequester;
     /// <inheritdoc/>
     public string RequestAddress { get; set; } = string.Empty;
     /// <inheritdoc/>
-    public string Session { get; set; } = string.Empty;
+    public string Session
+    {
+        get => _session;
+        set
+        {
+            _session = value;
+            if (TableRequester is not null)
+                TableRequester.Session = value;
+        }
+    }
     /// <inheritdoc/>
     public string DeviceInfo { get; set; } = string.Empty;
     /// <summary>
     /// 表格请求器（如需使用表格相关功能，请通过构建器添加WithTableRequester实例并赋值此属性）
     /// </summary>
-    public TableRequester? TableRequester { get; set; }
+    public TableRequester? TableRequester
+    {
+        get => _tableRequester;
+        set
+        {
+            _tableRequester = value;
+            if (_tableRequester is null) return;
+            if (_tableRequester.RequestAddress.Length == 0)
+                _tableRequester.RequestAddress = RequestAddress;
+            if (_tableRequester.DeviceInfo.Length == 0)
+                _tableRequester.DeviceInfo = DeviceInfo;
+            if (_tableRequester.Session.Length == 0)
+                _tableRequester.Session = Session;
+        }
+    }
     /// <inheritdoc/>
     public event XFEEventHandler<object?, ServerInteractiveEventArgs>? MessageReceived;
 

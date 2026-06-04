@@ -53,7 +53,11 @@ internal class Program
 
     private static readonly TableRequester TableRequester = new();
 
-    static Program() => s_xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
+    static Program()
+    {
+        s_xFEClientRequester.MessageReceived += XFEClientRequester_MessageReceived;
+        TableRequester.RequestAddress = s_xFEClientRequester.RequestAddress;
+    }
 
     private static void XFEClientRequester_MessageReceived(object? sender, ServerInteractiveEventArgs e)
     {

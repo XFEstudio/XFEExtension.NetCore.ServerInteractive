@@ -37,19 +37,68 @@ public static class UserHelper
         user = null;
         session = Regex.Unescape(session);
         var split = session.Split('|');
-        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel || encryptedUserLoginModel.UserLoginModel.DeviceInfo != deviceInfo)
+        if (split.Length != 2 || split[0].IsNullOrWhiteSpace() || split[1].IsNullOrWhiteSpace())
+        {
+            Console.Write($" Session格式无效：length={split.Length}, sessionLength={session.Length}");
             return UserOperateResult.LoginExpired;
-        if (Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]) is not { } targetUserLoginModel || encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
+        }
+        if (encryptedUserLoginModels.FirstOrDefault(user => user.UserLoginModel.Uid == split[0]) is not { } encryptedUserLoginModel)
+        {
+            Console.Write($" Session未找到或已被清理：uid={split[0]}");
+            return UserOperateResult.LoginExpired;
+        }
+        if (encryptedUserLoginModel.UserLoginModel.DeviceInfo != deviceInfo)
+        {
+            Console.Write($" 设备信息不匹配：uid={split[0]}, expected={FormatForLog(encryptedUserLoginModel.UserLoginModel.DeviceInfo)}, actual={FormatForLog(deviceInfo)}");
+            return UserOperateResult.LoginExpired;
+        }
+        UserLoginModel targetUserLoginModel;
+        try
+        {
+            targetUserLoginModel = Decrypt<UserLoginModel>(encryptedUserLoginModel.Key, split[1]);
+        }
+        catch (Exception ex)
+        {
+            Console.Write($" Session解密失败：uid={split[0]}, error={ex.Message}");
+            return UserOperateResult.LoginExpired;
+        }
+        if (encryptedUserLoginModel.UserLoginModel.Uid != targetUserLoginModel.Uid)
+        {
+            Console.Write($" Session解密失败或用户ID不匹配：uid={split[0]}");
             return UserOperateResult.UserNotFound;
-        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now || (encryptedUserLoginModel.UserLoginModel.LastIPAddress != ipAddress && !(encryptedUserLoginModel.UserLoginModel.LastIPAddress is "127.0.0.1" or "::1" && ipAddress is "127.0.0.1" or "::1")))
+        }
+        if (encryptedUserLoginModel.UserLoginModel.EndDateTime < DateTime.Now)
+        {
+            Console.Write($" Session到期：uid={split[0]}, expire={encryptedUserLoginModel.UserLoginModel.EndDateTime:O}, now={DateTime.Now:O}");
             return UserOperateResult.LoginExpired;
+        }
+        if (!IsSameIPAddress(encryptedUserLoginModel.UserLoginModel.LastIPAddress, ipAddress))
+        {
+            Console.Write($" IP地址不匹配：uid={split[0]}, expected={encryptedUserLoginModel.UserLoginModel.LastIPAddress}, actual={ipAddress}, expire={encryptedUserLoginModel.UserLoginModel.EndDateTime:O}");
+            return UserOperateResult.LoginExpired;
+        }
         if (GetUser(targetUserLoginModel.Uid, userInfoList) is not IUserInfo userInfo)
+        {
+            Console.Write($" 用户ID未注册：uid={targetUserLoginModel.Uid}");
             return UserOperateResult.UserNotFound;
+        }
         if (!userInfo.Enable)
+        {
+            Console.Write($" 用户已禁用：uid={targetUserLoginModel.Uid}");
             return UserOperateResult.UserDisabled;
+        }
         user = userInfo;
         Console.Write($"({user.UserName})");
         return UserOperateResult.Success;
+    }
+
+    internal static bool IsSameIPAddress(string loginIPAddress, string requestIPAddress) => loginIPAddress == requestIPAddress || (loginIPAddress is "127.0.0.1" or "::1" && requestIPAddress is "127.0.0.1" or "::1");
+
+    private static string FormatForLog(string value)
+    {
+        if (value.IsNullOrEmpty())
+            return "<empty>";
+        return value.Length <= 16 ? value : $"{value[..16]}...";
     }
 
     /// <summary>
@@ -212,10 +261,7 @@ public static class UserHelper
     {
         var result = ValidateUserPermission(sessionId, deviceInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
-        {
-            Console.Write(OutPutResult(result));
             throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
-        }
     }
 
     /// <summary>

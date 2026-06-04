@@ -46,7 +46,7 @@ public partial class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> whe
                 {
                     Uid = user.Id,
                     DeviceInfo = deviceInfo,
-                    LastIPAddress = ReturnArgs.Args.ClientIP,
+                    LastIPAddress = ReturnArgs.ClientIP,
                     EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays())
                 }
             };
@@ -56,7 +56,7 @@ public partial class UserLoginService<T> : ServerCoreUserLoginServiceBase<T> whe
         else
         {
             userLogin.UserLoginModel.DeviceInfo = deviceInfo;
-            userLogin.UserLoginModel.LastIPAddress = ReturnArgs.Args.ClientIP;
+            userLogin.UserLoginModel.LastIPAddress = ReturnArgs.ClientIP;
             userLogin.UserLoginModel.EndDateTime = DateTime.Now.AddDays(GetLoginKeepDays());
             Console.Write($"到期时间：{userLogin.UserLoginModel.EndDateTime}");
         }

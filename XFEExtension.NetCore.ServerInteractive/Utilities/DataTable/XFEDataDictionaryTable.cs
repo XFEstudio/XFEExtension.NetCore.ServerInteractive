@@ -126,7 +126,7 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
             {
                 case "get":
                     Console.Write($"获取{TableShowName}列表请求");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.ClientIP, GetPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     List<TValue> valueList = [.. GetTableFunction().Values];
                     var pageCount = requestJsonNode["pageCount"]?.GetValue<int>() ?? -1;
                     if (pageCount == -1)
@@ -158,7 +158,7 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
                         throw new StopAction(() => { }, $"\n无法使用Json转换目标{TableShowName}信息");
                     }
                     Console.Write($"：{item.Id}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, AddPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.ClientIP, AddPermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (item.Id.IsNullOrWhiteSpace())
                         item.Id = Guid.NewGuid().ToString();
                     var addTable = GetTableFunction();
@@ -171,7 +171,7 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
                     Console.Write($"删除{TableShowName}请求");
                     var id = requestJsonNode["id"]?.ToString();
                     Console.Write($"：{id}");
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, RemovePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.ClientIP, RemovePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     if (id.IsNullOrWhiteSpace())
                     {
                         statusCode = HttpStatusCode.BadRequest;
@@ -194,7 +194,7 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
                         statusCode = HttpStatusCode.BadRequest;
                         throw new StopAction(() => { }, $"\n{TableShowName}ID不能为空");
                     }
-                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.Args.ClientIP, ChangePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
+                    UserHelper.ValidatePermission(requestJsonNode["session"], requestJsonNode["deviceInfo"], r.ClientIP, ChangePermissionLevel, GetEncryptedUserLoginModelFunction(), GetUsersFunction(), r);
                     Change(item);
                     r.Args.Close();
                     break;
@@ -204,9 +204,14 @@ public class XFEDataDictionaryTable<TValue> : IXFEDataTable where TValue : IIdMo
                     break;
             }
         }
+        catch (ServerCoreReturnArgs returnArgs)
+        {
+            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){returnArgs.ReturnMessage}");
+            await returnArgs.Args.ReplyAndClose(returnArgs.ReturnMessage, returnArgs.StatusCode);
+        }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){ex}");
+            Console.WriteLine($"[WARN]({r.ServerCore.ServerCoreName}){ExceptionHelper.GetExceptionMessage(ex)}");
             Console.WriteLine($"[TRACE]{ex.StackTrace}");
             await r.Args.ReplyAndClose(ex.Message, statusCode);
         }
