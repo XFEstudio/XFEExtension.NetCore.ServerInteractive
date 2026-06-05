@@ -149,6 +149,10 @@ public abstract class XFEServerCoreBuilder : XFEBuilderBase<XFEServerCoreBuilder
         {
             _xFEServerCore.ServerCoreServiceList.Add(serverCoreService);
             _xFEServerCore.CyberCommServer.ServerStarted += serverCoreService.ServerStarted;
+            _xFEServerCore.CyberCommServer.RequestReceived += serverCoreService.RequestReceived;
+            _xFEServerCore.CyberCommServer.ClientConnected += serverCoreService.ClientConnected;
+            _xFEServerCore.CyberCommServer.MessageReceived += serverCoreService.MessageReceived;
+            _xFEServerCore.CyberCommServer.ConnectionClosed += serverCoreService.ConnectionClosed;
         }
         _xFEServerCore.ServerCoreVerifyServiceList = _serverCoreVerifyServiceList;
         _xFEServerCore.StandardCoreServiceDictionary = _serverStandardCoreServiceDictionary;

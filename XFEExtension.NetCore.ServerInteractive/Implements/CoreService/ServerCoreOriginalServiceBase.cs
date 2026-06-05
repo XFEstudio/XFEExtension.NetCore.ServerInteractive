@@ -11,5 +11,11 @@ public abstract class ServerCoreOriginalServiceBase : XFEServerCoreServiceBase, 
     /// <inheritdoc/>
     public abstract void ServerStarted(object? sender, EventArgs e);
     /// <inheritdoc/>
-    public abstract void RequestReceived(object? sender, CyberCommRequestEventArgs e);
+    public virtual void RequestReceived(object? sender, CyberCommRequestEventArgs e) { }
+    /// <inheritdoc/>
+    public virtual void ClientConnected(object? sender, CyberCommServerEventArgs e) { }
+    /// <inheritdoc/>
+    public virtual void MessageReceived(object? sender, CyberCommServerEventArgs e) { }
+    /// <inheritdoc/>
+    public virtual void ConnectionClosed(object? sender, CyberCommServerEventArgs e) { }
 }
