@@ -9,6 +9,18 @@ namespace XFEExtension.NetCore.ServerInteractive.Interfaces;
 public interface IUserServiceBase
 {
     /// <summary>
+    /// 会话
+    /// </summary>
+    string? Session { get; }
+    /// <summary>
+    /// 设备信息
+    /// </summary>
+    string? DeviceInfo { get; }
+    /// <summary>
+    /// 当前请求的用户
+    /// </summary>
+    IUserInfo? User { get; }
+    /// <summary>
     /// Json序列化设置
     /// </summary>
     JsonSerializerOptions JsonSerializerOptions { get; set; }
@@ -36,4 +48,10 @@ public interface IUserServiceBase
     /// 获取用户方法
     /// </summary>
     Func<IEnumerable<IUserInfo>> GetUserFunction { get; set; }
+
+    /// <summary>
+    /// 校验用户信息（仅限标准请求）
+    /// </summary>
+    /// <returns></returns>
+    (string session, string deviceInfo, IUserInfo user) VerifyUserInfo();
 }

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.2.0-preview.1.0</Version>
+    <Version>3.2.0</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,14 +21,13 @@
     <PackageReleaseNotes>
       ## 调整
 
-      优化权限校验与日志输出逻辑
+      增强用户服务基类与权限校验逻辑，发布3.2.0
 
-      - 替换 `ValidatePermission` 方法中 `r.Args.ClientIP` 为 `r.ClientIP`。
-      - 增强 `XFEDataDictionaryTable` 和 `XFEDataListTable` 的异常处理，捕获 `ServerCoreReturnArgs`。
-      - 改进 `UserHelper.GetUser` 方法，增加 `session` 校验和日志输出。
-      - 增加 `IsSameIPAddress` 和 `FormatForLog` 辅助方法。
-      - 调整多个服务类中 `ClientIP` 的获取方式。
-      - 更新项目版本号至 `3.1.0`。
+      本次提交：
+      - IUserServiceBase 接口新增 Session、DeviceInfo、User 属性及 VerifyUserInfo 方法；
+      - UserHelper 工具类参数 sessionId 统一为 session，优化方法和注释；
+      - ServerCoreUserServiceBase 实现用户信息自动获取与校验；
+      - 项目版本号升级为 3.2.0，正式发布。
 
       ## 新增
 

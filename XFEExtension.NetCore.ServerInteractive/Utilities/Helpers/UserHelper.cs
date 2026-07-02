@@ -182,18 +182,18 @@ public static class UserHelper
     /// <summary>
     /// 校验用户权限（使用Session）
     /// </summary>
-    /// <param name="sessionId"></param>
+    /// <param name="session"></param>
     /// <param name="deviceInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="requiredPermissionLevel"></param>
     /// <param name="encryptedUserLoginModels"></param>
     /// <param name="userInfoList"></param>
     /// <returns></returns>
-    public static UserOperateResult ValidateUserPermission(string? sessionId, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
+    public static UserOperateResult ValidateUserPermission(string? session, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList)
     {
-        if (sessionId.IsNullOrWhiteSpace() || deviceInfo.IsNullOrWhiteSpace())
+        if (session.IsNullOrWhiteSpace() || deviceInfo.IsNullOrWhiteSpace())
             return UserOperateResult.UserNotFound;
-        var result = GetUser(sessionId, deviceInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
+        var result = GetUser(session, deviceInfo, ipAddress, encryptedUserLoginModels, userInfoList, out var user);
         if (result != UserOperateResult.Success)
             return result;
         return user!.PermissionLevel < requiredPermissionLevel ? UserOperateResult.PermissionDenied : UserOperateResult.Success;
@@ -249,7 +249,7 @@ public static class UserHelper
     /// <summary>
     /// 校验权限（使用Session）
     /// </summary>
-    /// <param name="sessionId"></param>
+    /// <param name="session"></param>
     /// <param name="deviceInfo"></param>
     /// <param name="ipAddress"></param>
     /// <param name="requiredPermissionLevel"></param>
@@ -257,9 +257,9 @@ public static class UserHelper
     /// <param name="userInfoList"></param>
     /// <param name="r"></param>
     /// <exception cref="StopAction"></exception>
-    public static void ValidatePermission(string? sessionId, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
+    public static void ValidatePermission(string? session, string? deviceInfo, string ipAddress, int requiredPermissionLevel, IEnumerable<EncryptedUserLoginModel> encryptedUserLoginModels, IEnumerable<IUserInfo> userInfoList, ServerCoreReturnArgs r)
     {
-        var result = ValidateUserPermission(sessionId, deviceInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
+        var result = ValidateUserPermission(session, deviceInfo, ipAddress, requiredPermissionLevel, encryptedUserLoginModels, userInfoList);
         if (result != UserOperateResult.Success)
             throw r.Error(OutPutResult(result), HttpStatusCode.Forbidden);
     }
