@@ -11,30 +11,37 @@ namespace XFEExtension.NetCore.ServerInteractive.Utilities.Server.Services.CoreS
 /// <inheritdoc cref="ServerCoreStandardServiceBase" />
 public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase, IUserServiceBase
 {
-    IUserInfo? _user;
-
     /// <summary>
-    /// 会话
+    /// 会话（自动校验）
     /// </summary>
-    public string? Session { get => Json > "session"; }
-    /// <summary>
-    /// 设备信息
-    /// </summary>
-    public string? DeviceInfo { get => Json > "deviceInfo"; }
-    /// <summary>
-    /// 本次请求用户（自动校验）
-    /// </summary>
-    public IUserInfo? User
+    public string? Session
     {
         get
         {
-
-            if (_user is null)
-            {
-                var (_, _, user) = VerifyUserInfo();
-                _user = user;
-            }
-            return _user;
+            field ??= Json > "session" ?? throw Error("会话无效");
+            return field;
+        }
+    }
+    /// <summary>
+    /// 设备信息（自动校验）
+    /// </summary>
+    public string? DeviceInfo
+    {
+        get
+        {
+            field ??= Json > "deviceInfo" ?? throw Error("缺少设备信息");
+            return field;
+        }
+    }
+    /// <summary>
+    /// 本次请求用户（自动校验）
+    /// </summary>
+    public IUserInfo User
+    {
+        get
+        {
+            field ??= VerifyUserInfo();
+            return field;
         }
     }
     /// <inheritdoc/>
@@ -58,13 +65,11 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
     /// 校验用户信息（仅限标准请求）
     /// </summary>
     /// <returns></returns>
-    protected (string session, string deviceInfo, IUserInfo user) VerifyUserInfo()
+    protected IUserInfo VerifyUserInfo()
     {
-        string session = Json > "session" ?? throw Error("用户未登录");
-        string deviceInfo = Json > "deviceInfo" ?? throw Error("缺少电脑信息");
-        if (session.NullOrWhiteSpace) throw Error("用户未登录");
-        if (deviceInfo.NullOrWhiteSpace) throw Error("电脑信息不能为空");
-        var result = UserHelper.GetUser(session, deviceInfo, ClientIP, GetEncryptedUserLoginModelFunction(), GetUserFunction(), out var user);
-        return user is null ? throw Error(UserHelper.OutPutResult(result)) : (session, deviceInfo, user);
+        if (Session.NullOrWhiteSpace) throw Error("会话无效");
+        if (DeviceInfo.NullOrWhiteSpace) throw Error("设备信息无效");
+        var result = UserHelper.GetUser(Session, DeviceInfo, ClientIP, GetEncryptedUserLoginModelFunction(), GetUserFunction(), out var user);
+        return user is null ? throw Error(UserHelper.OutPutResult(result)) : user;
     }
 }

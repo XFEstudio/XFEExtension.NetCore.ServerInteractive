@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.2.0</Version>
+    <Version>3.2.1</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,13 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      增强用户服务基类与权限校验逻辑，发布3.2.0
+      重构用户服务基类并优化属性校验机制
 
-      本次提交：
-      - IUserServiceBase 接口新增 Session、DeviceInfo、User 属性及 VerifyUserInfo 方法；
-      - UserHelper 工具类参数 sessionId 统一为 session，优化方法和注释；
-      - ServerCoreUserServiceBase 实现用户信息自动获取与校验；
-      - 项目版本号升级为 3.2.0，正式发布。
+      重构 ServerCoreUserServiceBase，Session、DeviceInfo、User 属性实现自动校验和懒加载，缺失时抛出异常。VerifyUserInfo 方法简化为仅返回 IUserInfo，移除 _user 字段，属性内部实现缓存。项目版本号升级至 3.2.1。
 
       ## 新增
 
