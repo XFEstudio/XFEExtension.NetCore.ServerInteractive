@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>3.2.1</Version>
+    <Version>3.2.2</Version>
     <Title>XFEExtension.NetCore.ServerInteractive</Title>
     <RepositoryUrl>https://github.com/XFEstudio/XFEExtension.NetCore.ServerInteractive</RepositoryUrl>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -21,9 +21,9 @@
     <PackageReleaseNotes>
       ## 调整
 
-      重构用户服务基类并优化属性校验机制
+      ServerCoreUserServiceBase属性类型调整为非空
 
-      重构 ServerCoreUserServiceBase，Session、DeviceInfo、User 属性实现自动校验和懒加载，缺失时抛出异常。VerifyUserInfo 方法简化为仅返回 IUserInfo，移除 _user 字段，属性内部实现缓存。项目版本号升级至 3.2.1。
+      将 Session 和 DeviceInfo 属性类型由 string? 改为 string，确保获取时必有值并自动校验；项目版本号升级至 3.2.2。
 
       ## 新增
 

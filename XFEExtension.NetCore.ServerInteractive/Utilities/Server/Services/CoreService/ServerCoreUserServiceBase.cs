@@ -14,7 +14,7 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
     /// <summary>
     /// 会话（自动校验）
     /// </summary>
-    public string? Session
+    public string Session
     {
         get
         {
@@ -25,7 +25,7 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
     /// <summary>
     /// 设备信息（自动校验）
     /// </summary>
-    public string? DeviceInfo
+    public string DeviceInfo
     {
         get
         {
