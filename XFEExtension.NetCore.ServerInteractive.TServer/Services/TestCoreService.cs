@@ -11,6 +11,5 @@ public partial class TestCoreService : ServerCoreUserServiceBase
                                                            Your route is {Route};
                                                            Your IP is {ClientIP};
                                                            Your headers are {string.Join(',', Args.Request.Headers)}
-                                                           {}
                                                        """);
 }

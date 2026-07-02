@@ -13,11 +13,17 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
 {
     IUserInfo? _user;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// 会话
+    /// </summary>
     public string? Session { get => Json > "session"; }
-    /// <inheritdoc/>
+    /// <summary>
+    /// 设备信息
+    /// </summary>
     public string? DeviceInfo { get => Json > "deviceInfo"; }
-    /// <inheritdoc/>
+    /// <summary>
+    /// 本次请求用户（自动校验）
+    /// </summary>
     public IUserInfo? User
     {
         get
@@ -48,7 +54,10 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
     /// <inheritdoc/>
     protected ServerCoreUserServiceBase() => JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// 校验用户信息（仅限标准请求）
+    /// </summary>
+    /// <returns></returns>
     protected (string session, string deviceInfo, IUserInfo user) VerifyUserInfo()
     {
         string session = Json > "session" ?? throw Error("用户未登录");
@@ -57,10 +66,5 @@ public abstract class ServerCoreUserServiceBase : ServerCoreStandardServiceBase,
         if (deviceInfo.NullOrWhiteSpace) throw Error("电脑信息不能为空");
         var result = UserHelper.GetUser(session, deviceInfo, ClientIP, GetEncryptedUserLoginModelFunction(), GetUserFunction(), out var user);
         return user is null ? throw Error(UserHelper.OutPutResult(result)) : (session, deviceInfo, user);
-    }
-
-    (string session, string deviceInfo, IUserInfo user) IUserServiceBase.VerifyUserInfo()
-    {
-        return VerifyUserInfo();
     }
 }
